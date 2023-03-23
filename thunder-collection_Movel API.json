@@ -1,0 +1,137 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Movel API",
+    "dateExported": "2023-03-23T05:02:06.247Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "1a768139-a882-469b-94bd-bcf3c88fdb0c",
+            "colId": "1714c71d-a138-4b5d-b444-d6f61eabd7d5",
+            "containerId": "",
+            "name": "Register",
+            "url": "https://admin.movel.id/api/user/register",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2023-03-23T04:29:57.386Z",
+            "modified": "2023-03-23T04:32:22.666Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "name",
+                        "value": "Naruto"
+                    },
+                    {
+                        "name": "email",
+                        "value": "naruto@gmail.com"
+                    },
+                    {
+                        "name": "password",
+                        "value": "12345678"
+                    },
+                    {
+                        "name": "password_confirmation",
+                        "value": "12345678"
+                    },
+                    {
+                        "name": "tc",
+                        "value": "true"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "9dfc0473-72c0-4760-8ed8-3fd8f500a597",
+            "colId": "1714c71d-a138-4b5d-b444-d6f61eabd7d5",
+            "containerId": "",
+            "name": "Login",
+            "url": "https://admin.movel.id/api/user/login",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2023-03-23T04:34:17.338Z",
+            "modified": "2023-03-23T04:57:53.673Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "email",
+                        "value": "admin@gmail.com"
+                    },
+                    {
+                        "name": "password",
+                        "value": "123456"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "c0d8e3ce-ee71-482f-b62f-c3759b3f1bc5",
+            "colId": "1714c71d-a138-4b5d-b444-d6f61eabd7d5",
+            "containerId": "",
+            "name": "Change Password",
+            "url": "https://admin.movel.id/api/user/changepassword",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2023-03-23T04:38:49.407Z",
+            "modified": "2023-03-23T05:01:21.936Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "password",
+                        "value": "123456"
+                    },
+                    {
+                        "name": "password_confirmation",
+                        "value": "123456"
+                    }
+                ]
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "4|SieUDN1AXyRXfHvdHBPOjNesgl28anhCH3mk8zsw"
+            },
+            "tests": []
+        },
+        {
+            "_id": "ab307824-1fdd-468d-b59e-5e1aec90923b",
+            "colId": "1714c71d-a138-4b5d-b444-d6f61eabd7d5",
+            "containerId": "",
+            "name": "Logout",
+            "url": "https://admin.movel.id/api/user/logout",
+            "method": "POST",
+            "sortNum": 60000,
+            "created": "2023-03-23T04:50:10.465Z",
+            "modified": "2023-03-23T04:58:10.179Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "8|9aZQWAPzExEC83njc22CqYh3DigMAGasiyzybUjR"
+            },
+            "tests": []
+        }
+    ]
+}
