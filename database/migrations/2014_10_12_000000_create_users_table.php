@@ -17,10 +17,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('no_hp', 14);
+            $table->string('alamat', 255)->nullable();
+            $table->string('keterangan', 255)->nullable();
+            $table->string('foto', 255)->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
-            $table->boolean('tc');
             $table->timestamps();
         });
     }

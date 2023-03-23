@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "Movel API",
-    "dateExported": "2023-03-23T10:04:54.296Z",
+    "dateExported": "2023-03-23T05:02:06.247Z",
     "version": "1.1",
     "folders": [],
     "requests": [
@@ -14,7 +14,7 @@
             "method": "POST",
             "sortNum": 30000,
             "created": "2023-03-23T04:29:57.386Z",
-            "modified": "2023-03-23T10:04:19.690Z",
+            "modified": "2023-03-23T04:32:22.666Z",
             "headers": [],
             "params": [],
             "body": {
@@ -23,23 +23,23 @@
                 "form": [
                     {
                         "name": "name",
-                        "value": "Shym"
+                        "value": "Naruto"
                     },
                     {
                         "name": "email",
-                        "value": "shym@gmail.com"
-                    },
-                    {
-                        "name": "no_hp",
-                        "value": "085255171701"
+                        "value": "naruto@gmail.com"
                     },
                     {
                         "name": "password",
-                        "value": "123456"
+                        "value": "12345678"
                     },
                     {
                         "name": "password_confirmation",
-                        "value": "123456"
+                        "value": "12345678"
+                    },
+                    {
+                        "name": "tc",
+                        "value": "true"
                     }
                 ]
             },
@@ -54,7 +54,7 @@
             "method": "POST",
             "sortNum": 40000,
             "created": "2023-03-23T04:34:17.338Z",
-            "modified": "2023-03-23T10:01:15.613Z",
+            "modified": "2023-03-23T04:57:53.673Z",
             "headers": [],
             "params": [],
             "body": {
@@ -63,11 +63,11 @@
                 "form": [
                     {
                         "name": "email",
-                        "value": "naruto@gmail.com"
+                        "value": "admin@gmail.com"
                     },
                     {
                         "name": "password",
-                        "value": "12345678"
+                        "value": "123456"
                     }
                 ]
             },

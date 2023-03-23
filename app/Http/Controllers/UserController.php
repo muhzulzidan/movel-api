@@ -12,9 +12,15 @@ class UserController extends Controller
         $request->validate([
             'name'=>'required',
             'email'=>'required|email',
-            'password'=>'required|confirmed',
-            'tc'=>'required',
+            'no_hp'=>'required',
+            'password'=>'required|confirmed|string|min:6',
         ]);
+        $no_hp = $request['no_hp']; 
+        if ($request['no_hp'][0] == "0") { 
+            $no_hp = substr($no_hp, 1); 
+        } if ($no_hp[0] == "8") { 
+            $no_hp = "62" . $no_hp; 
+        } 
         if(User::where('email', $request->email)->first()){
             return response([
                 'message' => 'Email already exists',
@@ -25,8 +31,8 @@ class UserController extends Controller
         $user = User::create([
             'name'=>$request->name,
             'email'=>$request->email,
+            'no_hp'=>$no_hp,
             'password'=>Hash::make($request->password),
-            'tc'=>json_decode($request->tc),
         ]);
         $token = $user->createToken($request->email)->plainTextToken;
         return response([
