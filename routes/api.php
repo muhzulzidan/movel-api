@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\PasswordResetController;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
