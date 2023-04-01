@@ -14,10 +14,10 @@ class Driver extends Model
         'user_id',
         'address',
         'photo',
-        // 'no_ktp',
-        // 'foto_ktp',
-        // 'foto_sim',
-        // 'foto_stnk',
+        'no_ktp',
+        'foto_ktp',
+        'foto_sim',
+        'foto_stnk',
     ];
 
     public function user()

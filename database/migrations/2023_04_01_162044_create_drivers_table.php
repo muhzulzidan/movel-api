@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->unique();
             $table->string('photo')->nullable();
             $table->text('address')->nullable();
             $table->timestamps();
