@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('keterangan', 255)->nullable();
             $table->string('foto', 255)->nullable();
             $table->timestamp('email_verified_at')->nullable();
+            $table->integer('role')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

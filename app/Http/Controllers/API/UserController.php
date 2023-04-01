@@ -15,6 +15,7 @@ class UserController extends Controller
             'email'=>'required|email',
             'no_hp'=>'required',
             'password'=>'required|confirmed|string|min:6',
+            'role'=>'required',
         ]);
         $no_hp = $request['no_hp']; 
         if ($request['no_hp'][0] == "0") { 
@@ -34,10 +35,9 @@ class UserController extends Controller
             'email'=>$request->email,
             'no_hp'=>$no_hp,
             'password'=>Hash::make($request->password),
+            'role'=>$request->role,
         ]);
-        $token = $user->createToken($request->email)->plainTextToken;
         return response([
-            'token'=>$token,
             'message' => 'Registration Success',
             'status'=>'success'
         ], 201);
@@ -48,15 +48,45 @@ class UserController extends Controller
             'email'=>'required|email',
             'password'=>'required',
         ]);
+        // $user = User::where('email', $request->email)->first();
+        // if($user && Hash::check($request->password, $user->password)){
+        //     $token = $user->createToken($request->email)->plainTextToken;
+        //     return response([
+        //         'token'=>$token,
+        //         'message' => 'Login Success',
+        //         'status'=>'success'
+        //     ], 200);
+        //}
+
         $user = User::where('email', $request->email)->first();
         if($user && Hash::check($request->password, $user->password)){
-            $token = $user->createToken($request->email)->plainTextToken;
+            if($user->role == 0) {
+                $token = $user->createToken($request->email)->plainTextToken;
+                return response([
+                    'token'=>$token,
+                    'message' => 'Login Success as Penumpang',
+                    'status'=>'success'
+                ], 200);
+            } else if ($user->role == 1) {
+                $token = $user->createToken($request->email)->plainTextToken;
+                return response([
+                    'token'=>$token,
+                    'message' => 'Login Success as Supir',
+                    'status'=>'success'
+                ], 200);
+            } else {
+                return response([
+                    'message' => 'Invalid Role',
+                    'status'=>'failed'
+                ], 422);
+            }
+        } else {
             return response([
-                'token'=>$token,
-                'message' => 'Login Success',
-                'status'=>'success'
-            ], 200);
+                'message' => 'Invalid email or password',
+                'status'=>'failed'
+            ], 401);
         }
+
         return response([
             'message' => 'The Provided Credentials are incorrect',
             'status'=>'failed'
