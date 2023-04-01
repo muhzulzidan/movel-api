@@ -3,123 +3,151 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         $request->validate([
-            'name'=>'required',
-            'email'=>'required|email',
-            'no_hp'=>'required',
-            'password'=>'required|confirmed|string|min:6',
-            'role'=>'required',
+            'name' => 'required',
+            'email' => 'required|email',
+            'no_hp' => 'required',
+            'password' => 'required|confirmed|string|min:6',
+            'role_id' => 'required|exists:roles,id',
         ]);
-        $no_hp = $request['no_hp']; 
-        if ($request['no_hp'][0] == "0") { 
-            $no_hp = substr($no_hp, 1); 
-        } if ($no_hp[0] == "8") { 
-            $no_hp = "62" . $no_hp; 
-        } 
-        if(User::where('email', $request->email)->first()){
+
+        $no_hp = $request['no_hp'];
+        if ($request['no_hp'][0] == "0") {
+            $no_hp = substr($no_hp, 1);
+        }
+        if ($no_hp[0] == "8") {
+            $no_hp = "62" . $no_hp;
+        }
+
+        if (User::where('email', $request->email)->first()) {
             return response([
                 'message' => 'Email already exists',
-                'status'=>'failed'
-            ], 200);
+                'status' => 'failed',
+            ], 409);
+        }
+
+        if (User::where('no_hp', $no_hp)->first()) {
+            return response([
+                'message' => 'No hp already exists',
+                'status' => 'failed',
+            ], 409);
         }
 
         $user = User::create([
-            'name'=>$request->name,
-            'email'=>$request->email,
-            'no_hp'=>$no_hp,
-            'password'=>Hash::make($request->password),
-            'role'=>$request->role,
+            'name' => $request->name,
+            'email' => $request->email,
+            'no_hp' => $no_hp,
+            'password' => Hash::make($request->password),
+            'role_id' => $request->role_id,
         ]);
+
+        if ($request->role_id == 2) {
+            $user->passenger()->create();
+        } elseif ($request->role_id == 3) {
+            $user->driver()->create();
+        }
+
         return response([
             'message' => 'Registration Success',
-            'status'=>'success'
+            'status' => 'success',
         ], 201);
     }
 
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $request->validate([
-            'email'=>'required|email',
-            'password'=>'required',
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
-        // $user = User::where('email', $request->email)->first();
-        // if($user && Hash::check($request->password, $user->password)){
-        //     $token = $user->createToken($request->email)->plainTextToken;
-        //     return response([
-        //         'token'=>$token,
-        //         'message' => 'Login Success',
-        //         'status'=>'success'
-        //     ], 200);
-        //}
 
         $user = User::where('email', $request->email)->first();
-        if($user && Hash::check($request->password, $user->password)){
-            if($user->role == 0) {
+        if ($user && Hash::check($request->password, $user->password)) {
+            if ($user->role_id == 2) {
                 $token = $user->createToken($request->email)->plainTextToken;
                 return response([
-                    'token'=>$token,
-                    'message' => 'Login Success as Penumpang',
-                    'status'=>'success'
+                    'token' => $token,
+                    'message' => 'Login Success as Passenger',
+                    'status' => 'success',
                 ], 200);
-            } else if ($user->role == 1) {
+            } else if ($user->role_id == 3) {
                 $token = $user->createToken($request->email)->plainTextToken;
                 return response([
-                    'token'=>$token,
-                    'message' => 'Login Success as Supir',
-                    'status'=>'success'
+                    'token' => $token,
+                    'message' => 'Login Success as Driver',
+                    'status' => 'success',
                 ], 200);
             } else {
                 return response([
                     'message' => 'Invalid Role',
-                    'status'=>'failed'
+                    'status' => 'failed',
                 ], 422);
             }
         } else {
             return response([
                 'message' => 'Invalid email or password',
-                'status'=>'failed'
+                'status' => 'failed',
             ], 401);
         }
 
         return response([
             'message' => 'The Provided Credentials are incorrect',
-            'status'=>'failed'
+            'status' => 'failed',
         ], 401);
     }
 
-    public function logout(){
-        auth()->user()->tokens()->delete();
-        return response([
-            'message' => 'Logout Success',
-            'status'=>'success'
-        ], 200);
-    }
-    
-    public function logged_user(){
+    public function logged_user()
+    {
         $loggeduser = auth()->user();
         return response([
-            'user'=>$loggeduser,
+            'user' => $loggeduser,
             'message' => 'Logged User Data',
-            'status'=>'success'
+            'status' => 'success',
         ], 200);
     }
 
-    public function change_password(Request $request){
+    public function change_password(Request $request)
+    {
         $request->validate([
+            'old_password' => 'required',
             'password' => 'required|confirmed',
         ]);
+
         $loggeduser = auth()->user();
-        $loggeduser->password = Hash::make($request->password);
-        $loggeduser->save();
+
+        if (!Hash::check($request->old_password, $loggeduser->password)) {
+            return response([
+                'message' => 'Old Password is Incorrect',
+                'status' => 'failed',
+            ], 401);
+        }
+
+        $loggeduser->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        $loggeduser->tokens()->delete();
+
         return response([
             'message' => 'Password Changed Successfully',
-            'status'=>'success'
+            'status' => 'success',
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response([
+            'message' => 'Logout Success',
+            'status' => 'success',
         ], 200);
     }
 }
