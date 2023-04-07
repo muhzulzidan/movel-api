@@ -1,10 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\PassengerController;
 use App\Http\Controllers\API\PasswordResetController;
+use App\Http\Controllers\API\UserController;
+use Illuminate\Support\Facades\Route;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
@@ -21,8 +20,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/passenger', [PassengerController::class, 'index']);
 });
 
-
 // Protected Route Passengers
 Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
     Route::get('/passenger', [PassengerController::class, 'index']);
+    Route::patch('/passenger/update', [PassengerController::class, 'store']);
 });
