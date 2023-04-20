@@ -17,8 +17,8 @@ class UserController extends Controller
             'no_hp' => 'required',
             'password' => 'required|confirmed|string|min:6',
             'role_id' => 'required|exists:roles,id',
-        ]);
-
+        ], 200);
+   
         $no_hp = $request['no_hp'];
         if ($request['no_hp'][0] == "0") {
             $no_hp = substr($no_hp, 1);
@@ -47,7 +47,7 @@ class UserController extends Controller
             'no_hp' => $no_hp,
             'password' => Hash::make($request->password),
             'role_id' => $request->role_id,
-        ]);
+        ], 200);
 
         if ($request->role_id == 2) {
             $user->passenger()->create();
