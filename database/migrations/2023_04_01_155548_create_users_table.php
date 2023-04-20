@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('no_hp', 14)->unique();
             $table->string('password'); 
             $table->rememberToken();
-            $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('role_id')->defauld(2);
             $table->timestamps();
             $table->softDeletes();
 

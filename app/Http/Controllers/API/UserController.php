@@ -36,7 +36,7 @@ class UserController extends Controller
 
         if (User::where('no_hp', $no_hp)->first()) {
             return response([
-                'message' => 'No hp already exists',
+                'message' => 'No HP already exists',
                 'status' => 'failed',
             ], 409);
         }
@@ -46,7 +46,7 @@ class UserController extends Controller
             'email' => $request->email,
             'no_hp' => $no_hp,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id,
+            'role_id' => $request->role_id
         ], 200);
 
         if ($request->role_id == 2) {
@@ -82,6 +82,13 @@ class UserController extends Controller
                 return response([
                     'token' => $token,
                     'message' => 'Login Success as Driver',
+                    'status' => 'success',
+                ], 200);
+            } else if ($user->role_id == 1) {
+                $token = $user->createToken($request->email)->plainTextToken;
+                return response([
+                    'token' => $token,
+                    'message' => 'Login Success as Admin',
                     'status' => 'success',
                 ], 200);
             } else {
