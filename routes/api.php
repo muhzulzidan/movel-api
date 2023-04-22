@@ -5,6 +5,7 @@ use App\Http\Controllers\API\MasterData\KotaKabController;
 use App\Http\Controllers\API\PassengerController;
 use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\Transaction\KotaAsalController;
+use App\Http\Controllers\API\Transaction\KotaTujuanController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,3 +47,8 @@ Route::get('/kota_kab', [KotaKabController::class, 'index']);
 Route::get('/kota_asal/search', [KotaAsalController::class, 'search_kota_asal']);
 Route::get('/kota_asal/three', [KotaAsalController::class, 'three_kota_asal']);
 Route::post('/kota_asal', [KotaAsalController::class, 'set_kota_asal']);
+
+// Route Transaction/KotaTujuan
+Route::get('/kota_tujuan/search', [KotaTujuanController::class, 'search_kota_tujuan']);
+Route::get('/kota_tujuan/three', [KotaTujuanController::class, 'three_kota_tujuan']);
+Route::post('/kota_tujuan', [KotaTujuanController::class, 'set_kota_tujuan']);
