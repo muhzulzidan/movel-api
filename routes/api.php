@@ -4,6 +4,7 @@ use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MasterData\KotaKabController;
 use App\Http\Controllers\API\PassengerController;
 use App\Http\Controllers\API\PasswordResetController;
+use App\Http\Controllers\API\Transaction\DriverDepartureController;
 use App\Http\Controllers\API\Transaction\JadwalBerangkatController;
 use App\Http\Controllers\API\Transaction\KotaAsalController;
 use App\Http\Controllers\API\Transaction\KotaTujuanController;
@@ -56,3 +57,6 @@ Route::post('/kota_tujuan', [KotaTujuanController::class, 'set_kota_tujuan']);
 
 // Route Transaction/JadwalBerangkat
 Route::post('/jadwal_berangkat', [JadwalBerangkatController::class, 'set_jadwal_berangkat']);
+
+// Route Transaction/DriverDeparture
+Route::get('/drivers/available', [DriverDepartureController::class, 'driver_available']);
