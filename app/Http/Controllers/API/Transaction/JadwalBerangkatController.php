@@ -12,7 +12,7 @@ class JadwalBerangkatController extends Controller
         // Validasi inputan tanggal dan jam
         $request->validate([
             'date_departure' => 'required|date',
-            'hours_departure' => 'required|date_format:H:i',
+            'hours_departure' => 'required|date_format:H:i:s',
         ]);
 
         //Menyimpan data ke session
