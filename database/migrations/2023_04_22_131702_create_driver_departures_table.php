@@ -19,12 +19,11 @@ return new class extends Migration
             $table->unsignedBigInteger('kota_asal_id');
             $table->unsignedBigInteger('kota_tujuan_id');
             $table->date('date_departure');
-            $table->unsignedBigInteger('time_departure_id');
+            $table->time('time_departure', 0);
 
             $table->foreign('driver_id')->references('id')->on('drivers');
             $table->foreign('kota_asal_id')->references('id')->on('kota_kabs');
             $table->foreign('kota_tujuan_id')->references('id')->on('kota_kabs');
-            $table->foreign('time_departure_id')->references('id')->on('time_departures');
 
             $table->timestamps();
         });

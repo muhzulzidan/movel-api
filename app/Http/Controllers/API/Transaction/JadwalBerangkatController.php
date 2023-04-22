@@ -12,13 +12,13 @@ class JadwalBerangkatController extends Controller
         // Validasi inputan tanggal dan jam
         $request->validate([
             'date_departure' => 'required|date',
-            'hours_departure' => 'required|date_format:H:i:s',
+            'time_departure_id' => 'required|exists:time_departures,id',
         ]);
 
         //Menyimpan data ke session
         session()->put('jadwal_berangkat', [
             'date_departure' => $request->date_departure,
-            'hours_departure' => $request->hours_departure,
+            'time_departure_id' => $request->time_departure_id,
         ]);
 
         // Mengembalikan data berupa jadwal berangkat yang telah ditentukan
@@ -26,6 +26,5 @@ class JadwalBerangkatController extends Controller
             'success' => true,
             'data' => session()->get('jadwal_berangkat'),
         ]);
-
     }
 }

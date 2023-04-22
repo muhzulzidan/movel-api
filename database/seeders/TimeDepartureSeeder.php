@@ -16,23 +16,38 @@ class TimeDepartureSeeder extends Seeder
     {
         DB::table('time_departures')->insert([
             [
-                'time_name' => 'pagi',
-                'hour_start' => '06:00:00',
-                'hour_end' => '11:00:00',
+                'time_name' => 'Pagi',
+                'hour_start' => '05:00',
+                'hour_end' => '11:00',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'time_name' => 'siang',
-                'hour_start' => '11:00:00',
-                'hour_end' => '17:00:00',
+                'time_name' => 'Siang',
+                'hour_start' => '11:00',
+                'hour_end' => '15:00',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'time_name' => 'malam',
-                'hour_start' => '17:00:00',
-                'hour_end' => '23:59:59',
+                'time_name' => 'Sore',
+                'hour_start' => '15:00',
+                'hour_end' => '18:00',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'time_name' => 'Malam',
+                'hour_start' => '18:00',
+                'hour_end' => '23:00',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            [
+                'time_name' => 'Tengah Malam',
+                'hour_start' => '23:00',
+                'hour_end' => '05:00',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

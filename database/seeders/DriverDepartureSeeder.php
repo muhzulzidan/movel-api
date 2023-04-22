@@ -20,7 +20,7 @@ class DriverDepartureSeeder extends Seeder
                 'kota_asal_id' => 6,
                 'kota_tujuan_id' => 18,
                 'date_departure' => '2023-04-25',
-                'time_departure_id' => 1,
+                'time_departure' => "18:30",
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

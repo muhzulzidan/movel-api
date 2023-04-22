@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('time_departures', function (Blueprint $table) {
             $table->id();
             $table->string('time_name');
-            $table->time('hour_start');
-            $table->time('hour_end');
+            $table->time('hour_start', 0);
+            $table->time('hour_end', 0);
             $table->timestamps();
         });
     }
