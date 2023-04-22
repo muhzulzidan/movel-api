@@ -48,6 +48,7 @@ class KotaAsalController extends Controller
     {
         // Validasi ketika inputan kosong
         $request->validate([
+            // 'id' => 'required',
             'id' => 'required|numeric',
         ]);
 
