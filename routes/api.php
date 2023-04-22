@@ -4,6 +4,7 @@ use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MasterData\KotaKabController;
 use App\Http\Controllers\API\PassengerController;
 use App\Http\Controllers\API\PasswordResetController;
+use App\Http\Controllers\API\Transaction\JadwalBerangkatController;
 use App\Http\Controllers\API\Transaction\KotaAsalController;
 use App\Http\Controllers\API\Transaction\KotaTujuanController;
 use App\Http\Controllers\API\UserController;
@@ -52,3 +53,6 @@ Route::post('/kota_asal', [KotaAsalController::class, 'set_kota_asal']);
 Route::get('/kota_tujuan/search', [KotaTujuanController::class, 'search_kota_tujuan']);
 Route::get('/kota_tujuan/three', [KotaTujuanController::class, 'three_kota_tujuan']);
 Route::post('/kota_tujuan', [KotaTujuanController::class, 'set_kota_tujuan']);
+
+// Route Transaction/JadwalBerangkat
+Route::post('/jadwal_berangkat', [JadwalBerangkatController::class, 'set_jadwal_berangkat']);
