@@ -21,7 +21,7 @@ class JadwalBerangkatController extends Controller
             'hours_departure' => $request->hours_departure,
         ]);
 
-        // Mengembalikan data berupa nama_kota yang terpilih
+        // Mengembalikan data berupa jadwal berangkat yang telah ditentukan
         return response()->json([
             'success' => true,
             'data' => session()->get('jadwal_berangkat'),
