@@ -9,5 +9,5 @@ class DriverDeparture extends Model
 {
     use HasFactory;
 
-    // protected $fillable = ['driver_id', 'kota_asal_id', 'kota_tujuan_id', 'date_departure', 'time_departure_id'];
+    protected $fillable = ['driver_id', 'kota_asal_id', 'kota_tujuan_id', 'date_departure', 'time_departure'];
 }

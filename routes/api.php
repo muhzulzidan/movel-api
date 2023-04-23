@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Driver\RuteScheduleDriverController;
 use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MasterData\KotaKabController;
 use App\Http\Controllers\API\PassengerController;
@@ -32,6 +33,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/loggeduser', [UserController::class, 'logged_user']);
     Route::patch('/changepassword', [UserController::class, 'change_password']);
     Route::get('/passenger', [PassengerController::class, 'index']);
+
+    // Route Kota Kabupaten
+    Route::get('/kota_kab/search', [KotaKabController::class, 'search_kota_kab']);
+
 });
 
 // Protected Route Passengers
@@ -40,23 +45,35 @@ Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
     Route::patch('/passenger/update', [PassengerController::class, 'store']);
 });
 
+// Protected Route Drivers
+Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function () {
+    Route::match(['post', 'patch'], '/drivers/rute_jadwal', [RuteScheduleDriverController::class, 'store_update_rute_jadwal']);
+});
+
 // Route Transaction (tolong jangan dihapus ya)
 // ...
-// Route MasterData/KotaKab
-Route::get('/kota_kab', [KotaKabController::class, 'index']);
 
+// Route Passenger
 // Route Transaction/KotaAsal
-Route::get('/kota_asal/search', [KotaAsalController::class, 'search_kota_asal']);
-Route::get('/kota_asal/three', [KotaAsalController::class, 'three_kota_asal']);
-Route::post('/kota_asal', [KotaAsalController::class, 'set_kota_asal']);
+Route::get('/kota_asal_pass/search', [KotaAsalController::class, 'search_kota_asal_pass']);
+Route::get('/kota_asal_pass/three', [KotaAsalController::class, 'three_kota_asal_pass']);
+Route::post('/kota_asal_pass', [KotaAsalController::class, 'set_kota_asal_pass']);
 
 // Route Transaction/KotaTujuan
-Route::get('/kota_tujuan/search', [KotaTujuanController::class, 'search_kota_tujuan']);
-Route::get('/kota_tujuan/three', [KotaTujuanController::class, 'three_kota_tujuan']);
-Route::post('/kota_tujuan', [KotaTujuanController::class, 'set_kota_tujuan']);
+Route::get('/kota_tujuan_pass/search', [KotaTujuanController::class, 'search_kota_tujuan_pass']);
+Route::get('/kota_tujuan_pass/three', [KotaTujuanController::class, 'three_kota_tujuan_pass']);
+Route::post('/kota_tujuan_pass', [KotaTujuanController::class, 'set_kota_tujuan_pass']);
 
 // Route Transaction/JadwalBerangkat
-Route::post('/jadwal_berangkat', [JadwalBerangkatController::class, 'set_jadwal_berangkat']);
+Route::post('/jadwal_berangkat_pass', [JadwalBerangkatController::class, 'set_jadwal_berangkat_pass']);
+
+// Route Driver
+// Route Rute dan Jadwal Driver
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    // Route::post('/drivers/rute_jadwal', [RuteScheduleDriverController::class, 'store_rute_jadwal']);
+    // Route::patch('/drivers/rute_jadwal', [RuteScheduleDriverController::class, 'update_rute_jadwal']);
+});
 
 // Route Transaction/DriverDeparture
 Route::get('/drivers/available', [DriverDepartureController::class, 'driver_available']);
