@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -12,13 +13,13 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'no_hp' => 'required',
-            'password' => 'required|confirmed|string|min:6',
-            'role_id' => 'required|exists:roles,id',
-        ], 200);
-   
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+            'no_hp' => ['required', 'string', 'max:13'],
+            'password' => ['required', 'confirmed', 'min:6'],
+            'role_id' => ['required'],
+        ]);
+
         $no_hp = $request['no_hp'];
         if ($request['no_hp'][0] == "0") {
             $no_hp = substr($no_hp, 1);
@@ -46,7 +47,7 @@ class UserController extends Controller
             'email' => $request->email,
             'no_hp' => $no_hp,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id
+            'role_id' => $request->role_id,
         ], 200);
 
         if ($request->role_id == 2) {
@@ -71,21 +72,30 @@ class UserController extends Controller
         $user = User::where('email', $request->email)->first();
         if ($user && Hash::check($request->password, $user->password)) {
             if ($user->role_id == 2) {
+                $request->session()->put('user_id', $user->id);
+                $request->session()->flush();
                 $token = $user->createToken($request->email)->plainTextToken;
+
                 return response([
                     'token' => $token,
                     'message' => 'Login Success as Passenger',
                     'status' => 'success',
                 ], 200);
             } else if ($user->role_id == 3) {
+                $request->session()->put('user_id', $user->id);
+                $request->session()->flush();
                 $token = $user->createToken($request->email)->plainTextToken;
+
                 return response([
                     'token' => $token,
                     'message' => 'Login Success as Driver',
                     'status' => 'success',
                 ], 200);
             } else if ($user->role_id == 1) {
+                $request->session()->put('user_id', $user->id);
+                $request->session()->flush();
                 $token = $user->createToken($request->email)->plainTextToken;
+
                 return response([
                     'token' => $token,
                     'message' => 'Login Success as Admin',
@@ -150,6 +160,8 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
+        $request->session()->flush();
+        $request->session()->put('user_id', null);
         $request->user()->tokens()->delete();
 
         return response([

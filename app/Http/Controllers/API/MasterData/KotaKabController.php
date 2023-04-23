@@ -39,4 +39,13 @@ class KotaKabController extends Controller
 
     }
 
+    // Fungsi untuk mengambil 3 Kota Kabupaten
+    public function three_kota_kab()
+    {
+        // Melimit 3 data dan diambil secara acak
+        $threeKotaKabs = KotaKab::inRandomOrder()->limit(3)->get();
+        // Mengembalikan 3 data Kota Kabupaten
+        return KotaKabResource::collection($threeKotaKabs);
+    }
+
 }
