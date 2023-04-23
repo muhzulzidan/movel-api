@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\Driver\RuteScheduleDriverController;
 use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MasterData\KotaKabController;
+use App\Http\Controllers\API\MasterData\TimeDepartureController;
 use App\Http\Controllers\API\PassengerController;
 use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\Transaction\DriverDepartureController;
@@ -44,6 +45,9 @@ Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
 
     // Route Kota Kabupaten
     Route::get('/kota_kab/three', [KotaKabController::class, 'three_kota_kab']);
+
+    // Route Time Departure
+    Route::get('/time_departure', [TimeDepartureController::class, 'index']);
 
     // Route Pemesanan
     Route::post('rute_jadwal/kota_asal', [RuteScheduleController::class, 'set_kota_asal']);
