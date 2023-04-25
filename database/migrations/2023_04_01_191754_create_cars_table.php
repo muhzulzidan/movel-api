@@ -15,12 +15,15 @@ return new class extends Migration
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->id();
-            $table->string('car_name');
+            $table->string('merk');
+            $table->string('type');
+            $table->string('jenis');
+            $table->string('model');
             $table->string('production_year');
+            $table->string('isi_silinder');
             $table->string('license_plate_number');
-            $table->integer('seating_capacity');
-            $table->string('brand');
-            $table->string('car_model');
+            $table->string('machine_number');
+            $table->unsignedTinyInteger('seating_capacity');
             $table->unsignedBigInteger('driver_id')->unique();
             $table->timestamps();
             $table->softDeletes();

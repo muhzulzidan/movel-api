@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Driver;
-use App\Models\Rating;
 use App\Models\Passenger;
+use App\Models\Rating;
 use Illuminate\Database\Seeder;
 
 class RatingSeeder extends Seeder
@@ -22,11 +22,11 @@ class RatingSeeder extends Seeder
 // Generate 50 ratings for each driver and passenger
         foreach ($drivers as $driver) {
             foreach ($passengers as $passenger) {
-                for ($i = 1; $i <= 50; $i++) {
+                for ($i = 1; $i <= 5; $i++) {
                     Rating::create([
                         'driver_id' => $driver->id,
                         'passenger_id' => $passenger->id,
-                        'rating' => rand(1, 5),
+                        'nilai_rating' => rand(4, 5),
                     ]);
                 }
             }

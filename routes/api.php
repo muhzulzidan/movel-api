@@ -6,7 +6,7 @@ use App\Http\Controllers\API\MasterData\KotaKabController;
 use App\Http\Controllers\API\MasterData\TimeDepartureController;
 use App\Http\Controllers\API\PassengerController;
 use App\Http\Controllers\API\PasswordResetController;
-use App\Http\Controllers\API\Transaction\DriverDepartureController;
+use App\Http\Controllers\API\Transaction\AvailableDriverController;
 use App\Http\Controllers\API\Transaction\RuteScheduleController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
@@ -53,8 +53,9 @@ Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
     Route::post('rute_jadwal/kota_asal', [RuteScheduleController::class, 'set_kota_asal']);
     Route::post('rute_jadwal/kota_tujuan', [RuteScheduleController::class, 'set_kota_tujuan']);
     Route::post('rute_jadwal/date_time', [RuteScheduleController::class, 'set_date_time']);
-    Route::get('/drivers/available', [DriverDepartureController::class, 'driver_available']);
-
+    Route::get('/drivers/available', [AvailableDriverController::class, 'driver_available']);
+    Route::get('/drivers/available/{id}', [AvailableDriverController::class, 'driver_available_show']);
+    Route::post('/drivers/available', [AvailableDriverController::class, 'set_driver_available']);
 });
 
 // Protected Route Drivers
