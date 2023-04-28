@@ -14,6 +14,20 @@ class Driver extends Model
 {
     use HasFactory;
 
+    protected $table = "drivers";
+
+    protected $fillable = [
+        'user_id',
+        'address',
+        'photo',
+        'is_smoking',
+        'driver_age',
+        'no_ktp',
+        'foto_ktp',
+        'foto_sim',
+        'foto_stnk',
+    ];
+
     protected $with = ['user_driver:id,name'];
 
     public function user_driver(): BelongsTo

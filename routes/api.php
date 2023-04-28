@@ -1,16 +1,17 @@
 <?php
 
-use App\Http\Controllers\API\Driver\RuteScheduleDriverController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\Driver\DriverController;
+use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MasterData\KotaKabController;
-use App\Http\Controllers\API\MasterData\TimeDepartureController;
-use App\Http\Controllers\API\PassengerController;
-use App\Http\Controllers\API\PasswordResetController;
-use App\Http\Controllers\API\Transaction\AvailableDriverController;
 use App\Http\Controllers\API\Transaction\OrdersController;
+use App\Http\Controllers\API\Passenger\PassengerController;
+use App\Http\Controllers\API\MasterData\TimeDepartureController;
 use App\Http\Controllers\API\Transaction\RuteScheduleController;
-use App\Http\Controllers\API\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\Driver\RuteScheduleDriverController;
+use App\Http\Controllers\API\Transaction\AvailableDriverController;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
@@ -39,8 +40,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
 // Protected Route Passengers
 Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
+    //Route Profile
     Route::get('/passenger', [PassengerController::class, 'index']);
-
     Route::put('/passenger/update', [PassengerController::class, 'update']);
 
     // Route Kota Kabupaten
@@ -64,5 +65,9 @@ Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
 
 // Protected Route Drivers
 Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function () {
+    //Route Profile
+    Route::get('/driver', [DriverController::class, 'index']);
+    Route::put('/driver/update', [DriverController::class, 'update']);
+
     Route::match (['post', 'patch'], '/drivers/rute_jadwal', [RuteScheduleDriverController::class, 'store_update_rute_jadwal']);
 });
