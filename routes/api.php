@@ -7,6 +7,7 @@ use App\Http\Controllers\API\MasterData\TimeDepartureController;
 use App\Http\Controllers\API\PassengerController;
 use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\Transaction\AvailableDriverController;
+use App\Http\Controllers\API\Transaction\OrdersController;
 use App\Http\Controllers\API\Transaction\RuteScheduleController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
@@ -22,16 +23,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/email/verification-notification', [EmailVerificationController::class, 'send_verification_email'])
         ->name('verification.notice');
     Route::get('/email-verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
-    // Route::post('/resend-verification-email', [EmailVerificationController::class, 'resend_verification_email'])
-    //             ->middleware('throttle:6,1')->name('verification.send');
 });
 
 // Protected Routes
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
-    Route::get('/loggeduser', [UserController::class, 'logged_user']);
-    Route::patch('/changepassword', [UserController::class, 'change_password']);
-    Route::get('/passenger', [PassengerController::class, 'index']);
+    // CRUD/Setting Profile Users
+    Route::get('/read_user', [UserController::class, 'read_user']);
+    Route::put('/changepassword', [UserController::class, 'change_password']);
 
     // Route Kota Kabupaten
     Route::get('/kota_kab/search', [KotaKabController::class, 'search_kota_kab']);
@@ -41,7 +40,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 // Protected Route Passengers
 Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
     Route::get('/passenger', [PassengerController::class, 'index']);
-    Route::patch('/passenger/update', [PassengerController::class, 'store']);
+
+    Route::put('/passenger/update', [PassengerController::class, 'update']);
+    Route::post('/passenger_update', [PassengerController::class, 'store']);
 
     // Route Kota Kabupaten
     Route::get('/kota_kab/three', [KotaKabController::class, 'three_kota_kab']);
@@ -56,9 +57,13 @@ Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
     Route::get('/drivers/available', [AvailableDriverController::class, 'driver_available']);
     Route::get('/drivers/available/{id}', [AvailableDriverController::class, 'driver_available_show']);
     Route::post('/drivers/available', [AvailableDriverController::class, 'set_driver_available']);
+    Route::get('/drivers/list_seat_car', [AvailableDriverController::class, 'list_seat_car']);
+    Route::post('/drivers/set_seat_car', [AvailableDriverController::class, 'set_seat_car']);
+    Route::get('/orders/resume', [OrdersController::class, 'order_resume']);
+    Route::post('/orders/set_order', [OrdersController::class, 'set_order']);
 });
 
 // Protected Route Drivers
 Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function () {
-    Route::match(['post', 'patch'], '/drivers/rute_jadwal', [RuteScheduleDriverController::class, 'store_update_rute_jadwal']);
+    Route::match (['post', 'patch'], '/drivers/rute_jadwal', [RuteScheduleDriverController::class, 'store_update_rute_jadwal']);
 });

@@ -5,10 +5,14 @@ namespace App\Http\Controllers\API\Transaction;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AvailableDriverDetailResource;
 use App\Http\Resources\AvailableDriverResource;
+use App\Http\Resources\LabelSeatCarResource;
+use App\Models\Car;
 use App\Models\DriverDeparture;
+use App\Models\LabelSeatCar;
 use App\Models\Rating;
 use App\Models\TimeDeparture;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AvailableDriverController extends Controller
 {
@@ -102,6 +106,80 @@ class AvailableDriverController extends Controller
             'data' => [
                 'driver_departure_id' => session()->get('driver_departure_id'),
             ],
+        ]);
+    }
+
+    public function list_seat_car()
+    {
+        // Mengambil id data driver_departure
+        $driver_departure_id = session()->get('driver_departure_id');
+
+        // Jika tidak ditemukan datanya
+        if (!$driver_departure_id) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 422);
+        }
+
+        // Mengambil id driver berdasarkan id driver_departure
+        $driver = DriverDeparture::select('driver_id')->findOrFail($driver_departure_id);
+
+        // Mengambil id car berdasarkan driver_id
+        $car = Car::select('id')->where('driver_id', $driver->driver_id)->get()->first();
+
+        // Mendapatkan data seat car berdasarkan car id
+        $label_seat_car = LabelSeatCar::where('car_id', $car->id)->get();
+
+        return LabelSeatCarResource::collection($label_seat_car);
+    }
+
+    public function set_seat_car(Request $request)
+    {
+        // validasi inputan
+        $request->validate([
+            'seat_car_ids' => [
+                'required',
+                'array',
+                Rule::exists('label_seat_cars', 'id')->where(function ($query) use ($request) {
+                    $driver_departure_id = session()->get('driver_departure_id');
+                    $driver_id = DriverDeparture::findOrFail($driver_departure_id)->driver_id;
+                    $car_id = Car::where('driver_id', $driver_id)->value('id');
+                    $query->where('car_id', $car_id);
+                }),
+            ],
+        ]);
+
+        // Mengambil id data driver_departure
+        $driver_departure_id = session()->get('driver_departure_id');
+
+        // Jika tidak ditemukan datanya
+        if (!$driver_departure_id) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 422);
+        }
+
+        // Mengambil id driver berdasarkan id driver_departure
+        $driver = DriverDeparture::select('driver_id')->findOrFail($driver_departure_id);
+
+        // Mengambil id car berdasarkan driver_id
+        $car = Car::select('id')->where('driver_id', $driver->driver_id)->get()->first();
+
+        // Mengambil data inputan yang lolos
+        $seatCarIds = $request->seat_car_ids;
+
+        // Mendapatkan semua data seat car yang ada dalam array yang cocok
+        $carSeats = LabelSeatCar::whereIn('id', $seatCarIds)->where('car_id', $car->id)->get();
+
+        // Mengecek kursi yang sudah terpesan
+        foreach ($carSeats as $carSeat) {
+            if ($carSeat->is_filled == 1) {
+                return response()->json(['message' => 'Ada kursi sudah terpilih'], 422);
+            }
+        }
+
+        // Menyimpan data pilihan kursi pengguna ke dalam session
+        session()->put('seat_data', $seatCarIds);
+
+        // Respon jika kursi berhasil di pilih
+        return response()->json([
+            'message' => 'Kursi berhasil dipilih',
         ]);
     }
 }
