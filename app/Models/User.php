@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Driver;
 use App\Models\Passenger;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,8 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
+    protected $table = "users";
+
     protected $fillable = [
         'name',
         'email',
@@ -26,6 +29,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'no_hp',
         'role_id',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.

@@ -42,7 +42,6 @@ Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
     Route::get('/passenger', [PassengerController::class, 'index']);
 
     Route::put('/passenger/update', [PassengerController::class, 'update']);
-    Route::post('/passenger_update', [PassengerController::class, 'store']);
 
     // Route Kota Kabupaten
     Route::get('/kota_kab/three', [KotaKabController::class, 'three_kota_kab']);

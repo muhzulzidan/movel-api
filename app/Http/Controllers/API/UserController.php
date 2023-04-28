@@ -120,11 +120,11 @@ class UserController extends Controller
         ], 401);
     }
 
-    public function logged_user()
+    public function read_user()
     {
-        $loggeduser = auth()->user();
+        $userdata = auth()->user();
         return response([
-            'user' => $loggeduser,
+            'userdata' => $userdata,
             'message' => 'Logged User Data',
             'status' => 'success',
         ], 200);
@@ -137,20 +137,20 @@ class UserController extends Controller
             'password' => 'required|confirmed',
         ]);
 
-        $loggeduser = auth()->user();
+        $userdata = auth()->user();
 
-        if (!Hash::check($request->old_password, $loggeduser->password)) {
+        if (!Hash::check($request->old_password, $userdata->password)) {
             return response([
                 'message' => 'Old Password is Incorrect',
                 'status' => 'failed',
             ], 401);
         }
 
-        $loggeduser->update([
+        $userdata->update([
             'password' => Hash::make($request->password),
         ]);
 
-        $loggeduser->tokens()->delete();
+        $userdata->tokens()->delete();
 
         return response([
             'message' => 'Password Changed Successfully',
