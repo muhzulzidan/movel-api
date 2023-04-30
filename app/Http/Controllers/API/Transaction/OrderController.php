@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\API\Transaction;
 
+use App\Events\NewOrderNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AvailableDriverDetailResource;
 use App\Models\DriverDeparture;
 use App\Models\LabelSeatCar;
 use App\Models\Order;
+use App\Models\User;
 
-class OrdersController extends Controller
+class OrderController extends Controller
 {
 
     // Fungsi untuk menampilkan resume pesanan
@@ -45,11 +47,8 @@ class OrdersController extends Controller
 
         // Jika data dari session tidak ada
         if (!$driver_departure_id || !$seat_data) {
-            return response()->json(['message' => 'Required data from session is missing'], 422);
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
-
-        // Menghitung harga sewa
-        $priceOrder = count($seat_data) * 150000;
 
         // Mendapatkan data seat car berdasarkan session seat_data
         $seatCarChoices = LabelSeatCar::select(['id', 'label_seat'])->whereIn('id', $seat_data)->get();
@@ -65,13 +64,20 @@ class OrdersController extends Controller
         // Mendapatkan user yang sedang login
         $user_id = auth()->user()->id;
 
+        // Menghitung harga sewa
+        $priceOrder = count($seat_data) * 150000;
+
         // Simpan pesanan ke tabel orders
-        Order::create([
+        $order = Order::create([
             'user_id' => $user_id,
             'driver_departure_id' => $driver_departure_id,
             'status_order_id' => 2,
             'price_order' => $priceOrder,
         ]);
+
+        // Kirim notifikasi ke driver terkait pesanan baru
+        event(new NewOrderNotification($order));
+        session()->flush();
 
         // Respon JSON Sukses
         return response()->json([

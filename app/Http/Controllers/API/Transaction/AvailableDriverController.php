@@ -28,7 +28,7 @@ class AvailableDriverController extends Controller
         $time_departure_id = $date_time['time_departure_id'] ?? null;
 
         if (!$date_departure || !$time_departure_id || !$kota_asal_id || !$kota_tujuan_id) {
-            return response()->json(['message' => 'Required data from session is missing'], 422);
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
 
         // Mengambil data rentang waktu berdasarkan time_departure_id
@@ -116,7 +116,7 @@ class AvailableDriverController extends Controller
 
         // Jika tidak ditemukan datanya
         if (!$driver_departure_id) {
-            return response()->json(['message' => 'Data tidak ditemukan'], 422);
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
 
         // Mengambil id driver berdasarkan id driver_departure
@@ -133,6 +133,14 @@ class AvailableDriverController extends Controller
 
     public function set_seat_car(Request $request)
     {
+        // Mengambil id data driver_departure
+        $driver_departure_id = session()->get('driver_departure_id');
+
+        // Jika tidak ditemukan datanya
+        if (!$driver_departure_id) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
         // validasi inputan
         $request->validate([
             'seat_car_ids' => [
@@ -146,14 +154,6 @@ class AvailableDriverController extends Controller
                 }),
             ],
         ]);
-
-        // Mengambil id data driver_departure
-        $driver_departure_id = session()->get('driver_departure_id');
-
-        // Jika tidak ditemukan datanya
-        if (!$driver_departure_id) {
-            return response()->json(['message' => 'Data tidak ditemukan'], 422);
-        }
 
         // Mengambil id driver berdasarkan id driver_departure
         $driver = DriverDeparture::select('driver_id')->findOrFail($driver_departure_id);

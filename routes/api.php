@@ -1,17 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\Driver\DriverController;
-use App\Http\Controllers\API\PasswordResetController;
+use App\Http\Controllers\API\Driver\RuteScheduleDriverController;
 use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MasterData\KotaKabController;
-use App\Http\Controllers\API\Transaction\OrdersController;
-use App\Http\Controllers\API\Passenger\PassengerController;
 use App\Http\Controllers\API\MasterData\TimeDepartureController;
-use App\Http\Controllers\API\Transaction\RuteScheduleController;
-use App\Http\Controllers\API\Driver\RuteScheduleDriverController;
+use App\Http\Controllers\API\Passenger\PassengerController;
+use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\Transaction\AvailableDriverController;
+use App\Http\Controllers\API\Transaction\OrderController;
+use App\Http\Controllers\API\Transaction\RuteScheduleController;
+use App\Http\Controllers\API\UserController;
+use Illuminate\Support\Facades\Route;
 
 // Public Routes
 Route::post('/register', [UserController::class, 'register']);
@@ -59,8 +59,8 @@ Route::middleware(['auth:sanctum', 'checkRole:2'])->group(function () {
     Route::post('/drivers/available', [AvailableDriverController::class, 'set_driver_available']);
     Route::get('/drivers/list_seat_car', [AvailableDriverController::class, 'list_seat_car']);
     Route::post('/drivers/set_seat_car', [AvailableDriverController::class, 'set_seat_car']);
-    Route::get('/orders/resume', [OrdersController::class, 'order_resume']);
-    Route::post('/orders/set_order', [OrdersController::class, 'set_order']);
+    Route::get('/orders/resume', [OrderController::class, 'order_resume']);
+    Route::post('/orders/set_order', [OrderController::class, 'set_order']);
 });
 
 // Protected Route Drivers
