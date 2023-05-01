@@ -29,6 +29,7 @@ class PassengerController extends Controller
             'name' => 'required',
             'address' => 'required',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'address' => 'required',
         ]);
 
         $user = auth()->user();
@@ -61,11 +62,13 @@ class PassengerController extends Controller
         }
 
         $passenger->address = $request->input('address');
+        $passenger->gender = $request->input('gender');
         $passenger->save();
 
         return response([
             'name' => $user->name,
             'address' => $passenger->address,
+            'gender' => $passenger->gender,
             'photo' => $passenger->photo,
             'message' => 'Data updated successfully',
         ], 200);
