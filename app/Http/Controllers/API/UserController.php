@@ -77,9 +77,11 @@ class UserController extends Controller
                 $token = $user->createToken($request->email)->plainTextToken;
 
                 return response([
+                    'id' => $user->id,
                     'token' => $token,
                     'message' => 'Login Success as Passenger',
                     'status' => 'success',
+                    'role_id' => $user->role_id
                 ], 200);
             } else if ($user->role_id == 3) {
                 $request->session()->put('user_id', $user->id);
@@ -87,9 +89,11 @@ class UserController extends Controller
                 $token = $user->createToken($request->email)->plainTextToken;
 
                 return response([
+                    'id' => $user->id,
                     'token' => $token,
                     'message' => 'Login Success as Driver',
                     'status' => 'success',
+                    'role_id' => $user->role_id
                 ], 200);
             } else if ($user->role_id == 1) {
                 $request->session()->put('user_id', $user->id);
@@ -97,9 +101,11 @@ class UserController extends Controller
                 $token = $user->createToken($request->email)->plainTextToken;
 
                 return response([
+                    'id' => $user->id,
                     'token' => $token,
                     'message' => 'Login Success as Admin',
                     'status' => 'success',
+                    'role_id' => $user->role_id
                 ], 200);
             } else {
                 return response([
@@ -118,16 +124,6 @@ class UserController extends Controller
             'message' => 'The Provided Credentials are incorrect',
             'status' => 'failed',
         ], 401);
-    }
-
-    public function read_user()
-    {
-        $userdata = auth()->user();
-        return response([
-            'userdata' => $userdata,
-            'message' => 'Logged User Data',
-            'status' => 'success',
-        ], 200);
     }
 
     public function change_password(Request $request)
