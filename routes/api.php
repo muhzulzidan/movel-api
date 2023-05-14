@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\Driver\DriverController;
+use App\Http\Controllers\API\Driver\NewOrderController;
 use App\Http\Controllers\API\Driver\RuteScheduleDriverController;
 use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\MasterData\KotaKabController;
@@ -24,6 +25,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/email/verification-notification', [EmailVerificationController::class, 'send_verification_email'])
         ->name('verification.notice');
     Route::get('/email-verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
+    // Route::get('/email-verification', [EmailVerificationController::class, 'verifyEmail']);
 });
 
 // Protected Routes
@@ -70,4 +72,15 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
     Route::put('/driver/update', [DriverController::class, 'update']);
 
     Route::match (['post', 'patch'], '/drivers/rute_jadwal', [RuteScheduleDriverController::class, 'store_update_rute_jadwal']);
+
+    Route::get('/orders/driver', [NewOrderController::class, 'showOrdersByDriver']);
+
+    Route::get('/orders/accepted', [OrderController::class, 'showOrderAccepted']);
+
+    Route::get('/orders/{id}', [NewOrderController::class, 'showOrderById']);
+    Route::put('/orders/{id}/accept', [NewOrderController::class, 'updateOrderAccept']);
+    Route::put('/orders/{id}/pick_location', [OrderController::class, 'updateOrderPickLocation']);
+    Route::put('/orders/{id}/pick_location_arrive', [OrderController::class, 'updateOrderPickLocationArrive']);
+    Route::put('/orders/{id}/complete', [OrderController::class, 'updateOrderComplete']);
+
 });

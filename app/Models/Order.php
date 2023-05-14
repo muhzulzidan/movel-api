@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\DriverDeparture;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
@@ -15,4 +18,19 @@ class Order extends Model
         'status_order_id',
         'price_order',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function driverDeparture(): BelongsTo
+    {
+        return $this->belongsTo(DriverDeparture::class, 'driver_departure_id', 'id');
+    }
+
+    public function labelSeatCars()
+    {
+        return $this->hasMany(LabelSeatCar::class);
+    }
 }

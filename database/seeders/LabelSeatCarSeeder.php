@@ -17,16 +17,16 @@ class LabelSeatCarSeeder extends Seeder
 
         // Data awal untuk setiap mobil
         LabelSeatCar::create([
-            'car_id' => 2,
-            'user_id' => 2,
+            'car_id' => 3,
+            'label_seat' => 'Sopir',
         ]);
 
         // Membuat data untuk label kursi A - F
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 6; $i++) {
             LabelSeatCar::create([
                 'label_seat' => chr(64 + $i),
                 'is_filled' => 0,
-                'car_id' => 2,
+                'car_id' => 3,
             ]);
         }
 

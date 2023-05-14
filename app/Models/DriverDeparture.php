@@ -3,10 +3,14 @@
 namespace App\Models;
 
 use App\Models\Car;
+use App\Models\Order;
 use App\Models\Driver;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\KotaKab;
+use App\Models\LabelSeatCar;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class DriverDeparture extends Model
@@ -25,13 +29,18 @@ class DriverDeparture extends Model
         return $this->hasOneThrough(Car::class, Driver::class, 'id', 'driver_id', 'driver_id', 'id');
     }
 
-    // public function kota_asal(): BelongsTo
-    // {
-    //     return $this->belongsTo(KotaKab::class, 'kota_asal_id', 'id');
-    // }
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'driver_departure_id', 'id');
+    }
 
-    // public function kota_tujuan(): BelongsTo
-    // {
-    //     return $this->belongsTo(KotaKab::class, 'kota_tujuan_id', 'id');
-    // }
+    public function kotaAsal(): BelongsTo
+    {
+        return $this->belongsTo(KotaKab::class, 'kota_asal_id', 'id');
+    }
+
+    public function kotaTujuan(): BelongsTo
+    {
+        return $this->belongsTo(KotaKab::class, 'kota_tujuan_id', 'id');
+    }
 }

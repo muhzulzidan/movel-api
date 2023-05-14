@@ -78,6 +78,8 @@ class UserController extends Controller
 
                 return response([
                     'id' => $user->id,
+                    'name' =>$user->name,
+                    'email' =>$user->email,
                     'token' => $token,
                     'message' => 'Login Success as Passenger',
                     'status' => 'success',
@@ -90,6 +92,8 @@ class UserController extends Controller
 
                 return response([
                     'id' => $user->id,
+                    'name' =>$user->name,
+                    'email' =>$user->email,
                     'token' => $token,
                     'message' => 'Login Success as Driver',
                     'status' => 'success',
@@ -102,6 +106,8 @@ class UserController extends Controller
 
                 return response([
                     'id' => $user->id,
+                    'name' =>$user->name,
+                    'email' =>$user->email,
                     'token' => $token,
                     'message' => 'Login Success as Admin',
                     'status' => 'success',

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->unsignedTinyInteger('is_filled')->default(1);
             $table->unsignedBigInteger('car_id');
             $table->foreign('car_id')->references('id')->on('cars');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('order_id')->nullable();
+            $table->foreign('order_id')->references('id')->on('orders');
             $table->timestamps();
         });
     }
