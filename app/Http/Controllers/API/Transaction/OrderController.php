@@ -86,6 +86,7 @@ class OrderController extends Controller
         ]);
     }
 
+    // Mengambil daftar pesanan yang telah diterima driver
     public function showOrderAccepted()
     {
         $driverId = auth()->user()->driver->id;
@@ -93,9 +94,19 @@ class OrderController extends Controller
             $query->where('driver_id', $driverId)->whereNot('status_order_id', 1)->whereNot('status_order_id', 2);
         })->get();
 
+        // Jika data tidak ada
+        if ($orders->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan',
+            ], 404);
+        }
+
+        // Jika datanya ada
         return OrderAcceptedResource::collection($orders);
     }
 
+    // Update status driver menuju ke lokasi jemput
     public function updateOrderPickLocation($id)
     {
         $driverId = auth()->user()->driver->id;
@@ -104,20 +115,23 @@ class OrderController extends Controller
             $query->where('driver_id', $driverId)->where('status_order_id', 3);
         })->where('id', $id);
 
+        // Jika data tidak ada
         if (!$order->exists()) {
-            return response()->json(['message' => 'Order not found.'], 404);
+            return response()->json(['status' => false,
+                'message' => 'Order tidak ditemukan'], 404);
         }
 
+        // Jika data ada
         $orderAccepted = $order->get()->first();
-
+        // Update tabel orders
         $orderAccepted->update([
             'status_order_id' => 4,
         ]);
-
         return response()->json(['success' => true, 'message' => 'Anda menuju ke titik jemput']);
 
     }
 
+    // Update status driver tiba dilokasi
     public function updateOrderPickLocationArrive($id)
     {
         $driverId = auth()->user()->driver->id;
@@ -126,20 +140,23 @@ class OrderController extends Controller
             $query->where('driver_id', $driverId)->where('status_order_id', 4);
         })->where('id', $id);
 
+        // Jika data tidak ada
         if (!$order->exists()) {
-            return response()->json(['message' => 'Order not found.'], 404);
+            return response()->json(['status' => false,
+                'message' => 'Order tidak ditemukan'], 404);
         }
 
+        // Jika data ada
         $orderAccepted = $order->get()->first();
-
+        // Update data tabel orders
         $orderAccepted->update([
             'status_order_id' => 5,
         ]);
-
         return response()->json(['success' => true, 'message' => 'Anda telah tiba di lokasi jemput']);
 
     }
 
+    // Update status pesanan selesai oleh driver
     public function updateOrderComplete($id)
     {
         $driverId = auth()->user()->driver->id;
@@ -148,17 +165,18 @@ class OrderController extends Controller
             $query->where('driver_id', $driverId)->where('status_order_id', 5);
         })->where('id', $id);
 
+        // Jika datanya tidak ada
         if (!$order->exists()) {
-            return response()->json(['message' => 'Order not found.'], 404);
+            return response()->json(['status' => false,
+                'message' => 'Order tidak ditemukan'], 404);
         }
 
+        // Jika data ada
         $orderAccepted = $order->get()->first();
-
+        // Update data tabel orders
         $orderAccepted->update([
             'status_order_id' => 6,
         ]);
-
         return response()->json(['success' => true, 'message' => 'Selamat! Pesanan telah selesai']);
-
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\DriverDepartureResource;
 use App\Models\Driver;
 use App\Models\DriverDeparture;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,6 +32,19 @@ class RuteScheduleDriverController extends Controller
 
         // Mengambil data jadwal berangkat driver berdasarkan id driver
         $driver_departure = DriverDeparture::where('driver_id', $driver->id)->first();
+
+        // Mengambil id order terkait driver departure
+        $orderIds = $driver_departure->orders->pluck('id');
+
+        $orders = Order::whereIn('id', $orderIds)->where('status_order_id', 6)->get();
+
+        // Jika semua orderan, statusnya belum selesai
+        if ($orders->count() !== $orderIds->count()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak dapat mengubah rute',
+            ], 400);
+        }
 
         // Jika driver telah mengatur rute dan jadwal berangkat
         if ($driver_departure) {
