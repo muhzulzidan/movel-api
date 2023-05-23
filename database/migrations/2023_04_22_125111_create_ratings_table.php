@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedTinyInteger('rating');
+            $table->unsignedTinyInteger('nilai_rating');
             $table->unsignedBigInteger('driver_id');
-            $table->unsignedBigInteger('passenger_id');
+            $table->unsignedBigInteger('order_id');
             $table->timestamps();
 
             $table->foreign('driver_id')->references('id')->on('drivers');
-            $table->foreign('passenger_id')->references('id')->on('passengers');
+            $table->foreign('order_id')->references('id')->on('orders');
 
         });
     }

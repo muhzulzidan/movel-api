@@ -6,6 +6,7 @@ use App\Events\NewOrderNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AvailableDriverDetailResource;
 use App\Http\Resources\OrderAcceptedResource;
+use App\Http\Resources\OrderStatusResource;
 use App\Models\DriverDeparture;
 use App\Models\LabelSeatCar;
 use App\Models\Order;
@@ -23,20 +24,20 @@ class OrderController extends Controller
 
         // Jika data dari session tidak ada
         if (!$driver_departure_id || !$seat_data) {
-            return response()->json(['message' => 'Required data from session is missing'], 422);
+            return response()->json(['success' => false, 'message' => 'Data tidak tersedia'], 400);
         }
 
         // Mendapatkan data driver yang tersedia berdasarkan id
-        $driverDeparture = DriverDeparture::with(['driver:id,user_id,driver_age,is_smoking', 'car:cars.id,type,production_year,seating_capacity'])->findOrFail($driver_departure_id);
+        $driverDeparture = DriverDeparture::findOrFail($driver_departure_id);
 
         // Mendapatkan data seat car berdasarkan session seat_data
-        $seatCarChoices = LabelSeatCar::select(['id', 'label_seat'])->whereIn('id', $seat_data)->get();
+        $seatCarChoices = LabelSeatCar::select(['label_seat'])->whereIn('id', $seat_data)->get();
 
         // Menghitung harga sewa
         $priceOrder = count($seat_data) * 150000;
 
         // Memberikan respon
-        return (new AvailableDriverDetailResource($driverDeparture))->additional(['seat_car_choices' => $seatCarChoices, 'price_order' => $priceOrder]);
+        return (new AvailableDriverDetailResource($driverDeparture))->additional(['data' => ['seat_car_choices' => $seatCarChoices, 'price_order' => $priceOrder]]);
     }
 
     // Fungsi untuk membuat pesanan dan tersimpan ke database
@@ -48,7 +49,7 @@ class OrderController extends Controller
 
         // Jika data dari session tidak ada
         if (!$driver_departure_id || !$seat_data) {
-            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan'], 404);
         }
 
         // Mendapatkan user yang sedang login
@@ -82,8 +83,17 @@ class OrderController extends Controller
 
         // Respon JSON Sukses
         return response()->json([
+            'success' => true,
             'message' => 'Berhasil dipesan',
         ]);
+    }
+
+    // Mengambil status order berdasarkan passenger yang login
+    public function orderStatus()
+    {
+        $user = auth()->user();
+        $order = Order::findOrFail($user->id);
+        return new OrderStatusResource($order);
     }
 
     // Mengambil daftar pesanan yang telah diterima driver

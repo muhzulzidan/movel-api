@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Email Verified</title>
+    <title>Success Verify Email</title>
 </head>
 
 <body>
-    <h1>Email Anda telah terverifikasi sebelumnya.</h1>
-    <p>Silahkan Login di Aplikasi.</p>
+    <h1>Selamat! Email Anda berhasil terverifikasi.</h1>
+    <p>Anda sudah bisa Login di Aplikasi.</p>
     <p>Terima kasih telah menggunakan layanan kami.</p>
 </body>
 

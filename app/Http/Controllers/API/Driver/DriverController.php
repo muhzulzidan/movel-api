@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\API\Driver;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Driver;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class DriverController extends Controller
@@ -14,16 +13,17 @@ class DriverController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $passenger = User::join('drivers', 'drivers.user_id', '=', 'users.id')
+        $drivers = User::join('drivers', 'drivers.user_id', '=', 'users.id')
             ->select('users.name', 'users.email', 'users.no_hp', 'drivers.address', 'is_smoking', 'driver_age', 'drivers.photo', 'drivers.no_ktp', 'drivers.foto_ktp', 'drivers.foto_sim', 'drivers.foto_stnk')
             ->where('users.id', '=', $user->id)
             ->get();
 
-        return response($passenger, 200);
+        return response($drivers, 200);
     }
 
     public function update(Request $request)
     {
+
         $request->validate([
             'name' => 'required',
             'address' => 'required',
@@ -35,7 +35,7 @@ class DriverController extends Controller
         $user = auth()->user();
         $user_id = User::join('drivers', 'drivers.user_id', '=', 'users.id')
             ->select('drivers.id as drive_id')
-            ->where('users.id', '=', $user->id)
+            ->where('users.id', $user->id)
             ->get();
         $driver_id = $user_id[0]["drive_id"];
 
@@ -51,13 +51,13 @@ class DriverController extends Controller
             //upload image
             $file = $request->file('photo');
             $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('driver/profile/', $filename);
+            Storage::putFile('public', $filename);
             //delete old image
             $oldPhoto = $driver->photo;
-            Storage::delete('driver/profile/'.$oldPhoto);
+            Storage::delete('public/' . $oldPhoto);
 
             $driver->photo = $filename;
-        }else{
+        } else {
             unset($input['photo']);
         }
 

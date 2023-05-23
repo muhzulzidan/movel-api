@@ -33,4 +33,9 @@ class Order extends Model
     {
         return $this->hasMany(LabelSeatCar::class);
     }
+
+    public function statusOrder(): BelongsTo
+    {
+        return $this->belongsTo(StatusOrder::class, 'status_order_id', 'id');
+    }
 }

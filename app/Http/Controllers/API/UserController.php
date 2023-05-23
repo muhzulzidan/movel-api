@@ -5,21 +5,22 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function register(Request $request)
+    // Fungsi untuk register Passenger
+    public function registerPassenger(Request $request)
     {
+        // Validasi inputan register
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'no_hp' => ['required', 'string', 'max:13'],
             'password' => ['required', 'confirmed', 'min:6'],
-            'role_id' => ['required'],
         ]);
 
+        // Konversi otomatis nomor +62
         $no_hp = $request['no_hp'];
         if ($request['no_hp'][0] == "0") {
             $no_hp = substr($no_hp, 1);
@@ -28,147 +29,155 @@ class UserController extends Controller
             $no_hp = "62" . $no_hp;
         }
 
-        if (User::where('email', $request->email)->first()) {
-            return response([
-                'message' => 'Email already exists',
-                'status' => 'failed',
-            ], 409);
-        }
-
+        // Jika nomor HP sudah ada
         if (User::where('no_hp', $no_hp)->first()) {
             return response([
-                'message' => 'No HP already exists',
-                'status' => 'failed',
-            ], 409);
+                'success' => false,
+                'message' => 'No HP has been taken',
+            ], 422);
         }
 
+        // Buat akun user Passenger
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'no_hp' => $no_hp,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id,
+            'role_id' => 2,
+        ]);
+
+        // Buat data Passenger
+        $user->passenger()->create();
+
+        // Kirim email verifikasi
+        $user->sendEmailVerificationNotification();
+
+        // Respon berhasil registrasi
+        return response()->json([
+            'success' => true,
+            'message' => 'Kami telah mengirimkan kode verifikasi untuk registrasi melalui akun email. Silahkan cek email kamu!',
         ], 200);
-
-        if ($request->role_id == 2) {
-            $user->passenger()->create();
-        } elseif ($request->role_id == 3) {
-            $user->driver()->create();
-        }
-
-        return response([
-            'message' => 'Registration Success',
-            'status' => 'success',
-        ], 201);
     }
 
+    // Fungsi verifikasi email
+    public function verify($id, Request $request)
+    {
+        // Jika validasi gagal
+        if (!$request->hasValidSignature()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Verifying email fails',
+            ], 400);
+        }
+
+        $user = User::find($id);
+
+        // Jika email belum diverifikasi maka dilakukan verifikasi
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        } else {
+            // Informasi email telah terverifikasi sebelumnya diarahkan kesini
+            return redirect()->to('/email-verified');
+        }
+
+        // Informasi email berhasil diverifikasi diarahkan kesini
+        return redirect()->to('/email-verify');
+    }
+
+    // Fungsi untuk login ke sistem
     public function login(Request $request)
     {
+        // Validasi inputan email dan password
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
+        // Mengambil data user/pengguna berdasarkan email yang diinput
         $user = User::where('email', $request->email)->first();
-        if ($user && Hash::check($request->password, $user->password)) {
-            if ($user->role_id == 2) {
-                $request->session()->put('user_id', $user->id);
-                $request->session()->flush();
-                $token = $user->createToken($request->email)->plainTextToken;
 
-                return response([
-                    'id' => $user->id,
-                    'name' =>$user->name,
-                    'email' =>$user->email,
-                    'token' => $token,
-                    'message' => 'Login Success as Passenger',
-                    'status' => 'success',
-                    'role_id' => $user->role_id
-                ], 200);
-            } else if ($user->role_id == 3) {
-                $request->session()->put('user_id', $user->id);
-                $request->session()->flush();
-                $token = $user->createToken($request->email)->plainTextToken;
-
-                return response([
-                    'id' => $user->id,
-                    'name' =>$user->name,
-                    'email' =>$user->email,
-                    'token' => $token,
-                    'message' => 'Login Success as Driver',
-                    'status' => 'success',
-                    'role_id' => $user->role_id
-                ], 200);
-            } else if ($user->role_id == 1) {
-                $request->session()->put('user_id', $user->id);
-                $request->session()->flush();
-                $token = $user->createToken($request->email)->plainTextToken;
-
-                return response([
-                    'id' => $user->id,
-                    'name' =>$user->name,
-                    'email' =>$user->email,
-                    'token' => $token,
-                    'message' => 'Login Success as Admin',
-                    'status' => 'success',
-                    'role_id' => $user->role_id
-                ], 200);
-            } else {
-                return response([
-                    'message' => 'Invalid Role',
-                    'status' => 'failed',
-                ], 422);
-            }
-        } else {
-            return response([
-                'message' => 'Invalid email or password',
-                'status' => 'failed',
-            ], 401);
+        // Jika pengguna berdasarkan email tidak ada return error 400
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun tidak tersedia',
+            ], 400);
         }
 
-        return response([
-            'message' => 'The Provided Credentials are incorrect',
-            'status' => 'failed',
-        ], 401);
-    }
-
-    public function change_password(Request $request)
-    {
-        $request->validate([
-            'old_password' => 'required',
-            'password' => 'required|confirmed',
-        ]);
-
-        $userdata = auth()->user();
-
-        if (!Hash::check($request->old_password, $userdata->password)) {
-            return response([
-                'message' => 'Old Password is Incorrect',
-                'status' => 'failed',
-            ], 401);
+        // Jika email belum terverifikasi ada return error 403
+        if (!$user->email_verified_at) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal login! Email belum terverifikasi',
+            ], 403);
         }
 
-        $userdata->update([
-            'password' => Hash::make($request->password),
-        ]);
+        // Jika pengguna berdasarkan email ada dan password benar
+        if (Hash::check($request->password, $user->password)) {
 
-        $userdata->tokens()->delete();
+            // Buat token untuk user tersebut
+            $token = $user->createToken($request->email)->plainTextToken;
 
-        return response([
-            'message' => 'Password Changed Successfully',
-            'status' => 'success',
-        ], 200);
+            // response berhasil masuk
+            return response()->json([
+                'success' => true,
+                'message' => 'Berhasil masuk!',
+                'data' => [
+                    'id' => $user->id,
+                    'token' => $token,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role_id' => $user->role_id,
+                    'role_name' => $user->role->role_name,
+                ],
+            ]);
+        }
+
+        // Jika pengguna berdasarkan email ada tapi password salah
+        return response()->json([
+            'success' => false,
+            'message' => 'Email atau password salah!',
+        ], 403);
     }
 
+    // public function change_password(Request $request)
+    // {
+    //     $request->validate([
+    //         'old_password' => 'required',
+    //         'password' => 'required|confirmed',
+    //     ]);
+
+    //     $userdata = auth()->user();
+
+    //     if (!Hash::check($request->old_password, $userdata->password)) {
+    //         return response([
+    //             'message' => 'Old Password is Incorrect',
+    //             'status' => 'failed',
+    //         ], 401);
+    //     }
+
+    //     $userdata->update([
+    //         'password' => Hash::make($request->password),
+    //     ]);
+
+    //     $userdata->tokens()->delete();
+
+    //     return response([
+    //         'message' => 'Password Changed Successfully',
+    //         'status' => 'success',
+    //     ], 200);
+    // }
+
+    // Fungsi logout dari sistem
     public function logout(Request $request)
     {
-        $request->session()->flush();
-        $request->session()->put('user_id', null);
+        // Menghapus semua token terkait user yang login
         $request->user()->tokens()->delete();
 
-        return response([
-            'message' => 'Logout Success',
-            'status' => 'success',
-        ], 200);
+        // Response berhasil logout
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil logout',
+        ]);
     }
 }

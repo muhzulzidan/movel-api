@@ -17,7 +17,7 @@ class LabelSeatCarSeeder extends Seeder
 
         // Data awal untuk setiap mobil
         LabelSeatCar::create([
-            'car_id' => 3,
+            'car_id' => 2,
             'label_seat' => 'Sopir',
         ]);
 
@@ -26,7 +26,7 @@ class LabelSeatCarSeeder extends Seeder
             LabelSeatCar::create([
                 'label_seat' => chr(64 + $i),
                 'is_filled' => 0,
-                'car_id' => 3,
+                'car_id' => 2,
             ]);
         }
 

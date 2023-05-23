@@ -16,13 +16,11 @@ class AvailableDriverDetailResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'driver_id' => $this->driver_id,
-            'driver' => $this->whenLoaded('driver', function () {
-                return $this->driver;
-            }),
-            'car' => $this->whenLoaded('car'),
-            'time_departure' => $this->time_departure,
+            'driver_name' => $this->driver->user_driver->name,
+            'car_merk' => $this->car->merk,
+            'car_prod_year' => $this->car->production_year,
+            'car_seat_capacity' => $this->car->seating_capacity,
+            'is_smoking' => $this->Driver->is_smoking === 0 ? 'Tidak Merokok' : 'Merokok',
         ];
-
     }
 }

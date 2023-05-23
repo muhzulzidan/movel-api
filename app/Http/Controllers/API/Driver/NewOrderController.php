@@ -68,6 +68,29 @@ class NewOrderController extends Controller
         return response()->json(['success' => true, 'message' => 'Anda telah menerima pesanan']);
     }
 
+    // Mengubah status atau driver menolak pesanan
+    public function updateOrderReject($id)
+    {
+        // Memanggil fungsi order yang tersedia
+        $order = $this->_orderAvailable($id);
+
+        // Jika pesanan tidak ada
+        if (!$order->exists()) {
+            return response()->json(['status' => false,
+                'message' => 'Order tidak ditemukan'], 404);
+        }
+
+        // Jika pesanan ada
+        $orderAvailable = $order->get()->first();
+
+        // Update data pada tabel orders
+        $orderAvailable->update([
+            'status_order_id' => 1,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Anda telah menolak pesanan']);
+    }
+
     // fungsi privat untuk data order berdasarkan id
     private function _orderAvailable($id)
     {

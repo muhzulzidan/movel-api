@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\EmailVerificationController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,19 +9,19 @@ use App\Http\Controllers\API\EmailVerificationController;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Http\Request;
+ */
+use Illuminate\Support\Facades\Route;
 
-Route::get('/email-verified', [EmailVerificationController::class, 'verifyEmail'])->name('verification.verify');
+// Route view Email telah diverifikasi sebelumnya
+Route::get('/email-verified', function () {
+    return view('email-verified');
+});
 
+// Route view Email berhasil diverifikasi
+Route::get('/email-verify', function () {
+    return view('email-verify');
+});
 
 Route::get('/', function () {
     return view('welcome');
 });
-
-// Route::get('/email-verified', function () {
-//     return view('email-verified');
-// });
-
-

@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AvailableDriverResource extends JsonResource
+class OrderDriverResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +16,10 @@ class AvailableDriverResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'driver_name' => $this->driver->user_driver->name,
-            'car_merk' => $this->car->merk,
-            'car_prod_year' => $this->car->production_year,
-            'car_seat_capacity' => $this->car->seating_capacity,
-            'is_smoking' => $this->Driver->is_smoking === 0 ? 'Tidak Merokok' : 'Merokok',
+            'passenger_name' => $this->user->name,
+            'status_order' => $this->statusOrder->status_name,
+            'price_order' => $this->price_order,
         ];
+
     }
 }

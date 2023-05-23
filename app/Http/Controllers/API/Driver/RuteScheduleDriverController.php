@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\Driver;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\DriverDepartureResource;
 use App\Models\Driver;
 use App\Models\DriverDeparture;
 use App\Models\Order;
@@ -25,7 +24,7 @@ class RuteScheduleDriverController extends Controller
         ]);
 
         // Mengambil data user yang sudah login
-        $user = Auth::user();
+        $user = auth()->user();
 
         // Mengambil data driver berdasarkan user_id
         $driver = Driver::where('user_id', $user->id)->first();
@@ -33,21 +32,22 @@ class RuteScheduleDriverController extends Controller
         // Mengambil data jadwal berangkat driver berdasarkan id driver
         $driver_departure = DriverDeparture::where('driver_id', $driver->id)->first();
 
-        // Mengambil id order terkait driver departure
-        $orderIds = $driver_departure->orders->pluck('id');
-
-        $orders = Order::whereIn('id', $orderIds)->where('status_order_id', 6)->get();
-
-        // Jika semua orderan, statusnya belum selesai
-        if ($orders->count() !== $orderIds->count()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Tidak dapat mengubah rute',
-            ], 400);
-        }
-
         // Jika driver telah mengatur rute dan jadwal berangkat
         if ($driver_departure) {
+
+            // Mengambil id order terkait driver departure
+            $orderIds = $driver_departure->orders->pluck('id');
+
+            $orders = Order::whereIn('id', $orderIds)->where('status_order_id', 6)->get();
+
+            // Jika semua orderan, statusnya belum selesai
+            if ($orders->count() !== $orderIds->count()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak dapat mengubah rute',
+                ], 400);
+            }
+
             //Data akan di update
             $driver_departure->update([
                 'kota_asal_id' => $request->kota_asal_id,
@@ -55,23 +55,25 @@ class RuteScheduleDriverController extends Controller
                 'date_departure' => $request->date_departure,
                 'time_departure' => $request->time_departure,
             ]);
-            $rute_jadwal = $driver_departure;
-            $rute_jadwal['message'] = 'Rute dan jadwal berhasil diperbarui';
-        } else {
-            // Jika driver baru pertama kali mengatur rute dan jadwal
-            // Data akan ditambahkan
-            $rute_jadwal = DriverDeparture::create([
-                'driver_id' => $driver->id,
-                'kota_asal_id' => $request->kota_asal_id,
-                'kota_tujuan_id' => $request->kota_tujuan_id,
-                'date_departure' => $request->date_departure,
-                'time_departure' => $request->time_departure,
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Rute dan jadwal berhasil diperbarui',
             ]);
-            $rute_jadwal['message'] = 'Rute dan jadwal berhasil diatur';
         }
+        // Jika driver baru pertama kali mengatur rute dan jadwal
+        // Data akan ditambahkan
+        DriverDeparture::create([
+            'driver_id' => $driver->id,
+            'kota_asal_id' => $request->kota_asal_id,
+            'kota_tujuan_id' => $request->kota_tujuan_id,
+            'date_departure' => $request->date_departure,
+            'time_departure' => $request->time_departure,
+        ]);
 
-        // Mengembalikan respon JSON
-        return new DriverDepartureResource($rute_jadwal);
-
+        return response()->json([
+            'success' => true,
+            'message' => 'Rute dan jadwal berhasil ditambahkan',
+        ], 201);
     }
 }

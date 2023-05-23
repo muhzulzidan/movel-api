@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API\Passenger;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Passenger;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -51,13 +51,13 @@ class PassengerController extends Controller
             //upload image
             $file = $request->file('photo');
             $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('passenger/profile/', $filename);
+            $path = $file->storeAs('public/', $filename);
             //delete old image
             $oldPhoto = $passenger->photo;
-            Storage::delete('passenger/profile/'.$oldPhoto);
+            Storage::delete('public/' . $oldPhoto);
 
             $passenger->photo = $filename;
-        }else{
+        } else {
             unset($input['photo']);
         }
 
