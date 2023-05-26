@@ -54,6 +54,7 @@ class RuteScheduleDriverController extends Controller
                 'kota_tujuan_id' => $request->kota_tujuan_id,
                 'date_departure' => $request->date_departure,
                 'time_departure' => $request->time_departure,
+                'is_active' => true,
             ]);
 
             return response()->json([
@@ -69,6 +70,7 @@ class RuteScheduleDriverController extends Controller
             'kota_tujuan_id' => $request->kota_tujuan_id,
             'date_departure' => $request->date_departure,
             'time_departure' => $request->time_departure,
+            'is_active' => true,
         ]);
 
         return response()->json([

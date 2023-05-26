@@ -4,8 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password as RulesPassword;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -17,6 +22,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'no_hp' => ['required', 'string', 'max:13'],
+            'gender' => ['required', 'string', 'max:10'],
             'password' => ['required', 'confirmed', 'min:6'],
         ]);
 
@@ -47,7 +53,9 @@ class UserController extends Controller
         ]);
 
         // Buat data Passenger
-        $user->passenger()->create();
+        $user->passenger()->create([
+            'gender' => $request->gender,
+        ]);
 
         // Kirim email verifikasi
         $user->sendEmailVerificationNotification();
@@ -140,33 +148,84 @@ class UserController extends Controller
         ], 403);
     }
 
-    // public function change_password(Request $request)
-    // {
-    //     $request->validate([
-    //         'old_password' => 'required',
-    //         'password' => 'required|confirmed',
-    //     ]);
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
 
-    //     $userdata = auth()->user();
+        $user = User::where('id', auth()->user()->id)->get()->first();
 
-    //     if (!Hash::check($request->old_password, $userdata->password)) {
-    //         return response([
-    //             'message' => 'Old Password is Incorrect',
-    //             'status' => 'failed',
-    //         ], 401);
-    //     }
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password lama salah!',
+            ], 400);
+        }
 
-    //     $userdata->update([
-    //         'password' => Hash::make($request->password),
-    //     ]);
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
 
-    //     $userdata->tokens()->delete();
+        $user->tokens()->delete();
 
-    //     return response([
-    //         'message' => 'Password Changed Successfully',
-    //         'status' => 'success',
-    //     ], 200);
-    // }
+        return response()->json([
+            'success' => true,
+            'message' => 'Password berhasil diganti!',
+        ]);
+    }
+
+    public function forgetPassword(Request $request)
+    {
+
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        if ($status == Password::RESET_LINK_SENT) {
+            return response()->json([
+                'success' => true,
+                'message' => __($status),
+            ]);
+        }
+
+        throw ValidationException::withMessages(['email' => [trans($status)]]);
+    }
+
+    public function reset(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required', 'min:6', 'confirmed', RulesPassword::defaults()],
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status == Password::PASSWORD_RESET) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Password berhasil direset',
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => __($status),
+        ], 500);
+    }
 
     // Fungsi logout dari sistem
     public function logout(Request $request)

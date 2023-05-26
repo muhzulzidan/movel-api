@@ -3,21 +3,20 @@
 namespace App\Models;
 
 use App\Models\Car;
-use App\Models\Order;
 use App\Models\Driver;
 use App\Models\KotaKab;
-use App\Models\LabelSeatCar;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Order;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class DriverDeparture extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['driver_id', 'kota_asal_id', 'kota_tujuan_id', 'date_departure', 'time_departure'];
+    protected $fillable = ['driver_id', 'kota_asal_id', 'kota_tujuan_id', 'date_departure', 'time_departure', 'is_active'];
 
     public function driver(): BelongsTo
     {

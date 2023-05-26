@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Driver extends Model
 {
@@ -40,9 +41,9 @@ class Driver extends Model
         return $this->hasMany(DriverDeparture::class, 'driver_id', 'id');
     }
 
-    public function cars(): HasMany
+    public function car(): HasOne
     {
-        return $this->hasMany(Car::class, 'driver_id', 'id');
+        return $this->hasOne(Car::class, 'driver_id', 'id');
     }
 
 }

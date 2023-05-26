@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Driver;
 use App\Models\Order;
 use App\Models\Passenger;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -48,6 +49,12 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function sendPasswordResetNotification($token)
+    {
+        $url = 'https://admin.movel.id/reset_password?token=' . $token;
+        $this->notify(new ResetPasswordNotification($url));
+    }
 
     public function passenger()
     {
