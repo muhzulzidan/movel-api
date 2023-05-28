@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Driver;
+use App\Models\Passenger;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as RulesPassword;
 use Illuminate\Validation\ValidationException;
@@ -225,6 +228,58 @@ class UserController extends Controller
             'success' => false,
             'message' => __($status),
         ], 500);
+    }
+
+    public function changeFotoProfil(Request $request)
+    {
+        $request->validate([
+            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $user = auth()->user();
+
+        if ($user->role_id === 2) {
+            $id = $user->passenger->id;
+            $passenger = Passenger::find($id);
+
+            if ($request->hasFile('photo')) {
+                $photo = $request->file('photo');
+                $photo->storeAs('public/photos', $photo->hashName());
+
+                Storage::delete('public/photos/' . basename($passenger->photo));
+
+                $passenger->update([
+                    'photo' => $photo->hashName(),
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Foto profil diubah',
+                ]);
+            }
+
+        }
+        if ($user->role_id === 3) {
+            $id = $user->driver->id;
+            $driver = Driver::find($id);
+
+            if ($request->hasFile('photo')) {
+                $photo = $request->file('photo');
+                $photo->storeAs('public/photos', $photo->hashName());
+
+                Storage::delete('public/photos/' . basename($driver->photo));
+
+                $driver->update([
+                    'photo' => $photo->hashName(),
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Foto profil diubah',
+                ]);
+            }
+        }
+
     }
 
     // Fungsi logout dari sistem

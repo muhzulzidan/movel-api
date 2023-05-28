@@ -195,6 +195,54 @@ class OrderController extends Controller
 
     }
 
+    public function updateOrderCancelled($id)
+    {
+        $driverId = auth()->user()->driver->id;
+
+        $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
+            $query->where('driver_id', $driverId)->where('status_order_id', 7);
+        })->where('id', $id);
+
+        // Jika data tidak ada
+        if (!$order->exists()) {
+            return response()->json(['status' => false,
+                'message' => 'Order tidak ditemukan'], 404);
+        }
+
+        // Jika data ada
+        $orderAccepted = $order->get()->first();
+        // Update tabel orders
+        $orderAccepted->update([
+            'status_order_id' => 8,
+        ]);
+        return response()->json(['success' => true, 'message' => 'Setuju pembatalan pesanan']);
+
+    }
+
+    public function updateOrderNotCancelled($id)
+    {
+        $driverId = auth()->user()->driver->id;
+
+        $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
+            $query->where('driver_id', $driverId)->where('status_order_id', 7);
+        })->where('id', $id);
+
+        // Jika data tidak ada
+        if (!$order->exists()) {
+            return response()->json(['status' => false,
+                'message' => 'Order tidak ditemukan'], 404);
+        }
+
+        // Jika data ada
+        $orderAccepted = $order->get()->first();
+        // Update tabel orders
+        $orderAccepted->update([
+            'status_order_id' => 3,
+        ]);
+        return response()->json(['success' => true, 'message' => 'Menolak pembatalan pesanan']);
+
+    }
+
     // Update status driver menuju ke lokasi jemput
     public function updateOrderPickLocation($id)
     {

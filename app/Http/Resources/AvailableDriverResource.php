@@ -14,9 +14,13 @@ class AvailableDriverResource extends JsonResource
      */
     public function toArray($request)
     {
+        $fullNameDriver = $this->driver->user_driver->name;
+        $name = explode(" ", $fullNameDriver);
+        $driverName = $name[0];
+
         return [
             'id' => $this->id,
-            'driver_name' => $this->driver->user_driver->name,
+            'driver_name' => $driverName,
             'car_merk' => $this->car->merk,
             'car_prod_year' => $this->car->production_year,
             'car_seat_capacity' => $this->car->seating_capacity,
