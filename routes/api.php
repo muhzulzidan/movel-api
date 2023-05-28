@@ -71,6 +71,7 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
 
     Route::match (['post', 'put'], '/drivers/rute_jadwal', [DriverDepartureController::class, 'storeUpdateRuteJadwal']);
     Route::put('/drivers/inactive', [DriverDepartureController::class, 'setDriverInactive']);
+    Route::get('drivers/seat_cars', [DriverDepartureController::class, 'getListSeatCars']);
 
     Route::get('/orders/driver', [DriverOrderController::class, 'showOrdersByDriver']);
     Route::get('/orders/{id}/driver', [DriverOrderController::class, 'showDriverOrderById']);
@@ -81,6 +82,7 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
     Route::get('orders/{id}/driver/rejected', [DriverOrderController::class, 'detailRejectedDriverOrder']);
     Route::get('orders/driver/completed', [DriverOrderController::class, 'showListCompletedDriverOrders']);
     Route::get('orders/{id}/driver/completed', [DriverOrderController::class, 'detailCompletedDriverOrder']);
+    Route::post('orders/driver/take_self', [DriverOrderController::class, 'addPassengerByDriver']);
 
     Route::put('/orders/{id}/pick_location', [OrderController::class, 'updateOrderPickLocation']);
     Route::put('/orders/{id}/pick_location_arrive', [OrderController::class, 'updateOrderPickLocationArrive']);
@@ -90,7 +92,6 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
 
     Route::get('/cars/seat_car', [CarController::class, 'getSeatCar']);
     Route::get('/cars', [CarController::class, 'getCar']);
-
 });
 
 // Protected Route Admin

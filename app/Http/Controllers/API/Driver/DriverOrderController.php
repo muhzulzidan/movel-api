@@ -8,7 +8,12 @@ use App\Http\Resources\OrderAcceptedResource;
 use App\Http\Resources\OrderAvailableByIdResource;
 use App\Http\Resources\OrderDriverRejectedResource;
 use App\Http\Resources\OrderDriverResource;
+use App\Models\Car;
+use App\Models\DriverDeparture;
+use App\Models\LabelSeatCar;
 use App\Models\Order;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DriverOrderController extends Controller
 {
@@ -186,6 +191,67 @@ class DriverOrderController extends Controller
         return new DetailOrderDriverResource($order->first());
     }
 
+    public function addPassengerByDriver(Request $request)
+    {
+
+        $request->validate([
+            'seat_car_choices' => [
+                'required',
+                'array',
+                Rule::exists('label_seat_cars', 'id')->where(function ($query) use ($request) {
+                    $user = auth()->user();
+                    $driverId = $user->driver->id;
+                    $carId = Car::where('driver_id', $driverId)->value('id');
+                    $query->where('car_id', $carId);
+                }),
+            ],
+        ]);
+
+        $user = auth()->user();
+
+        $driverDepartureId = $user->driver->driverDeparture->id;
+
+        $seatCarChoices = $request->seat_car_choices;
+
+        $driverDeparture = DriverDeparture::findOrFail($driverDepartureId);
+        $car = $driverDeparture->driver->car;
+
+        $carSeats = LabelSeatCar::whereIn('id', $seatCarChoices)->where('car_id', $car->id)->get();
+
+        // Mengecek kursi yang sudah terpesan
+        foreach ($carSeats as $carSeat) {
+            if ($carSeat->is_filled == 1) {
+                return response()->json(['success' => false, 'message' => 'Ada kursi sudah terpilih'], 422);
+            }
+        }
+
+        $priceOrder = count($seatCarChoices) * 150000;
+
+        Order::create([
+            'user_id' => $user->id,
+            'driver_departure_id' => $driverDepartureId,
+            'status_order_id' => 3,
+            'price_order' => $priceOrder,
+        ]);
+
+        // Mendapatkan data seat car berdasarkan session seat_data
+        $labelSeatCars = LabelSeatCar::select(['id', 'label_seat'])->whereIn('id', $seatCarChoices)->get();
+
+        // Update data di seat car
+        $labelSeatCars->each(function ($seatCarChoice) {
+            $order = Order::latest()->first()->id;
+            $seatCarChoice->order_id = $order;
+            $seatCarChoice->is_filled = 1;
+            $seatCarChoice->save();
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Penumpang berhasil ditambahkan',
+        ]);
+
+    }
+
     // fungsi privat untuk data order berdasarkan id
     private function _orderAvailable($id)
     {
@@ -198,4 +264,5 @@ class DriverOrderController extends Controller
         return $order;
 
     }
+
 }

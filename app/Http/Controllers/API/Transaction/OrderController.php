@@ -118,7 +118,7 @@ class OrderController extends Controller
         $driverDepartureId = $request->driver_departure_id;
         $seatCarChoices = $request->seat_car_choices;
         $driverDeparture = DriverDeparture::findOrFail($driverDepartureId);
-        $car = $driverDeparture->driver->cars->first();
+        $car = $driverDeparture->driver->car;
 
         $carSeats = LabelSeatCar::whereIn('id', $seatCarChoices)->where('car_id', $car->id)->get();
 
@@ -155,7 +155,7 @@ class OrderController extends Controller
         $seatCarChoices = $request->seat_car_choices;
 
         $driverDeparture = DriverDeparture::findOrFail($driverDepartureId);
-        $car = $driverDeparture->driver->cars->first();
+        $car = $driverDeparture->driver->car;
 
         $carSeats = LabelSeatCar::whereIn('id', $seatCarChoices)->where('car_id', $car->id)->get();
 

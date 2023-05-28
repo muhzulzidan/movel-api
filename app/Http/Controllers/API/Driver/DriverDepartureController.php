@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Driver;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LabelSeatCarResource;
 use App\Models\Driver;
 use App\Models\DriverDeparture;
 use App\Models\Order;
@@ -90,5 +91,13 @@ class DriverDepartureController extends Controller
             'success' => true,
             'message' => 'Driver tidak aktif.',
         ]);
+    }
+
+    public function getListSeatCars()
+    {
+        $user = auth()->user();
+        $seatCars = $user->driver->car->labelSeats;
+
+        return LabelSeatCarResource::collection($seatCars);
     }
 }

@@ -42,6 +42,11 @@ class Driver extends Model
         return $this->hasMany(DriverDeparture::class, 'driver_id', 'id');
     }
 
+    public function driverDeparture(): HasOne
+    {
+        return $this->hasOne(DriverDeparture::class, 'driver_id', 'id');
+    }
+
     public function car(): HasOne
     {
         return $this->hasOne(Car::class, 'driver_id', 'id');
