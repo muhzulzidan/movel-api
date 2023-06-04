@@ -1,87 +1,57 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
 use App\Models\User;
-use GuzzleHttp\Exception\RequestException;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
+    use AuthenticatesUsers;
+
+    protected $redirectTo = '/home';
+
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
+
     public function loginForm()
     {
-        return view('auth.login');
+        return view('admin.auth.login');
     }
 
     public function loginVerify(Request $request)
     {
-        $email = $request->input('email');
-        $password = $request->input('password');
+        $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        // Kirim permintaan autentikasi ke API eksternal
-        $client = new Client();
-        try {
-            $response = $client->post('https://api.movel.id/api/user/login', [
-                'form_params' => [
-                    'email' => $email,
-                    'password' => $password,
-                ],
-            ]);
-
-            // Periksa respons yang diterima
-            $data = json_decode($response->getBody(), true);
-
-            if ($data['status']) {
-                // Jika autentikasi berhasil, simpan token autentikasi ke database lokal
-                $user = User::where('email', $data['email'])->first();
-                if (!$user) {
-                    $user = User::create([
-                        'name' => $data['name'],
-                        'email' => $data['email'],
-                        'role_id' => $data['role_id']
-                    ]);
-                }
-                $user->token = $data['token'];
-                $user->save();
-
-                Auth::login($user);
-
-                session()->flash('success', 'You are logged in! Welcome back ' . $data['name']);
-                return redirect()->route('home');
-            } else {
-                // Jika autentikasi gagal, tampilkan pesan error
-                return redirect()->back()->withErrors(['login' => 'Email atau password salah']);
-            }
-        } catch (RequestException $e) {
-            if ($e->hasResponse()) {
-                $response = $e->getResponse();
-                $data = json_decode($response->getBody(), true);
-                // Tampilkan pesan kesalahan
-                return redirect()->back()->withErrors(['login' => $data['message']]);
-            }
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role_id' => 1])) {
+            session()->flash('success', 'You are logged in! Welcome back ');
+            return redirect()->intended($this->redirectTo);
         }
+
+        $errorMsg = 'Invalid email or password';
+        $existingUser = User::where('email', $request->email)->first();
+        if ($existingUser && $existingUser->role_id !== 1) {
+            $errorMsg = 'Anda bukan Admin, Anda tidak dapat mengakses Dashboard ini!';
+        }
+
+
+        return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors([
+            'email' => $errorMsg,
+        ]);
+
+        // return redirect()->route('home');
     }
 
     public function logout(Request $request)
     {
-        // Ambil token autentikasi pengguna
-        $token = $request->user()->token;
-
-        // Kirim permintaan logout ke API eksternal
-        $client = new Client();
-        $client->post('https://api.movel.id/api/user/logout', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
-            ]
-        ]);
-
-        // Hapus token autentikasi pengguna dari database lokal
-        $request->user()->token = null;
-        $request->user()->save();
-
         // Logout dari aplikasi Admin
         Auth::logout();
 

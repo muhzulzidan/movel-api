@@ -12,7 +12,6 @@
  */
 use Illuminate\Support\Facades\Route;
 
-
 // Route view Email telah diverifikasi sebelumnya
 Route::get('/email-verified', function () {
     return view('email-verified');
@@ -29,13 +28,18 @@ Route::get('/email-verify', function () {
 | Web Route untuk ADMIN
 |--------------------------------------------------------------------------
  */
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\Management\SopirController;
+use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\ProfileController;
+
 
 Route::get('/login', [LoginController::class, 'loginForm']);
 Route::post('/login', [LoginController::class, 'loginVerify'])->name('login');
 
 Route::middleware(['auth'])->group(function () {
     // Route yang membutuhkan autentikasi
-    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::get('/sopir', [SopirController::class, 'index'])->name('sopir');
     Route::get('/show_sopir/{id}', [SopirController::class, 'show'])->name('showSopir');
@@ -43,8 +47,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/add_sopir', [SopirController::class, 'addSopir'])->name('addSopir');
     Route::get('/edit_sopir/{id}', [SopirController::class, 'editSopir'])->name('editSopir');
 
-    Route::get('/profile', 'ProfileController@index')->name('profile');
-    Route::put('/profile', 'ProfileController@update')->name('profile.update');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
