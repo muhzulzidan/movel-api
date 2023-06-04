@@ -314,6 +314,11 @@ class OrderController extends Controller
         $orderAccepted->update([
             'status_order_id' => 6,
         ]);
+
+        // RESET KURSI
+        // Nanti ku konfigurasi disini jika na klik Driver Pesanan Selesai
+        // maka kursi kosong kembali.
+
         return response()->json(['success' => true, 'message' => 'Selamat! Pesanan telah selesai']);
     }
 }
