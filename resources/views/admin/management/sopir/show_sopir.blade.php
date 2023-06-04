@@ -1,8 +1,14 @@
-@extends('layouts.admin')
+@extends('admin.layouts.admin')
 
 @section('main-content')
     <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">{{ __('Detail Data Sopir ') }} <strong>{{ $show_sopir['name'] }}</strong></h1>
+    <h1 class="h3 mb-4 text-gray-800">{{ __('Detail Data Sopir ') }}
+        @if ($show_sopir)
+            <strong>{{ $show_sopir['name'] }}</strong>
+        @else
+            <strong>Data not found</strong>
+        @endif
+    </h1>
 
     @if (session('success'))
         <div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
@@ -23,9 +29,8 @@
         <div class="col-lg-4">
             <div class="card shadow mb-4">
                 <div class="card-profile-image mt-4">
-                    <img class="rounded-circle avatar avatar"
-                        style="height: 180px; width: 180px;"
-                        src="https://api.movel.id/{{ $show_sopir['gambar_url'] }}" alt="">
+                    <img class="rounded-circle avatar avatar" style="height: 180px; width: 180px;"
+                        src="{{ asset(Storage::url($show_sopir['photo'])) }}" alt="">
                 </div>
                 <div class="card-body">
 

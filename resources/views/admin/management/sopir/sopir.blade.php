@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin.layouts.admin')
 
 @section('main-content')
     <!-- Page Heading -->
@@ -115,7 +115,7 @@
                                     <tr>
                                         <td class="d-flex align-items-center">
                                             <img class="img-profile rounded-circle avatar"
-                                                src="https://api.movel.id/{{ $sopir->gambar_url }}" alt="">
+                                                src="{{ asset(Storage::url($sopir->photo)) }}" alt="">
                                             <div class="pl-3 email">
                                                 <span class="font-weight-bold">{{ $sopir->name }}</span>
                                                 <span class="d-block">{{ $sopir->email }}</span>
@@ -141,9 +141,9 @@
                                                 <i class="fas fa-edit"></i> {{ __('Edit') }}
                                             </a>
 
-                                            <button class="btn btn-danger" id="{{ $sopir->id }}">
+                                            <a class="btn btn-danger" id="{{ $sopir->id }}" href="#" data-toggle="modal" data-target="#deleteModal">
                                                 <i class="fas fa-trash"></i> {{ __('Delete') }}
-                                            </button>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -157,4 +157,28 @@
         </div>
 
     </div>
+
+    <!-- Delete Modal-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Ready to Leave?') }}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Are you sure you want to delete this data?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form action="{{ route('sopir.destroy', $sopir->id) }}" method="POST">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                  </div>
+            </div>
+        </div>
+    </div>
 @endsection
+

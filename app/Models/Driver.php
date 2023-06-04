@@ -37,6 +37,11 @@ class Driver extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function driver_departures(): HasMany
     {
         return $this->hasMany(DriverDeparture::class, 'driver_id', 'id');
@@ -55,8 +60,7 @@ class Driver extends Model
     protected function photo(): Attribute
     {
         return Attribute::make(
-            get:fn($photo) => asset('/storage/photos/' . $photo),
+            get: fn ($photo) => asset('/storage/photos/' . $photo),
         );
     }
-
 }

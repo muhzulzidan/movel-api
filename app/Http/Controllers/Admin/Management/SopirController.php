@@ -4,103 +4,157 @@ namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
+use App\Models\Driver;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+
 
 
 class SopirController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $token = User::where('id', $user->id)->pluck('token');
-        $response = Http::withToken($token[0])->get('https://api.movel.id/api/user/all_drivers');
-        $drivers = $response->getBody()->getContents();
-        $drivers = json_decode($drivers);
-        // dd($drivers);
-        return view('management.sopir.sopir', ['drivers' => $drivers]);
+        $drivers = User::join('drivers', 'users.id', '=', 'drivers.user_id')
+                     ->select('users.*', 'drivers.*')
+                     ->get();
+        return view('admin.management.sopir.sopir', ['drivers' => $drivers]);
     }
 
     public function show($id)
     {
-        $user = auth()->user();
-        $token = User::where('id', $user->id)->pluck('token');
-        $response = Http::withToken($token[0])->get('https://api.movel.id/api/user/all_drivers/' . $id);
-        $show_sopir  = $response->json();
-        return view('management.sopir.show_sopir', ['show_sopir ' => $show_sopir ]);
+        $show_sopir = User::join('drivers', 'users.id', '=', 'drivers.user_id')
+            ->where('drivers.id', $id)
+            ->select('users.*', 'drivers.*')
+            ->first();
+
+        // $show_sopir = Storage::url($driver->photo);
+
+        return view('admin.management.sopir.show_sopir', compact('show_sopir'));
     }
 
-    public function addSopirView()
+    public function storeView()
     {
-        return view('management.sopir.add_sopir');
+        return view('admin.management.sopir.add_sopir');
     }
-    public function addSopir(Request $request)
+
+    public function store(Request $request)
     {
-        $data = [
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'no_hp' => $request->input('no_hp'),
-            'password' => $request->input('password'),
-            'password_confirmation' => $request->input('password_confirmation'),
-            'role_id' => $request->input('role_id'),
-            'photo' => $request->input('photo'),
-            'address' => $request->input('address'),
-            'is_smoking' => $request->input('is_smoking'),
-            'driver_age' => $request->input('driver_age'),
-            'no_ktp' => $request->input('no_ktp'),
-            'foto_ktp' => $request->input('foto_ktp'),
-            'foto_sim' => $request->input('foto_sim'),
-            'foto_stnk' => $request->input('foto_stnk')
-        ];
+        // Validasi data yang diterima
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+            'no_hp' => ['required', 'string', 'max:13'],
+            'password' => ['required', 'confirmed', 'min:6'],
+            'role_id' => ['required'],
+            'photo' => ['required', 'image', 'max:2048'],
+            'address' => ['required', 'string', 'max:255'],
+            'is_smoking' => ['required'],
+            'driver_age' => ['required'],
+            'no_ktp' => ['required'],
+            'foto_ktp' => ['required', 'image', 'max:2048'],
+            'foto_sim' => ['required', 'image', 'max:2048'],
+            'foto_stnk' => ['required', 'image', 'max:2048'],
+        ]);
 
-        $user = auth()->user();
-        $token = User::where('id', $user->id)->pluck('token');
+        // dd($validatedData);
 
-        if ($request->hasFile('photo')) {
-            $photo = $request->file('photo');
-            $photoName = $photo->getClientOriginalName();
-            $photoPath = $photo->getPathname();
+        // Ubah awalan no HP
+        $no_hp = $request['no_hp'];
+        if ($request['no_hp'][0] == "0") {
+            $no_hp = substr($no_hp, 1);
         }
-        if ($request->hasFile('foto_ktp')) {
-            $foto_ktp = $request->file('foto_ktp');
-            $foto_ktpName = $foto_ktp->getClientOriginalName();
-            $foto_ktpPath = $foto_ktp->getPathname();
-        }
-        if ($request->hasFile('foto_sim')) {
-            $foto_sim = $request->file('foto_sim');
-            $foto_simName = $foto_sim->getClientOriginalName();
-            $foto_simPath = $foto_sim->getPathname();
-        }
-        if ($request->hasFile('foto_stnk')) {
-            $foto_stnk = $request->file('foto_stnk');
-            $foto_stnkName = $foto_stnk->getClientOriginalName();
-            $foto_stnkPath = $foto_stnk->getPathname();
+        if ($no_hp[0] == "8") {
+            $no_hp = "62" . $no_hp;
         }
 
-        // Mengirim permintaan POST untuk menambahkan data
-        $photo = fopen($photoPath, 'r');
-        $foto_ktp = fopen($foto_ktpPath, 'r');
-        $foto_sim = fopen($foto_simPath, 'r');
-        $foto_stnk = fopen($foto_stnkPath, 'r');
-        $response = Http::attach(
-            'attachment', $photo, $photoName,
-            'attachment', $foto_ktp, $foto_ktpName,
-            'attachment', $foto_sim, $foto_simName,
-            'attachment', $foto_stnk, $foto_stnkName,
-        )->withToken($token[0])->post('https://api.movel.id/api/user/driver/store', $data);
-
-        // Mendapatkan status kode respons
-        $statusCode = $response->status();
-
-        if ($statusCode === 201) {
-            // Data berhasil ditambahkan
-            session()->flash('success', 'Sopir ' . $data['name'] . ' Berhasil Ditambahkan');
-        } else {
-            // Terjadi kesalahan
-            session()->flash('error', 'Sopir ' . $data['name'] . ' Gagal Ditambahkan');
+        // Cek Email
+        if (User::where('email', $request->email)->first()) {
+            return response([
+                'message' => 'Email already exists',
+                'status' => 'failed',
+            ], 409);
         }
-        return view('management.sopir.sopir');
+
+        // Cek no HP
+        if (User::where('no_hp', $no_hp)->first()) {
+            return response([
+                'message' => 'No HP already exists',
+                'status' => 'failed',
+            ], 409);
+        }
+
+        // Simpan data user
+        $user = User::create([
+            'name'              => $validatedData['name'],
+            'email'             => $validatedData['email'],
+            'email_verified_at' => date('Y-m-d H:i:s'),
+            'no_hp'             => $validatedData['no_hp'],
+            'password'          => Hash::make($validatedData['password']),
+            'role_id'           => 3,
+        ]);
+
+        // Simpan data driver
+        $driver = Driver::create([
+            'user_id'       => $user->id,
+            'address'       => $validatedData['address'],
+            'is_smoking'    => $validatedData['is_smoking'],
+            'driver_age'    => $validatedData['driver_age'],
+            'no_ktp'        => $validatedData['no_ktp'],
+        ]);
+
+        // Simpan file gambar
+        $photoPath = $request->file('photo')->store('public/photo');
+        $ktpPath = $request->file('foto_ktp')->store('public/KTP');
+        $simPath = $request->file('foto_sim')->store('public/SIM');
+        $stnkPath = $request->file('foto_stnk')->store('public/STNK');
+
+        // Mengupdate path gambar pada driver
+        $driver->update([
+            'photo' => $photoPath,
+            'foto_ktp' => $ktpPath,
+            'foto_sim' => $simPath,
+            'foto_stnk' => $stnkPath,
+        ]);
+
+        // Redirect atau melakukan tindakan lainnya
+        return redirect()->route('sopir')->with('success', 'Sopir baru berhasil ditambahkan');
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Validasi request
+        $request->validate([
+            'name' => 'required',
+            'driver_license' => 'required',
+            'images' => 'required',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        // Mengupdate data pada tabel users
+        $user = User::find($id);
+        $user->name = $request->input('name');
+        $user->save();
+
+        // Mengupdate data pada tabel drivers
+        $driver = Driver::where('user_id', $id)->first();
+        $driver->driver_license = $request->input('driver_license');
+        $driver->save();
+
+        // Mengunggah dan menyimpan gambar
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $filename = time() . '_' . $image->getClientOriginalName();
+                $image->storeAs('public/images', $filename);
+                // Menyimpan informasi gambar ke tabel images (asumsikan tabel images telah ada dengan kolom user_id dan filename)
+                $user->images()->create([
+                    'filename' => $filename
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
     }
 
     public function editSopir($id)
@@ -108,8 +162,27 @@ class SopirController extends Controller
         return view('management.sopir.edit_sopir');
     }
 
-    public function deleteSopir()
+    public function destroy($id)
     {
-        return view('management.sopir.add_sopir');
+        // Ambil data pengemudi berdasarkan ID
+        $driver = Driver::findOrFail($id);
+
+        // Hapus file gambar dari storage
+        Storage::delete([
+            $driver->photo,
+            $driver->foto_ktp,
+            $driver->foto_sim,
+            $driver->foto_stnk,
+        ]);
+
+        // Hapus data pengemudi
+        $driver->delete();
+
+        // Hapus data pengguna terkait jika tidak ada pengemudi lain yang terhubung dengannya
+        $user = User::find($driver->user_id);
+        if ($user && $user->drivers()->where('id', '!=', $driver->id)->count() === 0) {
+            $user->delete();
+        }
+        return redirect()->route('sopir')->with('success', 'Sopir berhasil dihapus');
     }
 }

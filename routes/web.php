@@ -36,16 +36,23 @@ use App\Http\Controllers\Admin\ProfileController;
 
 Route::get('/login', [LoginController::class, 'loginForm']);
 Route::post('/login', [LoginController::class, 'loginVerify'])->name('login');
+Route::get('/', function () {
+    return view('welcome');
+})->middleware('auth');
 
-Route::middleware(['auth'])->group(function () {
+Route::group(['middleware' => 'auth'], function () {
     // Route yang membutuhkan autentikasi
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::get('/sopir', [SopirController::class, 'index'])->name('sopir');
     Route::get('/show_sopir/{id}', [SopirController::class, 'show'])->name('showSopir');
-    Route::get('/add_sopir', [SopirController::class, 'addSopirView']);
-    Route::post('/add_sopir', [SopirController::class, 'addSopir'])->name('addSopir');
+
+    Route::get('/add_sopir', [SopirController::class, 'storeView']);
+    Route::post('/add_sopir', [SopirController::class, 'store'])->name('addSopir');
+
     Route::get('/edit_sopir/{id}', [SopirController::class, 'editSopir'])->name('editSopir');
+
+    Route::delete('/sopir/{id}', [SopirController::class, 'destroy'])->name('sopir.destroy');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

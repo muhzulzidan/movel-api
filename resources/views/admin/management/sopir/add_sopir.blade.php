@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin.layouts.admin')
 
 @section('main-content')
     <!-- Page Heading -->
@@ -23,10 +23,8 @@
         <div class="col-lg-12">
             <div class="card shadow mb-4">
                 <div class="card-body">
-                    <form method="POST" action="{{ route('addSopir') }}" class="user">
-
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
+                    <form method="POST" action="{{ route('addSopir') }}" class="user" enctype="multipart/form-data">
+                        @csrf
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label for="name">Nama Lengkap</label>
