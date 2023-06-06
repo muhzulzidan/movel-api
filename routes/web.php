@@ -45,14 +45,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::get('/sopir', [SopirController::class, 'index'])->name('sopir');
-    Route::get('/show_sopir/{id}', [SopirController::class, 'show'])->name('showSopir');
+    Route::get('/sopir/show/{id}', [SopirController::class, 'show'])->name('sopir.show');
 
-    Route::get('/add_sopir', [SopirController::class, 'storeView']);
-    Route::post('/add_sopir', [SopirController::class, 'store'])->name('addSopir');
+    Route::get('/sopir/add', [SopirController::class, 'storeView']);
+    Route::post('/sopir/add', [SopirController::class, 'store'])->name('sopir.store');
 
-    Route::get('/edit_sopir/{id}', [SopirController::class, 'editSopir'])->name('editSopir');
+    Route::get('/sopir/edit/{id}', [SopirController::class, 'updateView']);
+    Route::put('/sopir/edit/{id}', [SopirController::class, 'update'])->name('sopir.update');
 
-    Route::delete('/sopir/{id}', [SopirController::class, 'destroy'])->name('sopir.destroy');
+    Route::delete('/sopir/delete/{id}', [SopirController::class, 'destroy'])->name('sopir.destroy');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -7,7 +7,7 @@
             <h1 class="h3 mb-4 text-gray-800">{{ __('Data Sopir') }}</h1>
         </div>
         <div class="col-6">
-            <a href="{{ route('addSopir') }}" class="btn btn-primary float-right"><strong>Registrasi Sopir Baru</strong></a>
+            <a href="{{ route('sopir.store') }}" class="btn btn-primary float-right"><strong>Registrasi Sopir Baru</strong></a>
         </div>
     </div>
 
@@ -133,12 +133,12 @@
                                         <td class="text-center">{{ $sopir->driver_age }}</td>
                                         <td class="text-center">
 
-                                            <a href="{{ route('showSopir', $sopir->id) }}" class="btn btn-success">
-                                                <i class="fas fa-info-circle"></i> {{ __('Detail') }}
+                                            <a href="{{ route('sopir.show', $sopir->id) }}" class="btn btn-primary">
+                                                <i class="fas fa-plus-circle"></i> {{ __('Top Up') }}
                                             </a>
 
-                                            <a href="{{ route('editSopir', $sopir->id) }}" class="btn btn-primary">
-                                                <i class="fas fa-edit"></i> {{ __('Edit') }}
+                                            <a href="{{ route('sopir.update', $sopir->id) }}" class="btn btn-info">
+                                                <i class="fas fa-info-circle"></i> {{ __('Info') }}
                                             </a>
 
                                             <a class="btn btn-danger" id="{{ $sopir->id }}" href="#" data-toggle="modal" data-target="#deleteModal">

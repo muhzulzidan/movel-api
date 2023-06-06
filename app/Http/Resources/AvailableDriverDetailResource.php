@@ -20,6 +20,7 @@ class AvailableDriverDetailResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'driver_id' => $this->driver_id,
             'driver_name' => $driverName,
             'driver_age' => $this->driver->driver_age,
             'car_merk' => $this->car->merk,
