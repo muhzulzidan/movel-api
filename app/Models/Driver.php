@@ -60,7 +60,7 @@ class Driver extends Model
     protected function photo(): Attribute
     {
         return Attribute::make(
-            get: fn ($photo) => asset('/storage/photos/' . $photo),
+            get:fn($photo) => asset('/storage/photos/' . $photo),
         );
     }
 }

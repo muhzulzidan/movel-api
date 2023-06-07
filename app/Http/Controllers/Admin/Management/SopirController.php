@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin\Management;
 use App\Http\Controllers\Controller;
 use App\Models\Driver;
 use App\Models\User;
+use App\Models\Car;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class SopirController extends Controller
 {
@@ -19,19 +21,7 @@ class SopirController extends Controller
         return view('admin.management.sopir.sopir', ['drivers' => $drivers]);
     }
 
-    public function show($id)
-    {
-        $show_sopir = User::join('drivers', 'users.id', '=', 'drivers.user_id')
-            ->where('drivers.id', $id)
-            ->select('users.*', 'drivers.*')
-            ->first();
-
-        // $show_sopir = Storage::url($driver->photo);
-
-        return view('admin.management.sopir.show_sopir', compact('show_sopir'));
-    }
-
-    public function storeView()
+    public function store_view()
     {
         return view('admin.management.sopir.add_sopir');
     }
@@ -52,6 +42,15 @@ class SopirController extends Controller
             'foto_ktp' => ['required', 'image', 'max:2048'],
             'foto_sim' => ['required', 'image', 'max:2048'],
             'foto_stnk' => ['required', 'image', 'max:2048'],
+            'merek' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'max:255'],
+            'jenis' => ['required', 'string', 'max:255'],
+            'model' => ['required', 'string', 'max:255'],
+            'production_year' => ['required'],
+            'isi_silinder' => ['required'],
+            'license_plate_number' => ['required', 'string', 'max:255'],
+            'machine_number' => ['required'],
+            'seating_capacity' => ['required'],
         ]);
 
         // Ubah awalan no HP
@@ -89,6 +88,10 @@ class SopirController extends Controller
             'role_id' => 3,
         ]);
 
+        if (!$user) {
+            return redirect()->back()->with('error', 'Failed to create user');
+        }
+
         // Simpan data driver
         $driver = Driver::create([
             'user_id' => $user->id,
@@ -122,21 +125,51 @@ class SopirController extends Controller
             'foto_stnk' => $stnkPath,
         ]);
 
+        if (!$driver) {
+            // Delete the user that was created
+            $user->delete();
+
+            return redirect()->back()->with('error', 'Failed to create driver');
+        }
+
+        // Simpan data Mobil
+        $car = Car::create([
+            'merek' => $validatedData['merek'],
+            'type' => $validatedData['type'],
+            'jenis' => $validatedData['jenis'],
+            'model' => $validatedData['model'],
+            'production_year' => $validatedData['production_year'],
+            'isi_silinder' => $validatedData['isi_silinder'],
+            'license_plate_number' => $validatedData['license_plate_number'],
+            'machine_number' => $validatedData['machine_number'],
+            'seating_capacity' => $validatedData['seating_capacity'],
+            'driver_id' => $driver->id,
+        ]);
+
+        if (!$car) {
+            // Delete the user and driver that were created
+            $driver->delete();
+            $user->delete();
+
+            return redirect()->back()->with('error', 'Failed to create car');
+        }
+
         // Redirect atau melakukan tindakan lainnya
         return redirect()->route('sopir')->with('success', 'Sopir baru berhasil ditambahkan');
     }
 
-    public function updateView($id)
+    public function update_view($id)
     {
         $show_sopir = User::join('drivers', 'users.id', '=', 'drivers.user_id')
+            ->join('cars', 'drivers.id', '=', 'cars.driver_id')
             ->where('drivers.id', $id)
-            ->select('users.*', 'drivers.*')
+            ->select('users.*', 'drivers.*', 'cars.*')
             ->first();
 
         return view('admin.management.sopir.edit_sopir', compact('show_sopir'));
     }
 
-    public function update(Request $request, $id)
+    public function update_driver(Request $request, $id)
     {
         // Validasi data yang diterima
         $validatedData = $request->validate([
@@ -239,10 +272,10 @@ class SopirController extends Controller
 
             $driver->save();
 
-            return redirect()->route('sopir.update', $driver->id)->with('success', 'Data pengemudi berhasil diperbarui.');
+            return redirect()->route('sopir.update.driver', $driver->id)->with('success', 'Data pengemudi berhasil diperbarui.');
         }
 
-        return redirect()->route('sopir.update', $driver->id)->with('error', 'Data pengemudi tidak ditemukan.');
+        return redirect()->route('sopir.update.driver', $driver->id)->with('error', 'Data pengemudi tidak ditemukan.');
     }
 
     public function destroy($id)

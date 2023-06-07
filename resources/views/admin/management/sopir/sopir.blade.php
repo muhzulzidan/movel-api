@@ -133,7 +133,7 @@
                                         <td class="text-center">{{ $sopir->driver_age }}</td>
                                         <td class="text-center">
 
-                                            <a href="{{ route('sopir.show', $sopir->id) }}" class="btn btn-primary">
+                                            <a href="" class="btn btn-primary">
                                                 <i class="fas fa-plus-circle"></i> {{ __('Top Up') }}
                                             </a>
 

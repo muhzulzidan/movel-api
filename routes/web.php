@@ -45,13 +45,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::get('/sopir', [SopirController::class, 'index'])->name('sopir');
-    Route::get('/sopir/show/{id}', [SopirController::class, 'show'])->name('sopir.show');
 
-    Route::get('/sopir/add', [SopirController::class, 'storeView']);
+    Route::get('/sopir/add', [SopirController::class, 'store_view']);
     Route::post('/sopir/add', [SopirController::class, 'store'])->name('sopir.store');
 
-    Route::get('/sopir/edit/{id}', [SopirController::class, 'updateView']);
-    Route::put('/sopir/edit/{id}', [SopirController::class, 'update'])->name('sopir.update');
+    Route::get('/sopir/show/{id}', [SopirController::class, 'update_view'])->name('sopir.show');
+    Route::put('/sopir/show/{id}', [SopirController::class, 'update_driver'])->name('sopir.update.driver');
+    // Route::put('/sopir/show/{id}', [SopirController::class, 'update_car'])->name('sopir.update.car');
 
     Route::delete('/sopir/delete/{id}', [SopirController::class, 'destroy'])->name('sopir.destroy');
 
