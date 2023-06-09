@@ -66,55 +66,81 @@
         <li class="nav-item {{ Nav::isRoute('sopir') }}">
             <a class="nav-link" href="{{ route('sopir') }}">
                 <i class="fa-solid fa-user-tie"></i>
-                <span>{{ __('Data Sopir') }}</span>
+                <span>{{ __('Sopir') }}</span>
             </a>
         </li>
 
-        <!-- Nav Item - Data Pelanggan -->
-        <li class="nav-item {{ Nav::isRoute('profile') }}">
-            <a class="nav-link" href="{{ route('profile') }}">
+        <!-- Nav Item - Data Penumpang -->
+        <li class="nav-item {{ Nav::isRoute('penumpang') }}">
+            <a class="nav-link" href="{{ route('penumpang') }}">
                 <i class="fas fa-users"></i>
-                <span>{{ __('Data Pelanggan') }}</span>
+                <span>{{ __('Penumpang') }}</span>
             </a>
         </li>
 
-        <!-- Nav Item - Data Mobil -->
+        <!-- Nav Item - Data Kabupaten Kota -->
         <li class="nav-item {{ Nav::isRoute('profile') }}">
             <a class="nav-link" href="{{ route('profile') }}">
-                <i class="fas fa-car"></i>
-                <span>{{ __('Data Mobil') }}</span>
+                <i class="fa-solid fa-tree-city"></i>
+                <span>{{ __('Kabupaten/Kota') }}</span>
             </a>
         </li>
 
-        <!-- Nav Item - Data Rute -->
-        <li class="nav-item {{ Nav::isRoute('profile') }}">
-            <a class="nav-link" href="{{ route('profile') }}">
-                <i class="fas fa-route"></i>
-                <span>{{ __('Data Rute') }}</span>
-            </a>
-        </li>
-
-        <!-- Nav Item - Data Jadwal -->
-        <li class="nav-item {{ Nav::isRoute('profile') }}">
-            <a class="nav-link" href="{{ route('profile') }}">
-                <i class="fas fa-clipboard-list"></i>
-                <span>{{ __('Data Jadwal') }}</span>
-            </a>
-        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider">
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            {{ __('Settings') }}
+            {{ __('Management Pesanan') }}
         </div>
 
-        <!-- Nav Item - Profile -->
+        <!-- Nav Item - Riwayat Pesanan -->
         <li class="nav-item {{ Nav::isRoute('profile') }}">
             <a class="nav-link" href="{{ route('profile') }}">
                 <i class="fas fa-user-cog"></i>
-                <span>{{ __('Profile') }}</span>
+                <span>{{ __('Riwayat Pesanan') }}</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Invoice -->
+        <li class="nav-item {{ Nav::isRoute('profile') }}">
+            <a class="nav-link" href="{{ route('profile') }}">
+                <i class="fas fa-user-cog"></i>
+                <span>{{ __('Invoice') }}</span>
+            </a>
+        </li>
+
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            {{ __('Management Iklan') }}
+        </div>
+
+        <!-- Nav Item - Diskon -->
+        <li class="nav-item {{ Nav::isRoute('profile') }}">
+            <a class="nav-link" href="{{ route('profile') }}">
+                <i class="fas fa-user-cog"></i>
+                <span>{{ __('Diskon') }}</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Iklan Movel -->
+        <li class="nav-item {{ Nav::isRoute('profile') }}">
+            <a class="nav-link" href="{{ route('profile') }}">
+                <i class="fas fa-user-cog"></i>
+                <span>{{ __('Movel') }}</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Iklan Travel  -->
+        <li class="nav-item {{ Nav::isRoute('profile') }}">
+            <a class="nav-link" href="{{ route('profile') }}">
+                <i class="fas fa-user-cog"></i>
+                <span>{{ __('Travel Haji & Umrah') }}</span>
             </a>
         </li>
 
@@ -394,6 +420,18 @@
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
         });
     });
+</script>
+
+<script>
+    // Menghilangkan pesan flash setelah 5 detik
+    setTimeout(function() {
+        $('.alert-success').alert('close');
+    }, 5000);
+
+    // Menghilangkan pesan flash setelah 5 detik
+    setTimeout(function() {
+        $('.alert-danger').alert('close');
+    }, 5000);
 </script>
 
 <script>

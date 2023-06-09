@@ -106,8 +106,16 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#infolain"
+                                role="tab" aria-controls="infolain" aria-selected="false">
+                                <i class="fa fa-star"></i> Info Lain
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#contact1"
-                                role="tab" aria-controls="contact1" aria-selected="false">Umpan Balik</a>
+                                role="tab" aria-controls="contact1" aria-selected="false">
+                                <i class="fa fa-star"></i> Rating
+                            </a>
                         </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
@@ -178,7 +186,7 @@
                                 <tbody cellpadding="20px" cellspacing="10px">
                                     <tr>
                                         <td>Merek - Type - Tahun</td>
-                                        <td class="font-weight-bold">{{ $show_sopir['merek'] }} -
+                                        <td class="font-weight-bold">{{ $show_sopir['merk'] }} -
                                             {{ $show_sopir['type'] }} - {{ $show_sopir['production_year'] }}</td>
                                     </tr>
                                     <tr>
@@ -233,6 +241,10 @@
                             </div> --}}
                         </div>
 
+                        {{-- Info Lain --}}
+                        <div class="tab-pane fade" id="infolain" role="tabpanel" aria-labelledby="infolain-tab">...
+                        </div>
+
                         {{-- Info Data Feedback --}}
                         <div class="tab-pane fade" id="contact1" role="tabpanel" aria-labelledby="contact-tab1">...
                         </div>
@@ -257,10 +269,12 @@
                         <i class="fa-solid fa-car"></i> Data Mobil
                     </a>
                 </li>
-                <li class="nav-item font-weight-bold">
+                {{-- <li class="nav-item font-weight-bold">
                     <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
-                        aria-controls="contact" aria-selected="false">Umpan Balik</a>
-                </li>
+                        aria-controls="contact" aria-selected="false">
+                        <i class="fa fa-star"></i> Rating
+                    </a>
+                </li> --}}
             </ul>
             <div class="tab-content" id="myTabContent">
 
@@ -408,15 +422,15 @@
 
                         <div class="card-body">
 
-                            {{-- <form method="POST" action="{{ route('sopir.update.car', $show_sopir->id) }}" autocomplete="off" enctype="multipart/form-data"> --}}
+                            <form method="POST" action="{{ route('sopir.update.car', $show_sopir->id) }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="_method" value="PUT">
 
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="merek">Merek</label>
-                                        <input type="text" class="form-control" id="merek" name="merek"
-                                            placeholder="{{ __('Toyota') }}" required value="{{ old('merek', $show_sopir['merek']) }}" autofocus>
+                                        <label for="merk">Merek</label>
+                                        <input type="text" class="form-control" id="merk" name="merk"
+                                            placeholder="{{ __('Toyota') }}" required value="{{ old('merk', $show_sopir['merk']) }}" autofocus>
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="type">Type</label>
@@ -486,10 +500,8 @@
                     </div>
                 </div>
 
-                {{-- Untuk Edit Data Feedback Sopir --}}
-                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-
-                </div>
+                {{-- Untuk Edit Data Rating Sopir --}}
+                {{-- <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div> --}}
             </div>
 
         </div>

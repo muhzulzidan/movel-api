@@ -2,14 +2,7 @@
 
 @section('main-content')
     <!-- Page Heading -->
-    <div class="row no-gutters">
-        <div class="col-6">
-            <h1 class="h3 mb-4 text-gray-800">{{ __('Data Sopir') }}</h1>
-        </div>
-        <div class="col-6">
-            <a href="{{ route('sopir.store') }}" class="btn btn-primary float-right"><strong>Registrasi Sopir Baru</strong></a>
-        </div>
-    </div>
+    <h1 class="h3 mb-4 text-gray-800">{{ __('Data Penumpang') }}</h1>
 
     @if (session('success'))
         <div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
@@ -91,10 +84,10 @@
         <!-- Content Column -->
         <div class="col-lg-12 mb-4">
 
-            <!-- Databel Sopir -->
+            <!-- Databel Penumpang -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Tabel Sopir</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Tabel Penumpang</h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -103,45 +96,35 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>No HP</th>
-                                    {{-- <th>Alamat</th> --}}
-                                    <th>Merokok?</th>
+                                    <th>Alamat</th>
+                                    <th>Gender</th>
                                     <th>Usia</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
 
-                                @foreach ($drivers as $sopir)
+                                @foreach ($passengers as $penumpang)
                                     <tr>
                                         <td class="d-flex align-items-center">
                                             <img class="img-profile rounded-circle avatar"
-                                                src="{{ asset(Storage::url($sopir->photo)) }}" alt="">
+                                                src="{{ asset(Storage::url($penumpang->photo)) }}" alt="">
                                             <div class="pl-3 email">
-                                                <span class="font-weight-bold">{{ $sopir->name }}</span>
-                                                <span class="d-block">{{ $sopir->email }}</span>
+                                                <span class="font-weight-bold">{{ $penumpang->name }}</span>
+                                                <span class="d-block">{{ $penumpang->email }}</span>
                                             </div>
                                         </td>
-                                        <td>{{ $sopir->no_hp }}</td>
-                                        {{-- <td>{{ $sopir->address }}</td> --}}
+                                        <td>{{ $penumpang->no_hp }}</td>
+                                        <td>{{ $penumpang->address }}</td>
+                                        <td class="text-center">{{ $penumpang->gender }}</td>
+                                        <td class="text-center">{{ $penumpang->age_passenger }}</td>
                                         <td class="text-center">
-                                            @if ($sopir->is_smoking == 1)
-                                                <span class="badge badge-pill badge-warning">Merokok</span>
-                                            @elseif ($sopir->is_smoking == 0)
-                                                <span class="badge badge-pill badge-success">Tidak Merokok</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">{{ $sopir->driver_age }}</td>
-                                        <td class="text-center">
-
-                                            <a href="" class="btn btn-primary">
-                                                <i class="fas fa-plus-circle"></i> {{ __('Top Up') }}
-                                            </a>
-
-                                            <a href="{{ route('sopir.show', $sopir->id) }}" class="btn btn-info">
+                                            {{-- <a href="{{ route('penumpang.show', $penumpang->id) }}" class="btn btn-info">
                                                 <i class="fas fa-info-circle"></i> {{ __('Info') }}
-                                            </a>
+                                            </a> --}}
 
-                                            <a class="btn btn-danger" id="{{ $sopir->id }}" href="#" data-toggle="modal" data-target="#deleteModal">
+                                            <a class="btn btn-danger" id="{{ $penumpang->id }}" href="#"
+                                                data-toggle="modal" data-target="#deleteModal">
                                                 <i class="fas fa-trash"></i> {{ __('Delete') }}
                                             </a>
                                         </td>
@@ -159,7 +142,8 @@
     </div>
 
     <!-- Delete Modal-->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -171,14 +155,13 @@
                 <div class="modal-body">Are you sure you want to delete this data?</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <form action="{{ route('sopir.destroy', $sopir->id) }}" method="POST">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-danger">Delete</button>
+                    {{-- <form action="{{ route('sopir.destroy', $sopir->id) }}" method="POST"> --}}
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
-                  </div>
+                </div>
             </div>
         </div>
     </div>
 @endsection
-

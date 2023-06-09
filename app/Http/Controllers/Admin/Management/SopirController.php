@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+use App\Models\Car;
 use App\Models\Driver;
 use App\Models\User;
-use App\Models\Car;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 class SopirController extends Controller
 {
@@ -42,7 +41,7 @@ class SopirController extends Controller
             'foto_ktp' => ['required', 'image', 'max:2048'],
             'foto_sim' => ['required', 'image', 'max:2048'],
             'foto_stnk' => ['required', 'image', 'max:2048'],
-            'merek' => ['required', 'string', 'max:255'],
+            'merk' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', 'max:255'],
             'jenis' => ['required', 'string', 'max:255'],
             'model' => ['required', 'string', 'max:255'],
@@ -134,7 +133,7 @@ class SopirController extends Controller
 
         // Simpan data Mobil
         $car = Car::create([
-            'merek' => $validatedData['merek'],
+            'merk' => $validatedData['merk'],
             'type' => $validatedData['type'],
             'jenis' => $validatedData['jenis'],
             'model' => $validatedData['model'],
@@ -166,7 +165,7 @@ class SopirController extends Controller
             ->select('users.*', 'drivers.*', 'cars.*')
             ->first();
 
-        return view('admin.management.sopir.edit_sopir', compact('show_sopir'));
+        return view('admin.management.sopir.detail_sopir', compact('show_sopir'));
     }
 
     public function update_driver(Request $request, $id)
@@ -272,10 +271,33 @@ class SopirController extends Controller
 
             $driver->save();
 
-            return redirect()->route('sopir.update.driver', $driver->id)->with('success', 'Data pengemudi berhasil diperbarui.');
+            return redirect()->route('sopir.show', $driver->id)->with('success', 'Data pengemudi berhasil diperbarui.');
         }
 
-        return redirect()->route('sopir.update.driver', $driver->id)->with('error', 'Data pengemudi tidak ditemukan.');
+        return redirect()->route('sopir.show', $driver->id)->with('error', 'Data pengemudi tidak ditemukan.');
+    }
+
+    public function update_car(Request $request, $id)
+    {
+        // Validasi data yang diterima untuk tabel cars
+        $validatedData = $request->validate([
+            'merk' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'max:255'],
+            'jenis' => ['required', 'string', 'max:255'],
+            'model' => ['required', 'string', 'max:255'],
+            'production_year' => ['required'],
+            'isi_silinder' => ['required'],
+            'license_plate_number' => ['required', 'string', 'max:255'],
+            'machine_number' => ['required'],
+            'seating_capacity' => ['required'],
+        ]);
+
+        // Update data pada tabel cars berdasarkan ID
+        $car = Car::findOrFail($id);
+        $car->update($validatedData);
+
+        // Redirect atau melakukan tindakan lainnya
+        return redirect()->route('sopir.show', $car->driver_id)->with('success', 'Data Mobil berhasil diperbarui');
     }
 
     public function destroy($id)

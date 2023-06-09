@@ -13,7 +13,7 @@ class Car extends Model
     use HasFactory;
 
     protected $fillable = [
-        'merek',
+        'merk',
         'type',
         'jenis',
         'model',
