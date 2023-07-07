@@ -31,6 +31,7 @@ Route::get('/email-verify', function () {
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Management\SopirController;
 use App\Http\Controllers\Admin\Management\PenumpangController;
+use App\Http\Controllers\Admin\Management\OrderController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\ProfileController;
 
@@ -49,13 +50,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sopir', [SopirController::class, 'index'])->name('sopir');
     Route::get('/sopir/add', [SopirController::class, 'store_view']);
     Route::post('/sopir/add', [SopirController::class, 'store'])->name('sopir.store');
-    Route::get('/sopir/show/{id}', [SopirController::class, 'update_view'])->name('sopir.show');
+    Route::get('/sopir/show/{id}', [SopirController::class, 'show_view'])->name('sopir.show');
+    Route::get('/sopir/edit/{id}', [SopirController::class, 'update_view'])->name('sopir.edit');
+    Route::put('/sopir/topup/{id}', [SopirController::class, 'topup'])->name('sopir.topup');
+    Route::put('/sopir/ubah_saldo/{id}', [SopirController::class, 'changeSaldo'])->name('sopir.ubah_saldo');
     Route::put('/sopir/edit_driver/{id}', [SopirController::class, 'update_driver'])->name('sopir.update.driver');
     Route::put('/sopir/edit_car/{id}', [SopirController::class, 'update_car'])->name('sopir.update.car');
     Route::delete('/sopir/delete/{id}', [SopirController::class, 'destroy'])->name('sopir.destroy');
 
     // Route Data Penumpang
     Route::get('/penumpang', [PenumpangController::class, 'index'])->name('penumpang');
+
+    // Route Riwayat Pesanan
+    Route::get('/pesanan', [OrderController::class, 'index'])->name('order');
+
 
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');

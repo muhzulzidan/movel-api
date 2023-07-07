@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin\Management;
 
 use App\Http\Controllers\Controller;
+use App\Models\Balance;
 use App\Models\Car;
 use App\Models\Driver;
+use App\Models\DriverDeparture;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,10 +17,32 @@ class SopirController extends Controller
 {
     public function index()
     {
+        // $drivers = User::join('drivers', 'users.id', '=', 'drivers.user_id')
+        //     ->select('users.*', 'drivers.*')
+        //     ->get();
+
         $drivers = User::join('drivers', 'users.id', '=', 'drivers.user_id')
-            ->select('users.*', 'drivers.*')
+            ->join('cars', 'drivers.id', '=', 'cars.driver_id')
+            ->join('driver_departures', 'drivers.id', '=', 'driver_departures.driver_id')
+            ->leftJoin('balance', 'drivers.id', '=', 'balance.driver_id')
+            ->select('drivers.id as sopir_id', 'users.*', 'drivers.*', 'cars.*', 'balance.*', 'driver_departures.*')
             ->get();
-        return view('admin.management.sopir.sopir', ['drivers' => $drivers]);
+
+        $driver_aktif = DriverDeparture::where('is_active', 1)->count();
+        $driver_nonaktif = DriverDeparture::where('is_active', 0)->count();
+
+        return view('admin.management.sopir.sopir', compact('drivers', 'driver_aktif', 'driver_nonaktif'));
+    }
+
+    public function show_view($id)
+    {
+        $show_sopir = User::join('drivers', 'users.id', '=', 'drivers.user_id')
+            ->join('cars', 'drivers.id', '=', 'cars.driver_id')
+            ->where('drivers.id', $id)
+            ->select('users.*', 'drivers.*', 'cars.*')
+            ->first();
+
+        return view('admin.management.sopir.detail_sopir', compact('show_sopir'));
     }
 
     public function store_view()
@@ -165,7 +190,7 @@ class SopirController extends Controller
             ->select('users.*', 'drivers.*', 'cars.*')
             ->first();
 
-        return view('admin.management.sopir.detail_sopir', compact('show_sopir'));
+        return view('admin.management.sopir.edit_sopir', compact('show_sopir'));
     }
 
     public function update_driver(Request $request, $id)
@@ -271,10 +296,10 @@ class SopirController extends Controller
 
             $driver->save();
 
-            return redirect()->route('sopir.show', $driver->id)->with('success', 'Data pengemudi berhasil diperbarui.');
+            return redirect()->route('sopir.edit', $driver->id)->with('success', 'Data pengemudi berhasil diperbarui.');
         }
 
-        return redirect()->route('sopir.show', $driver->id)->with('error', 'Data pengemudi tidak ditemukan.');
+        return redirect()->route('sopir.edit', $driver->id)->with('error', 'Data pengemudi tidak ditemukan.');
     }
 
     public function update_car(Request $request, $id)
@@ -297,11 +322,57 @@ class SopirController extends Controller
         $car->update($validatedData);
 
         // Redirect atau melakukan tindakan lainnya
-        return redirect()->route('sopir.show', $car->driver_id)->with('success', 'Data Mobil berhasil diperbarui');
+        return redirect()->route('sopir.edit', $car->driver_id)->with('success', 'Data Mobil berhasil diperbarui');
+    }
+
+    public function topup(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'saldo' => ['required'],
+        ]);
+
+        $balance = Balance::where('driver_id', $id)->first();
+
+        if ($balance) {
+
+            // Jika data sudah ada, update saldo
+            $balance->driver_id = $id;
+            $balance->saldo += $validatedData['saldo'];
+
+            $balance->save();
+        } else {
+            // Jika data belum ada, buat data baru
+            $balance = Balance::create([
+                'driver_id' => $id,
+                'saldo' => $validatedData['saldo'],
+            ]);
+        }
+
+        return redirect()->route('sopir', $id)->with('success', 'TopUp berhasil');
+    }
+
+    public function changeSaldo(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'saldo' => ['required'],
+        ]);
+
+        $balance = Balance::where('driver_id', $id)->first();
+
+        // Jika data sudah ada, update saldo
+        $balance->driver_id = $id;
+        $balance->saldo = $validatedData['saldo'];
+
+        $balance->save();
+
+        return redirect()->route('sopir', $id)->with('success', 'TopUp berhasil');
     }
 
     public function destroy($id)
     {
+        // Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
         // Ambil data pengemudi berdasarkan ID
         $driver = Driver::findOrFail($id);
 
@@ -313,14 +384,34 @@ class SopirController extends Controller
             $driver->foto_stnk,
         ]);
 
-        // Hapus data pengemudi
-        $driver->delete();
-
         // Hapus data pengguna terkait jika tidak ada pengemudi lain yang terhubung dengannya
         $user = User::find($driver->user_id);
         if ($user && $user->drivers()->where('id', '!=', $driver->id)->count() === 0) {
             $user->delete();
         }
+
+        // Hapus data saldo terkait
+        $balance = Balance::where('driver_id', $id)->first();
+        if ($balance) {
+            $balance->delete();
+        }
+
+        // Hapus data mobil terkait
+        $car = Car::where('driver_id', $id)->first();
+        if ($car) {
+            // Hapus data label_seat_cars terkait
+            $car->labelSeats()->delete();
+
+            // Hapus data mobil
+            $car->delete();
+        }
+
+        // Hapus data pengemudi
+        $driver->delete();
+
+        // Enable foreign key checks again
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
         return redirect()->route('sopir')->with('success', 'Sopir berhasil di-HAPUS');
     }
 }

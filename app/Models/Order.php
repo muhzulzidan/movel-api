@@ -17,6 +17,7 @@ class Order extends Model
         'driver_departure_id',
         'status_order_id',
         'price_order',
+        'is_rating',
     ];
 
     public function user(): BelongsTo

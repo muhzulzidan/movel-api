@@ -2,7 +2,7 @@
 
 @section('main-content')
     <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">{{ __('Data Penumpang') }}</h1>
+    <h1 class="h3 mb-4 text-gray-800">{{ __('Riwayat Pesanan') }}</h1>
 
     @if (session('success'))
         <div class="alert alert-success border-left-success alert-dismissible fade show" role="alert">
@@ -27,7 +27,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase">Sopir Online</div>
+                            <div class="text-xs font-weight-bold text-success text-uppercase">Pesanan Sukses</div>
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
@@ -46,7 +46,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase">Sopir Berangkat</div>
+                            <div class="text-xs font-weight-bold text-info text-uppercase">Sedang Berlangsung</div>
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
@@ -65,7 +65,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase">Sopir Offline</div>
+                            <div class="text-xs font-weight-bold text-danger text-uppercase">Pesanan Gagal</div>
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
@@ -84,15 +84,15 @@
         <!-- Content Column -->
         <div class="col-lg-12 mb-4">
 
-            <!-- Databel Penumpang -->
+            <!-- Databel order -->
             <div class="card shadow mb-4">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>No HP</th>
+                                    <th>Nama Penumpang</th>
+                                    <th>Nama Sopir</th>
                                     <th>Alamat</th>
                                     <th>Gender</th>
                                     <th>Usia</th>
@@ -101,26 +101,32 @@
                             </thead>
                             <tbody>
 
-                                @foreach ($passengers as $penumpang)
+                                @foreach ($orders as $order)
                                     <tr>
                                         <td class="d-flex align-items-center">
                                             <img class="img-profile rounded-circle avatar"
-                                                src="{{ asset(Storage::url($penumpang->photo)) }}" alt="">
+                                                src="{{ asset(Storage::url($order->photo)) }}" alt="">
                                             <div class="pl-3 email">
-                                                <span class="font-weight-bold">{{ $penumpang->name }}</span>
-                                                <span class="d-block">{{ $penumpang->email }}</span>
+                                                <span class="font-weight-bold">{{ $order->name }}</span>
+                                                <span class="d-block">{{ $order->email }}</span>
                                             </div>
                                         </td>
-                                        <td>{{ $penumpang->no_hp }}</td>
-                                        <td>{{ $penumpang->address }}</td>
-                                        <td class="text-center">{{ $penumpang->gender }}</td>
-                                        <td class="text-center">{{ $penumpang->age_passenger }}</td>
+                                        <td>
+                                            @if ($order->driver_departure_id && $order->driverDeparture)
+                                                {{ $order->driverDeparture_id->driver_id }}</p>
+                                            @endif
+                                        </td>
+                                        <td>{{ $order->kota_asal_id }}</td>
+                                        <td class="text-center">{{ $order->kota_tujuan_id }}</td>
+                                        <td class="text-center">{{ $order->status_name }}</td>
+                                        <td class="text-center">{{ $order->price_order }}</td>
+                                        <td class="text-center">{{ $order->is_rating }}</td>
                                         <td class="text-center">
-                                            {{-- <a href="{{ route('penumpang.show', $penumpang->id) }}" class="btn btn-info">
+                                            {{-- <a href="{{ route('order.show', $order->id) }}" class="btn btn-info">
                                                 <i class="fas fa-info-circle"></i> {{ __('Info') }}
                                             </a> --}}
 
-                                            <a class="btn btn-danger" id="{{ $penumpang->id }}" href="#"
+                                            <a class="btn btn-danger" id="{{ $order->id }}" href="#"
                                                 data-toggle="modal" data-target="#deleteModal">
                                                 <i class="fas fa-trash"></i> {{ __('Delete') }}
                                             </a>

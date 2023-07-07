@@ -7,7 +7,8 @@
             <h1 class="h3 mb-4 text-gray-800">{{ __('Data Sopir') }}</h1>
         </div>
         <div class="col-6">
-            <a href="{{ route('sopir.store') }}" class="btn btn-primary float-right"><strong>Registrasi Sopir Baru</strong></a>
+            <a href="{{ route('sopir.store') }}" class="btn btn-primary float-right"><strong>Registrasi Sopir
+                    Baru</strong></a>
         </div>
     </div>
 
@@ -34,11 +35,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase">Sopir Online</div>
+                            <div class="text-xs font-weight-bold text-success text-uppercase">Sopir Aktif</div>
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
-                                20
+                                {{ $driver_aktif }}
                                 <i class="fas fa-users ml-1 text-gray-500"></i>
                             </div>
                         </div>
@@ -72,11 +73,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase">Sopir Offline</div>
+                            <div class="text-xs font-weight-bold text-danger text-uppercase">Sopir Nonaktif</div>
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
-                                20
+                                {{ $driver_nonaktif }}
                                 <i class="fas fa-users ml-1 text-gray-500"></i>
                             </div>
                         </div>
@@ -93,19 +94,16 @@
 
             <!-- Databel Sopir -->
             <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Tabel Sopir</h6>
-                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>No HP</th>
+                                    <th>Mobil</th>
                                     {{-- <th>Alamat</th> --}}
-                                    <th>Merokok?</th>
-                                    <th>Usia</th>
+                                    <th>Status</th>
+                                    <th>Top Up Saldo</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -121,27 +119,66 @@
                                                 <span class="d-block">{{ $sopir->email }}</span>
                                             </div>
                                         </td>
-                                        <td>{{ $sopir->no_hp }}</td>
-                                        {{-- <td>{{ $sopir->address }}</td> --}}
-                                        <td class="text-center">
-                                            @if ($sopir->is_smoking == 1)
-                                                <span class="badge badge-pill badge-warning">Merokok</span>
-                                            @elseif ($sopir->is_smoking == 0)
-                                                <span class="badge badge-pill badge-success">Tidak Merokok</span>
-                                            @endif
+
+                                        <td class="">
+                                            <span class="font-weight-bold">{{ $sopir->merk }} - {{ $sopir->type }}</span>
+                                            <span class="d-block">{{ $sopir->license_plate_number }}</span>
                                         </td>
-                                        <td class="text-center">{{ $sopir->driver_age }}</td>
+
+                                        {{-- <td>{{ $sopir->no_hp }}</td> --}}
+                                        {{-- <td>{{ $sopir->address }}</td> --}}
+                                        @if ($sopir->is_active == 1)
+                                            <td class="text-center"><span class="badge badge-success">Aktif</span></td>
+                                        @else
+                                            <td class="text-center"><span class="badge badge-danger">Nonaktif</span></td>
+                                        @endif
+
+
+                                        <td class="text-center">
+                                            <div class="btn-toolbar justify-content-center">
+                                                <div class="input-group mr-2">
+                                                    <input type="text" class="form-control"
+                                                        placeholder="{{ 'Rp ' . number_format($sopir->saldo, 0, ',', '.') }}"
+                                                        readonly>
+                                                </div>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    <button type="button" class="btn btn-info" id="{{ $sopir->sopir_id }}"
+                                                        data-toggle="modal"
+                                                        data-target="#topupModal-{{ $sopir->sopir_id }}"
+                                                        data-toggle="tooltip" data-placement="top" title="Top Up Saldo">
+                                                        <i class="fa-solid fa-wallet"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-warning"
+                                                        id="{{ $sopir->sopir_id }}" data-toggle="modal"
+                                                        data-target="#changeSaldoModal-{{ $sopir->sopir_id }}"
+                                                        data-toggle="tooltip" data-placement="top" title="Change Saldo">
+                                                        <i class="fa-solid fa-money-bill-transfer"></i>
+                                                    </button>
+                                                    {{-- <button type="button" class="btn btn-secondary"
+                                                        id="{{ $sopir->sopir_id }}" data-toggle="modal"
+                                                        data-target="#topupModal-{{ $sopir->sopir_id }}"
+                                                        data-toggle="tooltip" data-placement="top" title="Reset Saldo">
+                                                        <i class="fa-solid fa-eraser"></i>
+                                                    </button> --}}
+                                                </div>
+                                            </div>
+                                        </td>
+
                                         <td class="text-center">
 
-                                            <a href="" class="btn btn-primary">
-                                                <i class="fas fa-plus-circle"></i> {{ __('Top Up') }}
+                                            <a href="{{ route('sopir.show', $sopir->sopir_id) }}" class="btn btn-info">
+                                                <i class="fa-solid fa-comments"></i>
+                                            </a>
+                                            <a href="{{ route('sopir.show', $sopir->sopir_id) }}" class="btn btn-success">
+                                                <i class="fas fa-info-circle"></i> {{ __('Detail') }}
+                                            </a>
+                                            <a href="{{ route('sopir.edit', $sopir->sopir_id) }}"
+                                                class="btn btn-primary">
+                                                <i class="fas fa-edit"></i> {{ __('Edit') }}
                                             </a>
 
-                                            <a href="{{ route('sopir.show', $sopir->id) }}" class="btn btn-info">
-                                                <i class="fas fa-info-circle"></i> {{ __('Info') }}
-                                            </a>
-
-                                            <a class="btn btn-danger" id="{{ $sopir->id }}" href="#" data-toggle="modal" data-target="#deleteModal">
+                                            <a class="btn btn-danger" id="{{ $sopir->sopir_id }}" href="#"
+                                                data-toggle="modal" data-target="#deleteModal-{{ $sopir->sopir_id }}">
                                                 <i class="fas fa-trash"></i> {{ __('Delete') }}
                                             </a>
                                         </td>
@@ -158,27 +195,130 @@
 
     </div>
 
-    <!-- Delete Modal-->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Sure to Delete?') }}</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Are you sure you want to delete this data?</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <form action="{{ route('sopir.destroy', $sopir->id) }}" method="POST">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-danger">Delete</button>
+    <!-- TopUp Saldo Modal-->
+    @foreach ($drivers as $sopir)
+        <div class="modal fade" id="changeSaldoModal-{{ $sopir->sopir_id }}" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel-{{ $sopir->sopir_id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel-{{ $sopir->sopir_id }}">
+                            <h5>Ubah saldo Sopir <strong>{{ $sopir->name }}, ID: {{ $sopir->sopir_id }}</strong></h5>
+                        </h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('sopir.ubah_saldo', $sopir->sopir_id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="_method" value="PUT">
+                        <div class="modal-body">
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" name="saldo">
+                                    <option selected>Choose...</option>
+                                    <option value="5000">5.000</option>
+                                    <option value="10000">10.000</option>
+                                    <option value="20000">20.000</option>
+                                    <option value="30000">30.000</option>
+                                    <option value="40000">40.000</option>
+                                    <option value="50000">50.000</option>
+                                    <option value="100000">100.000</option>
+                                    <option value="150000">150.000</option>
+                                    <option value="200000">200.000</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">TopUp</button>
+                        </div>
                     </form>
-                  </div>
+                </div>
             </div>
         </div>
-    </div>
-@endsection
+    @endforeach
 
+    <!-- Change Saldo Modal-->
+    @foreach ($drivers as $sopir)
+        <div class="modal fade" id="topupModal-{{ $sopir->sopir_id }}" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel-{{ $sopir->sopir_id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel-{{ $sopir->sopir_id }}">
+                            <h5>TopUp saldo Sopir <strong>{{ $sopir->name }}, ID: {{ $sopir->sopir_id }}</strong></h5>
+                        </h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('sopir.topup', $sopir->sopir_id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="_method" value="PUT">
+                        <div class="modal-body">
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" name="saldo">
+                                    <option selected>Choose...</option>
+                                    <option value="5000">5.000</option>
+                                    <option value="10000">10.000</option>
+                                    <option value="20000">20.000</option>
+                                    <option value="30000">30.000</option>
+                                    <option value="40000">40.000</option>
+                                    <option value="50000">50.000</option>
+                                    <option value="100000">100.000</option>
+                                    <option value="150000">150.000</option>
+                                    <option value="200000">200.000</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">TopUp</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+
+    <!-- Delete Modal-->
+    @foreach ($drivers as $sopir)
+        <div class="modal fade" id="deleteModal-{{ $sopir->sopir_id }}" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel-{{ $sopir->sopir_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel-{{ $sopir->sopir_id }}">
+                            {{ __('Sure to Delete?') }}</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Apakah kamu ingin menghapus data <strong>{{ $sopir->name }} ID
+                            {{ $sopir->sopir_id }}</strong>!</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <form action="{{ route('sopir.destroy', $sopir->sopir_id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+@endsection

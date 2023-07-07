@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Car;
+use App\Models\Balance;
 use App\Models\DriverDeparture;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -55,6 +56,11 @@ class Driver extends Model
     public function car(): HasOne
     {
         return $this->hasOne(Car::class, 'driver_id', 'id');
+    }
+
+    public function Balance(): HasOne
+    {
+        return $this->hasOne(Balance::class, 'driver_id', 'id');
     }
 
     protected function photo(): Attribute
