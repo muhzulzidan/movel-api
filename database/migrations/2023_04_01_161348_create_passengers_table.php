@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('passengers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->unique();
-            $table->string('photo')->nullable();
+            $table->string('photo')->default('public/photo/default.png');;
             $table->text('address')->nullable();
             $table->string('gender')->nullable();
             $table->timestamps();

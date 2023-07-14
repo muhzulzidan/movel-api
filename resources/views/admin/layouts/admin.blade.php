@@ -82,13 +82,13 @@
                 </a>
             </li>
 
-            <!-- Nav Item - Data Kabupaten Kota -->
+            {{-- <!-- Nav Item - Data Kabupaten Kota -->
             <li class="nav-item {{ Nav::isRoute('profile') }}">
                 <a class="nav-link" href="{{ route('profile') }}">
                     <i class="fa-solid fa-tree-city"></i>
                     <span>{{ __('Kabupaten/Kota') }}</span>
                 </a>
-            </li>
+            </li> --}}
 
 
             <!-- Divider -->

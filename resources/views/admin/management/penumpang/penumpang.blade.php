@@ -117,11 +117,14 @@
                                         <td class="text-center">{{ $penumpang->age_passenger }}</td>
                                         <td class="text-center">
                                             {{-- <a href="{{ route('penumpang.show', $penumpang->id) }}" class="btn btn-info">
-                                                <i class="fas fa-info-circle"></i> {{ __('Info') }}
+                                                <i class="fas fa-info-circle"></i> {{ __('Detail') }}
                                             </a> --}}
-
+                                            <a href="{{ route('penumpang.edit', $penumpang->id) }}"
+                                                class="btn btn-primary">
+                                                <i class="fas fa-edit"></i> {{ __('Edit') }}
+                                            </a>
                                             <a class="btn btn-danger" id="{{ $penumpang->id }}" href="#"
-                                                data-toggle="modal" data-target="#deleteModal">
+                                                data-toggle="modal" data-target="#deleteModal-{{ $penumpang->id }}">
                                                 <i class="fas fa-trash"></i> {{ __('Delete') }}
                                             </a>
                                         </td>
@@ -139,20 +142,19 @@
     </div>
 
     <!-- Delete Modal-->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="deleteModal-{{ $penumpang->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel-{{ $penumpang->id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Sure to Delete?') }}</h5>
+                    <h5 class="modal-title" id="exampleModalLabel-{{ $penumpang->id }}">{{ __('Sure to Delete?') }}</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Are you sure you want to delete this data?</div>
+                <div class="modal-body">Are you sure you want to delete this data? {{ $penumpang->name }} ID: {{ $penumpang->id }}</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    {{-- <form action="{{ route('sopir.destroy', $sopir->id) }}" method="POST"> --}}
+                    <form action="{{ route('penumpang.destroy', $penumpang->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Delete</button>

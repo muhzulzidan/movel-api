@@ -60,6 +60,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Route Data Penumpang
     Route::get('/penumpang', [PenumpangController::class, 'index'])->name('penumpang');
+    Route::get('/penumpang/show/{id}', [PenumpangController::class, 'show_view'])->name('penumpang.show');
+    Route::get('/penumpang/edit/{id}', [PenumpangController::class, 'update_view'])->name('penumpang.edit');
+    Route::put('/penumpang/edit_passenger/{id}', [PenumpangController::class, 'update'])->name('penumpang.update');
+    Route::delete('/penumpang/delete/{id}', [PenumpangController::class, 'destroy'])->name('penumpang.destroy');
 
     // Route Riwayat Pesanan
     Route::get('/pesanan', [OrderController::class, 'index'])->name('order');
