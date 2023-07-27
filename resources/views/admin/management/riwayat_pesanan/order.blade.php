@@ -195,16 +195,7 @@
                                         <td class="text-center">
                                             {{ 'Rp ' . number_format($order->price_order, 0, ',', '.') }}</td>
                                         <td class="text-center">{{ $order->is_rating }}</td>
-                                        <td class="text-center">
-                                            {{-- <a href="{{ route('order.show', $order->id) }}" class="btn btn-info">
-                                                <i class="fas fa-info-circle"></i> {{ __('Info') }}
-                                            </a> --}}
 
-                                            {{-- <a class="btn btn-danger" id="{{ $order->id }}" href="#"
-                                                data-toggle="modal" data-target="#deleteModal">
-                                                <i class="fas fa-trash"></i> {{ __('Delete') }}
-                                            </a> --}}
-                                        </td>
                                     </tr>
                                 @endforeach
 

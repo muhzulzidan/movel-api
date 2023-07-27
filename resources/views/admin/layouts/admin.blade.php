@@ -29,7 +29,7 @@
     <link href="{{ asset('vendor/lightbox2/css/lightbox.min.css') }}" rel="stylesheet">
 
     <!-- Favicon -->
-    <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
+    <link href="{{ asset('img/favicon.svg') }}" rel="icon" type="image/png">
 </head>
 
 <body id="page-top">
@@ -40,11 +40,9 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">MOVEL</div>
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('home') }}">
+                <img src="{{ asset('img/favicon.svg') }}" class="img-profile" alt="" srcset="">
+                <div class="sidebar-brand-text mx-3 my-auto h4 text-align-center font-weight-bolder" style="color:#FFD12E;">MOVEL</div>
             </a>
 
             <!-- Divider -->
@@ -115,46 +113,6 @@
                 </a>
             </li> --}}
 
-
-            {{-- <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                {{ __('Management Iklan') }}
-            </div>
-
-            <!-- Nav Item - Diskon -->
-            <li class="nav-item {{ Nav::isRoute('profile') }}">
-                <a class="nav-link" href="{{ route('profile') }}">
-                    <i class="fas fa-user-cog"></i>
-                    <span>{{ __('Diskon') }}</span>
-                </a>
-            </li>
-
-            <!-- Nav Item - Iklan Movel -->
-            <li class="nav-item {{ Nav::isRoute('profile') }}">
-                <a class="nav-link" href="{{ route('profile') }}">
-                    <i class="fas fa-user-cog"></i>
-                    <span>{{ __('Movel') }}</span>
-                </a>
-            </li>
-
-            <!-- Nav Item - Iklan Travel  -->
-            <li class="nav-item {{ Nav::isRoute('profile') }}">
-                <a class="nav-link" href="{{ route('profile') }}">
-                    <i class="fas fa-user-cog"></i>
-                    <span>{{ __('Travel Haji & Umrah') }}</span>
-                </a>
-            </li> --}}
-
-            <!-- Nav Item - About -->
-            {{-- <li class="nav-item {{ Nav::isRoute('about') }}">
-            <a class="nav-link" href="{{ route('about') }}">
-                <i class="fas fa-fw fa-hands-helping"></i>
-                <span>{{ __('About') }}</span>
-            </a>
-        </li> --}}
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -449,8 +407,9 @@
         $(document).ready(function() {
             $('#dataTable').DataTable({
                 "lengthMenu": [
-                    [5, 10, 25, 50, -1],
-                    [5, 10, 25, 50, "All"]
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"],
+                    // pageLength: 10,
                 ]
             });
         });

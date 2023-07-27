@@ -7,6 +7,7 @@ use App\Models\Balance;
 use App\Models\Car;
 use App\Models\Driver;
 use App\Models\DriverDeparture;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -41,7 +42,16 @@ class SopirController extends Controller
             ->select('users.*', 'drivers.*', 'cars.*')
             ->first();
 
-        return view('admin.management.sopir.detail_sopir', compact('show_sopir'));
+        $total_penumpang = DB::table('orders')
+            ->whereExists(function ($query) use ($id) {
+                $query->select(DB::raw(1))
+                      ->from('driver_departures')
+                      ->whereColumn('driver_departures.id', '=', 'orders.driver_departure_id')
+                      ->where('driver_departures.driver_id', $id);
+            })
+            ->count();
+
+        return view('admin.management.sopir.detail_sopir', compact('show_sopir', 'total_penumpang'));
     }
 
     public function store_view()

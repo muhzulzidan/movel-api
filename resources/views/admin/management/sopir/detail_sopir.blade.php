@@ -67,7 +67,7 @@
                                 <span class="text-success font-weight-bold ml-2">3.5</span>
                             </div>
                             <div class="col-6">
-                                <span>65 Penumpang</span>
+                                <span>{{ $total_penumpang }} Penumpang</span>
                             </div>
                         </div>
                     </div>
@@ -87,18 +87,6 @@
                                 <i class="fa-solid fa-car"></i> Data Mobil
                             </a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#infolain"
-                                role="tab" aria-controls="infolain" aria-selected="false">
-                                <i class="fa fa-star"></i> Info Lain
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#contact1"
-                                role="tab" aria-controls="contact1" aria-selected="false">
-                                <i class="fa fa-star"></i> Rating
-                            </a>
-                        </li> --}}
                     </ul>
                     <div class="tab-content" id="myTabContent">
 
@@ -191,45 +179,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-
-                            {{-- <div class="row">
-                                <div class="col-4 text-center">
-                                    <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a href="{{ asset(Storage::url($show_sopir['foto_ktp'])) }}"
-                                            data-lightbox="foto_ktp" data-title="{{ $show_sopir['foto_ktp'] }}">
-                                            <img src="{{ asset(Storage::url($show_sopir['foto_ktp'])) }}" class="rounded"
-                                                alt="...">
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a href="{{ asset(Storage::url($show_sopir['foto_sim'])) }}"
-                                            data-lightbox="foto_sim" data-title="{{ $show_sopir['foto_sim'] }}">
-                                            <img src="{{ asset(Storage::url($show_sopir['foto_sim'])) }}" class="rounded"
-                                                alt="...">
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a href="{{ asset(Storage::url($show_sopir['foto_stnk'])) }}"
-                                            data-lightbox="foto_stnk" data-title="{{ $show_sopir['foto_stnk'] }}">
-                                            <img src="{{ asset(Storage::url($show_sopir['foto_stnk'])) }}"
-                                                class="rounded" alt="...">
-                                        </a>
-                                    </div>
-                                </div>
-                            </div> --}}
                         </div>
-
-                        {{-- Info Lain
-                        <div class="tab-pane fade" id="infolain" role="tabpanel" aria-labelledby="infolain-tab">...
-                        </div>
-
-                        Info Data Feedback
-                        <div class="tab-pane fade" id="contact1" role="tabpanel" aria-labelledby="contact-tab1">...
-                        </div> --}}
                     </div>
                 </div>
             </div>

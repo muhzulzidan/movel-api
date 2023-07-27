@@ -24,7 +24,9 @@
             <div class="card o-hidden border-0 shadow-lg my-3">
                 <div class="card-body p-0">
                     <div class="row">
-                        <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                        <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center" style="background: #b78bd2;">
+                            <img src="{{ asset('img/favicon.svg') }}" style="max-width: 100%; width: 60%;" alt="">
+                        </div>
                         <div class="col-lg-6">
                             <div class="p-5">
                                 <div class="text-center">
