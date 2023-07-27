@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
-    use AuthenticatesUsers;
+    // use AuthenticatesUsers;
 
     protected $redirectTo = '/home';
 

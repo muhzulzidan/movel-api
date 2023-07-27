@@ -16,7 +16,7 @@ class PenumpangController extends Controller
             ->where('users.role_id', 2)
             ->select('users.*', 'passengers.*')
             ->get();
-        return view('admin.management.penumpang.penumpang', ['passengers' => $passengers]);
+        return view('admin.management.penumpang.penumpang', compact('passengers'));
     }
 
     public function update_view($id) {
@@ -99,19 +99,19 @@ class PenumpangController extends Controller
     public function destroy($id)
     {
         // Ambil data pengemudi berdasarkan ID
-        $passengers = Passenger::findOrFail($id);
+        $passenger = Passenger::findOrFail($id);
 
         // Hapus file gambar dari storage
         Storage::delete([
-            $passengers->photo,
+            $passenger->photo,
         ]);
 
         // Hapus data pengemudi
-        $passengers->delete();
+        $passenger->delete();
 
         // Hapus data pengguna terkait jika tidak ada pengemudi lain yang terhubung dengannya
-        $user = User::find($passengers->user_id);
-        if ($user && $user->passenger()->where('id', '!=', $passengers->id)->count() === 0) {
+        $user = User::find($passenger->user_id);
+        if ($user && $user->passenger()->where('id', '!=', $passenger->id)->count() === 0) {
             $user->delete();
         }
         return redirect()->route('penumpang')->with('success', 'Penumpang berhasil di-HAPUS');

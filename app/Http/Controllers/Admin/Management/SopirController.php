@@ -17,21 +17,20 @@ class SopirController extends Controller
 {
     public function index()
     {
-        // $drivers = User::join('drivers', 'users.id', '=', 'drivers.user_id')
-        //     ->select('users.*', 'drivers.*')
-        //     ->get();
-
         $drivers = User::join('drivers', 'users.id', '=', 'drivers.user_id')
             ->join('cars', 'drivers.id', '=', 'cars.driver_id')
-            ->join('driver_departures', 'drivers.id', '=', 'driver_departures.driver_id')
+            // ->join('driver_departures', 'drivers.id', '=', 'driver_departures.driver_id')
             ->leftJoin('balance', 'drivers.id', '=', 'balance.driver_id')
-            ->select('drivers.id as sopir_id', 'users.*', 'drivers.*', 'cars.*', 'balance.*', 'driver_departures.*')
+            ->select('drivers.id as sopir_id', 'users.*', 'drivers.*', 'cars.*', 'balance.*')
             ->get();
 
-        $driver_aktif = DriverDeparture::where('is_active', 1)->count();
-        $driver_nonaktif = DriverDeparture::where('is_active', 0)->count();
+        $balances = Balance::all();
+        $allDriver = Driver::count();
 
-        return view('admin.management.sopir.sopir', compact('drivers', 'driver_aktif', 'driver_nonaktif'));
+        $driver_departure = DriverDeparture::all();
+        $driver_aktif = DriverDeparture::where('is_active', 1)->count();
+
+        return view('admin.management.sopir.sopir', compact('drivers', 'allDriver', 'driver_aktif', 'balances', 'driver_departure'));
     }
 
     public function show_view($id)
@@ -57,7 +56,7 @@ class SopirController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'no_hp' => ['required', 'string', 'max:13'],
-            'password' => ['required', 'confirmed', 'min:6'],
+            'password' => ['required', 'confirmed', 'min:8'],
             'photo' => ['required', 'image', 'max:2048'],
             'address' => ['required', 'string', 'max:255'],
             'is_smoking' => ['required'],
@@ -101,6 +100,7 @@ class SopirController extends Controller
                 'status' => 'failed',
             ], 409);
         }
+
 
         // Simpan data user
         $user = User::create([
@@ -168,6 +168,12 @@ class SopirController extends Controller
             'machine_number' => $validatedData['machine_number'],
             'seating_capacity' => $validatedData['seating_capacity'],
             'driver_id' => $driver->id,
+        ]);
+
+        // Buat tabel Balance
+        Balance::create([
+            'driver_id' => $driver->id,
+            'saldo' => 0,
         ]);
 
         if (!$car) {

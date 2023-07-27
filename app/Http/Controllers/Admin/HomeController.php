@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -25,10 +26,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $users = User::count();
+        $sopir = User::where('role_id', 3)->count();
+        $penumpang = User::where('role_id', 2)->count();
+        $total_pesanan = Order::count();
 
         $widget = [
-            'users' => $users,
+            'sopir' => $sopir,
+            'penumpang' => $penumpang,
+            'total_pesanan' => $total_pesanan,
             //...
         ];
 

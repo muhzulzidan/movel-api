@@ -108,15 +108,15 @@
             </li>
 
             <!-- Nav Item - Invoice -->
-            <li class="nav-item {{ Nav::isRoute('profile') }}">
+            {{-- <li class="nav-item {{ Nav::isRoute('profile') }}">
                 <a class="nav-link" href="{{ route('profile') }}">
                     <i class="fas fa-user-cog"></i>
                     <span>{{ __('Invoice') }}</span>
                 </a>
-            </li>
+            </li> --}}
 
 
-            <!-- Divider -->
+            {{-- <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Heading -->
@@ -146,7 +146,7 @@
                     <i class="fas fa-user-cog"></i>
                     <span>{{ __('Travel Haji & Umrah') }}</span>
                 </a>
-            </li>
+            </li> --}}
 
             <!-- Nav Item - About -->
             {{-- <li class="nav-item {{ Nav::isRoute('about') }}">
@@ -182,7 +182,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
+                    {{-- <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small"
@@ -193,13 +193,13 @@
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </form> --}}
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
+                        {{-- <li class="nav-item dropdown no-arrow d-sm-none">
                             <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-search fa-fw"></i>
@@ -220,10 +220,10 @@
                                     </div>
                                 </form>
                             </div>
-                        </li>
+                        </li> --}}
 
                         <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
+                        {{-- <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
@@ -273,10 +273,10 @@
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All
                                     Alerts</a>
                             </div>
-                        </li>
+                        </li> --}}
 
                         <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
+                        {{-- <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-envelope fa-fw"></i>
@@ -340,7 +340,7 @@
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Read More
                                     Messages</a>
                             </div>
-                        </li>
+                        </li> --}}
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -360,17 +360,16 @@
                                     <i class="fas fa-user-cog fa-sm fa-fw mr-2 text-gray-400"></i>
                                     {{ __('Profile') }}
                                 </a>
-                                <a class="dropdown-item" href="javascript:void(0)">
+                                {{-- <a class="dropdown-item" href="javascript:void(0)">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     {{ __('Settings') }}
                                 </a>
                                 <a class="dropdown-item" href="javascript:void(0)">
                                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                                     {{ __('Activity Log') }}
-                                </a>
+                                </a> --}}
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal"
-                                    data-target="#logoutModal">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     {{ __('Logout') }}
                                 </a>
@@ -489,6 +488,20 @@
             });
         });
     </script>
+
+    <script>
+        const currentYear = new Date().getFullYear();
+        const selectElement = document.getElementById('production_year');
+
+        // Generate options for years from current year to 2000 (descending order)
+        for (let year = currentYear; year >= 2000; year--) {
+            const optionElement = document.createElement('option');
+            optionElement.value = year;
+            optionElement.textContent = year;
+            selectElement.appendChild(optionElement);
+        }
+    </script>
+
 
 </body>
 

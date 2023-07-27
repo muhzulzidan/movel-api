@@ -54,23 +54,10 @@
                     <div class="col-9">
                         <h4 class="font-weight-bold">{{ $show_sopir['name'] }}</h4>
                         <div class="row">
-                            <div class="col-6">{{ $show_sopir['email'] }}</div>
-                            <div class="col-6 mr-0">{{ $show_sopir['no_hp'] }}</div>
+                            <div class="col-12">{{ $show_sopir['email'] }}</div>
+                            <div class="col-12">{{ $show_sopir['no_hp'] }}</div>
                         </div>
-                        <div class="mt-1 row">
-                            <div class="col-6">
-                                <i class="fa fa-star text-warning"></i>
-                                <i class="fa fa-star text-warning"></i>
-                                <i class="fa fa-star text-warning"></i>
-                                <i class="fa-solid fa-star-half-stroke text-warning"></i>
-                                <i class="fa-regular fa-star text-warning"></i>
-                                <span class="text-success font-weight-bold ml-2">3.5</span>
-                            </div>
-                            <div class="col-6">
-                                <span>65 Penumpang</span>
-                            </div>
-                        </div>
-                        <div class="mt-2">
+                        {{-- <div class="mt-2">
                             <a class="btn btn-success btn-sm" href="#">
                                 <i class="fas fa-download"></i> {{ __('Unduh Data') }}
                             </a>
@@ -80,7 +67,7 @@
                             <a class="btn btn-warning btn-sm" href="#">
                                 <i class="fa-solid fa-map-location-dot"></i> {{ __('Lacak') }}
                             </a>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -98,18 +85,18 @@
                                 <i class="fa-solid fa-car"></i> Data Mobil
                             </a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#infolain"
                                 role="tab" aria-controls="infolain" aria-selected="false">
                                 <i class="fa fa-star"></i> Info Lain
                             </a>
-                        </li>
-                        <li class="nav-item">
+                        </li> --}}
+                        {{-- <li class="nav-item">
                             <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#contact1"
                                 role="tab" aria-controls="contact1" aria-selected="false">
                                 <i class="fa fa-star"></i> Rating
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                     <div class="tab-content" id="myTabContent">
 
@@ -189,7 +176,7 @@
                                     </tr>
                                     <tr>
                                         <td>Jumlah Kursi</td>
-                                        <td class="font-weight-bold">{{ $show_sopir['seating_capacity'] }}</td>
+                                        <td class="font-weight-bold">{{ $show_sopir['seating_capacity'] }} Kursi</td>
                                     </tr>
                                     <tr>
                                         <td>Nomor Kendaraan</td>
@@ -203,44 +190,15 @@
                                 </tbody>
                             </table>
 
-                            {{-- <div class="row">
-                                <div class="col-4 text-center">
-                                    <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a href="{{ asset(Storage::url($show_sopir['foto_ktp'])) }}"
-                                            data-lightbox="foto_ktp" data-title="{{ $show_sopir['foto_ktp'] }}">
-                                            <img src="{{ asset(Storage::url($show_sopir['foto_ktp'])) }}" class="rounded"
-                                                alt="...">
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a href="{{ asset(Storage::url($show_sopir['foto_sim'])) }}"
-                                            data-lightbox="foto_sim" data-title="{{ $show_sopir['foto_sim'] }}">
-                                            <img src="{{ asset(Storage::url($show_sopir['foto_sim'])) }}" class="rounded"
-                                                alt="...">
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a href="{{ asset(Storage::url($show_sopir['foto_stnk'])) }}"
-                                            data-lightbox="foto_stnk" data-title="{{ $show_sopir['foto_stnk'] }}">
-                                            <img src="{{ asset(Storage::url($show_sopir['foto_stnk'])) }}"
-                                                class="rounded" alt="...">
-                                        </a>
-                                    </div>
-                                </div>
-                            </div> --}}
                         </div>
 
                         {{-- Info Lain --}}
-                        <div class="tab-pane fade" id="infolain" role="tabpanel" aria-labelledby="infolain-tab">...
-                        </div>
+                        {{-- <div class="tab-pane fade" id="infolain" role="tabpanel" aria-labelledby="infolain-tab">...
+                        </div> --}}
 
                         {{-- Info Data Feedback --}}
-                        <div class="tab-pane fade" id="contact1" role="tabpanel" aria-labelledby="contact-tab1">...
-                        </div>
+                        {{-- <div class="tab-pane fade" id="contact1" role="tabpanel" aria-labelledby="contact-tab1">...
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -274,10 +232,6 @@
                 {{-- Untuk Edit Data Diri Sopir --}}
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <div class="card shadow mb-4">
-
-                        <div class="card-header py-3">
-                            <h6 class="heading-small font-weight-bold text-primary m-0">Data Diri Sopir</h6>
-                        </div>
 
                         <div class="card-body">
 
@@ -327,7 +281,7 @@
                                                 value="{{ $show_sopir['photo'] }}">
                                         </div>
                                         <div class="form-group col-md-8">
-                                            <label for="address">Alamat</label>
+                                            <label for="address">Alamat<span class="small text-danger">*</span></label>
                                             <input type="text" class="form-control" id="address" name="address"
                                                 placeholder="{{ __('Alamat') }}"
                                                 value="{{ old('address', $show_sopir['address']) }}" required>
@@ -337,28 +291,32 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-3  mb-2">
                                             <span class="d-block d-flex justify-content-center"
-                                                for="is_smoking">Merokok?</span>
+                                                for="is_smoking">Merokok?<span class="small text-danger">*</span></span>
                                             <div class="d-block d-flex justify-content-center my-2">
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="is_smoking"
-                                                        id="inlineRadio2" value="1">
+                                                    <input class="form-check-input" type="radio" name="is_smoking" id="inlineRadio2" value="1"
+                                                        @if($show_sopir->is_smoking === 1) checked @endif>
                                                     <label class="form-check-label" for="inlineRadio2">Ya</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="is_smoking"
-                                                        id="inlineRadio1" value="0" checked>
+                                                    <input class="form-check-input" type="radio" name="is_smoking" id="inlineRadio1" value="0"
+                                                        @if($show_sopir->is_smoking === 0) checked @endif>
                                                     <label class="form-check-label" for="inlineRadio1">Tidak</label>
                                                 </div>
+
                                             </div>
                                         </div>
-                                        <div class="form-group col-md-3">
-                                            <label for="driver_age">Umur</label>
-                                            <input type="number" class="form-control" id="driver_age" name="driver_age"
-                                                placeholder="{{ __('Umur') }}"
-                                                value="{{ old('driver_age', $show_sopir['driver_age']) }}" required>
+                                        <div class="form-group col-md-2">
+                                            <label for="driver_age">Umur<span class="small text-danger">*</span></label>
+                                            <select class="form-control" id="driver_age" name="driver_age">
+                                                <option value="{{ old('driver_age', $show_sopir['driver_age']) }}">{{ $show_sopir['driver_age'] }}</option>
+                                                @for ($age = 18; $age <= 60; $age++)
+                                                    <option value="{{ $age }}">{{ $age }}</option>
+                                                @endfor
+                                            </select>
                                         </div>
                                         <div class="form-group col-md-6">
-                                            <label for="no_ktp">No KTP</label>
+                                            <label for="no_ktp">No KTP<span class="small text-danger">*</span></label>
                                             <input type="number" class="form-control" id="no_ktp" name="no_ktp"
                                                 placeholder="{{ __('No KTP') }}"
                                                 value="{{ old('no_ktp', $show_sopir['no_ktp']) }}" required>
@@ -409,10 +367,6 @@
                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                     <div class="card shadow mb-4">
 
-                        <div class="card-header py-3">
-                            <h6 class="heading-small font-weight-bold text-primary m-0">Data Mobil Sopir</h6>
-                        </div>
-
                         <div class="card-body">
 
                             <form method="POST" action="{{ route('sopir.update.car', $show_sopir->id) }}" autocomplete="off" enctype="multipart/form-data">
@@ -421,61 +375,70 @@
 
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="merk">Merek</label>
+                                        <label for="merk">Merek<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="merk" name="merk"
                                             placeholder="{{ __('Toyota') }}" required value="{{ old('merk', $show_sopir['merk']) }}" autofocus>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="type">Type</label>
+                                        <label for="type">Type<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="type" name="type"
                                             placeholder="{{ __('Kijang Inova') }}" required value="{{ old('type', $show_sopir['type']) }}" autofocus>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="production_year">Tuhun Produksi</label>
-                                        <input type="number" class="form-control" id="production_year"
-                                            name="production_year" placeholder="{{ __('Tahun Produksi') }}" required value="{{ old('production_year', $show_sopir['production_year']) }}"
-                                            autofocus>
+                                        <label for="production_year">Tahun Produksi<span class="small text-danger">*</span></label>
+                                        <select class="form-control" id="production_year" name="production_year" placeholder="{{ __('Tahun Produksi') }}" autofocus>
+                                            <option value="{{ old('production_year', $show_sopir['production_year']) }}">{{ $show_sopir['production_year'] }}</option>
+                                        </select>
                                     </div>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="jenis">Jenis Kendaraan</label>
+                                        <label for="jenis">Jenis Kendaraan<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="jenis" name="jenis"
                                             placeholder="{{ __('Mobil Penumpang') }}" required value="{{ old('jenis', $show_sopir['jenis']) }}">
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="model">Model</label>
+                                        <label for="model">Model<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="model"name="model"
                                             placeholder="{{ __('Mini Bus') }}" required value="{{ old('model', $show_sopir['model']) }}">
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="seating_capacity">Kapasitas Kursi</label>
-                                        <input type="number" class="form-control" id="seating_capacity"
-                                            name="seating_capacity" placeholder="{{ __('Kapasitas Kursi') }}" required value="{{ old('seating_capacity', $show_sopir['seating_capacity']) }}">
+                                        <label for="seating_capacity">Kapasitas Kursi<span class="small text-danger">*</span></label>
+                                        <select class="form-control" id="seating_capacity" name="seating_capacity">
+                                            <option value="{{ old('seating_capacity', $show_sopir['seating_capacity']) }}">{{ $show_sopir['seating_capacity'] }} Kursi</option>
+                                            <option value="4">4 Kursi</option>
+                                            <option value="7">7 Kursi</option>
+                                        </select>
                                     </div>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="license_plate_number">Nomor Kendaraan</label>
+                                        <label for="license_plate_number">Nomor Kendaraan<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="license_plate_number"
                                             name="license_plate_number" placeholder="{{ __('DD 2023 YR') }}" required value="{{ old('license_plate_number', $show_sopir['license_plate_number']) }}">
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="machine_number">Nomor Mesin</label>
+                                        <label for="machine_number">Nomor Mesin<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control"
                                             id="machine_number"name="machine_number"
                                             placeholder="{{ __('Nomor Mesin') }}" required value="{{ old('machine_number', $show_sopir['machine_number']) }}">
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="isi_silinder">Isi Silinder</label>
-                                        <input type="number" class="form-control" id="isi_silinder" name="isi_silinder"
-                                            placeholder="{{ __('Isi Silinder') }}" required value="{{ old('isi_silinder', $show_sopir['isi_silinder']) }}">
+                                        <label for="isi_silinder">Isi Silinder<span class="small text-danger">*</span></label>
+                                        <select class="form-control" id="isi_silinder" name="isi_silinder" required>
+                                            <option value="{{ old('isi_silinder', $show_sopir['isi_silinder']) }}">{{ $show_sopir['isi_silinder'] }}</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="8">8</option>
+                                        </select>
                                     </div>
                                 </div>
 

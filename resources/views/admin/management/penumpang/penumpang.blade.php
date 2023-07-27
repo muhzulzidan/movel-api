@@ -19,65 +19,6 @@
         </div>
     @endif
 
-    <div class="row">
-
-        <!-- Sopir yang Online -->
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-success shadow">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase">Sopir Online</div>
-                        </div>
-                        <div class="col-auto">
-                            <div class="font-weight-bold text-gray-800">
-                                20
-                                <i class="fas fa-users ml-1 text-gray-500"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sopir yang Berangkat -->
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-info shadow">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase">Sopir Berangkat</div>
-                        </div>
-                        <div class="col-auto">
-                            <div class="font-weight-bold text-gray-800">
-                                10
-                                <i class="fas fa-users ml-1 text-gray-500"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sopir Offline -->
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-danger shadow">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase">Sopir Offline</div>
-                        </div>
-                        <div class="col-auto">
-                            <div class="font-weight-bold text-gray-800">
-                                20
-                                <i class="fas fa-users ml-1 text-gray-500"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="row">
 
@@ -142,6 +83,7 @@
     </div>
 
     <!-- Delete Modal-->
+    @foreach ($passengers as $penumpang)
     <div class="modal fade" id="deleteModal-{{ $penumpang->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel-{{ $penumpang->id }}" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -163,4 +105,6 @@
             </div>
         </div>
     </div>
+    @endforeach
+
 @endsection

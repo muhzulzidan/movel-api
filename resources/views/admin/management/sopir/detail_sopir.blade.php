@@ -70,24 +70,6 @@
                                 <span>65 Penumpang</span>
                             </div>
                         </div>
-                        <div class="mt-2">
-                            <a class="btn btn-success btn-sm" href="#">
-                                <i class="fas fa-download"></i> {{ __('Unduh Data') }}
-                            </a>
-                            <a class="btn btn-info btn-sm" href="#">
-                                <i class="fa-solid fa-unlock-keyhole"></i> {{ __('Reset Sandi') }}
-                            </a>
-                            <a class="btn btn-warning btn-sm" href="#">
-                                <i class="fa-solid fa-map-location-dot"></i> {{ __('Lacak') }}
-                            </a>
-                            <a class="btn btn-secondary btn-sm" href="#">
-                                <i class="fa-solid fa-microphone"></i> {{ __('Sadap') }}
-                            </a>
-                            <a class="btn btn-danger btn-sm mr-0" id="{{ $show_sopir->id }}" href="#"
-                                data-toggle="modal" data-target="#deleteModal">
-                                <i class="fas fa-trash"></i> {{ __('Delete') }}
-                            </a>
-                        </div>
                     </div>
                 </div>
 
@@ -105,7 +87,7 @@
                                 <i class="fa-solid fa-car"></i> Data Mobil
                             </a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#infolain"
                                 role="tab" aria-controls="infolain" aria-selected="false">
                                 <i class="fa fa-star"></i> Info Lain
@@ -116,7 +98,7 @@
                                 role="tab" aria-controls="contact1" aria-selected="false">
                                 <i class="fa fa-star"></i> Rating
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                     <div class="tab-content" id="myTabContent">
 
@@ -241,13 +223,13 @@
                             </div> --}}
                         </div>
 
-                        {{-- Info Lain --}}
+                        {{-- Info Lain
                         <div class="tab-pane fade" id="infolain" role="tabpanel" aria-labelledby="infolain-tab">...
                         </div>
 
-                        {{-- Info Data Feedback --}}
+                        Info Data Feedback
                         <div class="tab-pane fade" id="contact1" role="tabpanel" aria-labelledby="contact-tab1">...
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

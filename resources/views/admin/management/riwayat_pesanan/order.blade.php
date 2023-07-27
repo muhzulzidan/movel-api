@@ -30,8 +30,7 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase">Pesanan Sukses</div>
                         </div>
                         <div class="col-auto">
-                            <div class="font-weight-bold text-gray-800">
-                                20
+                            <div class="font-weight-bold text-gray-800">{{ $orderBerhasil->count }}
                                 <i class="fas fa-users ml-1 text-gray-500"></i>
                             </div>
                         </div>
@@ -50,7 +49,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
-                                10
+                                {{ $orderBerlangsung->count }}
                                 <i class="fas fa-users ml-1 text-gray-500"></i>
                             </div>
                         </div>
@@ -69,7 +68,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
-                                20
+                                {{ $orderGagal->count }}
                                 <i class="fas fa-users ml-1 text-gray-500"></i>
                             </div>
                         </div>
@@ -93,10 +92,12 @@
                                 <tr>
                                     <th>Nama Penumpang</th>
                                     <th>Nama Sopir</th>
-                                    <th>Alamat</th>
-                                    <th>Gender</th>
-                                    <th>Usia</th>
-                                    <th>Action</th>
+                                    <th>Order Date</th>
+                                    <th>Departure Date</th>
+                                    <th>Tujuan</th>
+                                    <th>Status</th>
+                                    <th>Harga</th>
+                                    <th>Rating</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -105,31 +106,104 @@
                                     <tr>
                                         <td class="d-flex align-items-center">
                                             <img class="img-profile rounded-circle avatar"
-                                                src="{{ asset(Storage::url($order->photo)) }}" alt="">
+                                                src="{{ asset(Storage::url($order->passenger_photo)) }}" alt="">
                                             <div class="pl-3 email">
-                                                <span class="font-weight-bold">{{ $order->name }}</span>
-                                                <span class="d-block">{{ $order->email }}</span>
+                                                <span class="font-weight-bold">{{ $order->passenger_name }}</span>
+                                                <span class="d-block">{{ $order->passenger_email }}</span>
                                             </div>
                                         </td>
+
                                         <td>
-                                            @if ($order->driver_departure_id && $order->driverDeparture)
-                                                {{ $order->driverDeparture_id->driver_id }}</p>
-                                            @endif
+                                            <div class="d-flex">
+                                                <img class="img-profile rounded-circle avatar"
+                                                    src="{{ asset(Storage::url($order->driver_photo)) }}" alt="">
+                                                <div class="pl-3 email">
+                                                    <span class="font-weight-bold">
+                                                        @php
+                                                            $driverName = null;
+                                                            if ($order->driver_id) {
+                                                                foreach ($dataDriver as $driver) {
+                                                                    if ($driver->id == $order->driver_id) {
+                                                                        // Mengambil data user (nama) dari tabel users berdasarkan user_id dari tabel drivers
+                                                                        $user = $driver->user;
+                                                                        if ($user) {
+                                                                            $driverName = $user->name;
+                                                                        }
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        @endphp
+                                                        @if ($driverName)
+                                                            {{ $driverName }}
+                                                        @endif
+                                                    </span>
+                                                    <span class="d-block">
+                                                        @php
+                                                            $driverEmail = null;
+                                                            if ($order->driver_id) {
+                                                                foreach ($dataDriver as $driver) {
+                                                                    if ($driver->id == $order->driver_id) {
+                                                                        // Mengambil data user (email) dari tabel users berdasarkan user_id dari tabel drivers
+                                                                        $user = $driver->user;
+                                                                        if ($user) {
+                                                                            $driverEmail = $user->email;
+                                                                        }
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        @endphp
+                                                        @if ($driverEmail)
+                                                            {{ $driverEmail }}
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td>{{ $order->kota_asal_id }}</td>
-                                        <td class="text-center">{{ $order->kota_tujuan_id }}</td>
-                                        <td class="text-center">{{ $order->status_name }}</td>
-                                        <td class="text-center">{{ $order->price_order }}</td>
+
+                                        <td>{{ $order->tgl_pemesanan }}</td>
+                                        <td>{{ $order->date_departure }} - {{ $order->time_departure }}</td>
+
+                                        @php
+                                            $kotaAsal = null;
+                                            if ($order->kota_asal_id) {
+                                                foreach ($kotaAsalData as $kota) {
+                                                    if ($kota->id == $order->kota_asal_id) {
+                                                        $kotaAsal = $kota->nama_kota;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            $kotaTujuan = null;
+                                            if ($order->kota_tujuan_id) {
+                                                foreach ($kotaTujuanData as $kota) {
+                                                    if ($kota->id == $order->kota_tujuan_id) {
+                                                        $kotaTujuan = $kota->nama_kota;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+
+                                        @if ($kotaAsal && $kotaTujuan)
+                                            <td>{{ $kotaAsal }} - {{ $kotaTujuan }}</td>
+                                        @endif
+
+                                        <td>{{ $order->status_name }}</td>
+                                        <td class="text-center">
+                                            {{ 'Rp ' . number_format($order->price_order, 0, ',', '.') }}</td>
                                         <td class="text-center">{{ $order->is_rating }}</td>
                                         <td class="text-center">
                                             {{-- <a href="{{ route('order.show', $order->id) }}" class="btn btn-info">
                                                 <i class="fas fa-info-circle"></i> {{ __('Info') }}
                                             </a> --}}
 
-                                            <a class="btn btn-danger" id="{{ $order->id }}" href="#"
+                                            {{-- <a class="btn btn-danger" id="{{ $order->id }}" href="#"
                                                 data-toggle="modal" data-target="#deleteModal">
                                                 <i class="fas fa-trash"></i> {{ __('Delete') }}
-                                            </a>
+                                            </a> --}}
                                         </td>
                                     </tr>
                                 @endforeach

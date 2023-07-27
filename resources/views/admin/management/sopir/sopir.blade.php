@@ -30,7 +30,7 @@
     <div class="row">
 
         <!-- Sopir yang Online -->
-        <div class="col-xl-4 col-md-4 mb-4">
+        <div class="col-xl-6 col-md-6 mb-4">
             <div class="card border-left-success shadow">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -48,27 +48,8 @@
             </div>
         </div>
 
-        <!-- Sopir yang Berangkat -->
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-info shadow">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase">Sopir Berangkat</div>
-                        </div>
-                        <div class="col-auto">
-                            <div class="font-weight-bold text-gray-800">
-                                10
-                                <i class="fas fa-users ml-1 text-gray-500"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Sopir Offline -->
-        <div class="col-xl-4 col-md-4 mb-4">
+        <div class="col-xl-6 col-md-6 mb-4">
             <div class="card border-left-danger shadow">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -77,7 +58,7 @@
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
-                                {{ $driver_nonaktif }}
+                                {{ $allDriver - $driver_aktif }}
                                 <i class="fas fa-users ml-1 text-gray-500"></i>
                             </div>
                         </div>
@@ -125,9 +106,18 @@
                                             <span class="d-block">{{ $sopir->license_plate_number }}</span>
                                         </td>
 
-                                        {{-- <td>{{ $sopir->no_hp }}</td> --}}
-                                        {{-- <td>{{ $sopir->address }}</td> --}}
-                                        @if ($sopir->is_active == 1)
+                                        @php
+                                            $driverStatus = null;
+                                            foreach ($driver_departure as $status) {
+                                                if ($status->driver_id == $sopir->sopir_id) {
+                                                    $driverStatus = $status->is_active;
+                                                    break;
+                                                }
+                                            }
+                                        @endphp
+
+                                        <!-- Your other table columns here -->
+                                        @if ($driverStatus == 1)
                                             <td class="text-center"><span class="badge badge-success">Aktif</span></td>
                                         @else
                                             <td class="text-center"><span class="badge badge-danger">Nonaktif</span></td>
@@ -166,14 +156,13 @@
 
                                         <td class="text-center">
 
-                                            <a href="{{ route('sopir.show', $sopir->sopir_id) }}" class="btn btn-info">
+                                            {{-- <a href="{{ route('sopir.show', $sopir->sopir_id) }}" class="btn btn-info">
                                                 <i class="fa-solid fa-comments"></i>
-                                            </a>
+                                            </a> --}}
                                             <a href="{{ route('sopir.show', $sopir->sopir_id) }}" class="btn btn-success">
                                                 <i class="fas fa-info-circle"></i> {{ __('Detail') }}
                                             </a>
-                                            <a href="{{ route('sopir.edit', $sopir->sopir_id) }}"
-                                                class="btn btn-primary">
+                                            <a href="{{ route('sopir.edit', $sopir->sopir_id) }}" class="btn btn-primary">
                                                 <i class="fas fa-edit"></i> {{ __('Edit') }}
                                             </a>
 

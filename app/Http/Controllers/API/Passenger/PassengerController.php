@@ -73,30 +73,4 @@ class PassengerController extends Controller
             'message' => 'Data updated successfully',
         ], 200);
     }
-
-    public function destroy($id)
-    {
-        // Disable foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
-
-        // Ambil data pengemudi berdasarkan ID
-        $passenger = Passenger::findOrFail($id);
-
-        // Hapus file gambar dari storage
-        Storage::delete([$passenger->photo]);
-
-        // Hapus data pengguna terkait jika tidak ada pengemudi lain yang terhubung dengannya
-        $user = User::find($passenger->user_id);
-        if ($user && $user->passengers()->where('id', '!=', $passenger->id)->count() === 0) {
-            $user->delete();
-        }
-
-        // Hapus data pengemudi
-        $passenger->delete();
-
-        // Enable foreign key checks again
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
-
-        return redirect()->route('penumpang')->with('success', 'Sopir berhasil di-HAPUS');
-    }
 }

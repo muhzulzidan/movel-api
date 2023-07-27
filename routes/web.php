@@ -34,13 +34,19 @@ use App\Http\Controllers\Admin\Management\PenumpangController;
 use App\Http\Controllers\Admin\Management\OrderController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\ProfileController;
+use Illuminate\Support\Facades\Hash;
 
 
 Route::get('/login', [LoginController::class, 'loginForm']);
 Route::post('/login', [LoginController::class, 'loginVerify'])->name('login');
+Route::get('/hashpassword', function () {
+    $hashedPassword = Hash::make('12345678');
+    return $hashedPassword;
+});
 Route::get('/', function () {
     return view('welcome');
 })->middleware('auth');
+
 
 Route::group(['middleware' => 'auth'], function () {
     // Route yang membutuhkan autentikasi
@@ -68,10 +74,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Route Riwayat Pesanan
     Route::get('/pesanan', [OrderController::class, 'index'])->name('order');
 
-
-
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/updatePassword', [ProfileController::class, 'updatePassword'])->name('profile.update.password');
+
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
