@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('kota_tujuan_id');
             $table->date('date_departure');
             $table->time('time_departure', 0);
+            $table->bigInteger('is_active', 0);
 
             $table->foreign('driver_id')->references('id')->on('drivers');
             $table->foreign('kota_asal_id')->references('id')->on('kota_kabs');

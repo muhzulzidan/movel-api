@@ -45,9 +45,9 @@ class SopirController extends Controller
         $total_penumpang = DB::table('orders')
             ->whereExists(function ($query) use ($id) {
                 $query->select(DB::raw(1))
-                      ->from('driver_departures')
-                      ->whereColumn('driver_departures.id', '=', 'orders.driver_departure_id')
-                      ->where('driver_departures.driver_id', $id);
+                    ->from('driver_departures')
+                    ->whereColumn('driver_departures.id', '=', 'orders.driver_departure_id')
+                    ->where('driver_departures.driver_id', $id);
             })
             ->count();
 
@@ -97,18 +97,13 @@ class SopirController extends Controller
 
         // Cek Email
         if (User::where('email', $validatedData['email'])->first()) {
-            return response([
-                'message' => 'Email already exists',
-                'status' => 'failed',
-            ], 409);
+            return redirect()->back()->withErrors(['error' => 'Email already exists']);
         }
 
+        // dd($no_hp);
         // Cek no HP
         if (User::where('no_hp', $no_hp)->first()) {
-            return response([
-                'message' => 'No HP already exists',
-                'status' => 'failed',
-            ], 409);
+            return redirect()->back()->withErrors(['error' => 'No HP already exists']);
         }
 
 
@@ -123,7 +118,7 @@ class SopirController extends Controller
         ]);
 
         if (!$user) {
-            return redirect()->back()->with('error', 'Failed to create user');
+            return redirect()->back()->withErrors('error', 'Failed to create user');
         }
 
         // Simpan data driver
@@ -142,7 +137,7 @@ class SopirController extends Controller
         $stnkSize = $request->file('foto_stnk')->getSize();
 
         if ($photoSize > 2097152 || $ktpSize > 2097152 || $simSize > 2097152 || $stnkSize > 2097152) {
-            return redirect()->back()->with('error', 'One or more files exceed the maximum file size of 2 MB.');
+            return redirect()->back()->withErrors('error', 'One or more files exceed the maximum file size of 2 MB.');
         }
 
         // Simpan file gambar
@@ -150,6 +145,20 @@ class SopirController extends Controller
         $ktpPath = $request->file('foto_ktp')->store('public/KTP');
         $simPath = $request->file('foto_sim')->store('public/SIM');
         $stnkPath = $request->file('foto_stnk')->store('public/STNK');
+
+        // Save uploaded files to temporary session
+        if ($request->hasFile('photo')) {
+            $request->session()->put('photo', $request->file('photo')->getPathName());
+        }
+        if ($request->hasFile('foto_ktp')) {
+            $request->session()->put('foto_ktp', $request->file('foto_ktp')->getPathName());
+        }
+        if ($request->hasFile('foto_sim')) {
+            $request->session()->put('foto_sim', $request->file('foto_sim')->getPathName());
+        }
+        if ($request->hasFile('foto_stnk')) {
+            $request->session()->put('foto_stnk', $request->file('foto_stnk')->getPathName());
+        }
 
         // Mengupdate path gambar pada driver
         $driver->update([
@@ -163,7 +172,7 @@ class SopirController extends Controller
             // Delete the user that was created
             $user->delete();
 
-            return redirect()->back()->with('error', 'Failed to create driver');
+            return redirect()->back()->withErrors('error', 'Failed to create driver');
         }
 
         // Simpan data Mobil
@@ -190,8 +199,9 @@ class SopirController extends Controller
             // Delete the user and driver that were created
             $driver->delete();
             $user->delete();
+            $driver->balance()->delete();
 
-            return redirect()->back()->with('error', 'Failed to create car');
+            return redirect()->back()->withErrors('error', 'Failed to create car');
         }
 
         // Redirect atau melakukan tindakan lainnya
@@ -315,7 +325,7 @@ class SopirController extends Controller
             return redirect()->route('sopir.edit', $driver->id)->with('success', 'Data pengemudi berhasil diperbarui.');
         }
 
-        return redirect()->route('sopir.edit', $driver->id)->with('error', 'Data pengemudi tidak ditemukan.');
+        return redirect()->route('sopir.edit', $driver->id)->withErrors('error', 'Data pengemudi tidak ditemukan.');
     }
 
     public function update_car(Request $request, $id)

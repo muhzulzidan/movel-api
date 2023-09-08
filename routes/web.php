@@ -53,6 +53,11 @@ Route::group(['middleware' => 'auth'], function () {
     // Route yang membutuhkan autentikasi
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+    // Redirect authenticated users from root URL ("/") to "/home"
+    Route::get('/', function () {
+        return redirect()->route('home');
+    });
+
     // Route Data Sopir
     Route::get('/sopir', [SopirController::class, 'index'])->name('sopir');
     Route::get('/sopir/add', [SopirController::class, 'store_view']);

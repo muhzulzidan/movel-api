@@ -29,7 +29,7 @@
     <link href="{{ asset('vendor/lightbox2/css/lightbox.min.css') }}" rel="stylesheet">
 
     <!-- Favicon -->
-    <link href="{{ asset('img/favicon.svg') }}" rel="icon" type="image/png">
+    <link href="{{ asset('img/movel.png') }}" rel="icon" type="image/png">
 </head>
 
 <body id="page-top">

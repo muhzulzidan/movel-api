@@ -184,7 +184,7 @@
 
     </div>
 
-    <!-- TopUp Saldo Modal-->
+    <!-- Change Saldo Modal-->
     @foreach ($drivers as $sopir)
         <div class="modal fade" id="changeSaldoModal-{{ $sopir->sopir_id }}" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalLabel-{{ $sopir->sopir_id }}" aria-hidden="true">
@@ -192,7 +192,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel-{{ $sopir->sopir_id }}">
-                            <h5>Ubah saldo Sopir <strong>{{ $sopir->name }}, ID: {{ $sopir->sopir_id }}</strong></h5>
+                            <h5>Ubah saldo Sopir <strong>{{ $sopir->name }}</strong></h5>
                         </h5>
                         <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
@@ -204,28 +204,17 @@
                         @method('PUT')
                         <input type="hidden" name="_method" value="PUT">
                         <div class="modal-body">
-
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Rp</span>
                                 </div>
-                                <select class="custom-select" id="inputGroupSelect01" name="saldo">
-                                    <option selected>Choose...</option>
-                                    <option value="5000">5.000</option>
-                                    <option value="10000">10.000</option>
-                                    <option value="20000">20.000</option>
-                                    <option value="30000">30.000</option>
-                                    <option value="40000">40.000</option>
-                                    <option value="50000">50.000</option>
-                                    <option value="100000">100.000</option>
-                                    <option value="150000">150.000</option>
-                                    <option value="200000">200.000</option>
-                                </select>
+                                <input type="number" class="form-control" id="saldo"name="saldo"
+                                    placeholder="{{ __('Change Saldo') }}" required value="{{ old('saldo', $sopir->saldo) }}">
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">TopUp</button>
+                            <button type="submit" class="btn btn-warning">Change</button>
                         </div>
                     </form>
                 </div>
@@ -233,7 +222,7 @@
         </div>
     @endforeach
 
-    <!-- Change Saldo Modal-->
+    <!-- TopUp Saldo Modal-->
     @foreach ($drivers as $sopir)
         <div class="modal fade" id="topupModal-{{ $sopir->sopir_id }}" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalLabel-{{ $sopir->sopir_id }}" aria-hidden="true">
@@ -241,7 +230,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel-{{ $sopir->sopir_id }}">
-                            <h5>TopUp saldo Sopir <strong>{{ $sopir->name }}, ID: {{ $sopir->sopir_id }}</strong></h5>
+                            <h5>TopUp saldo Sopir <strong>{{ $sopir->name }}</strong></h5>
                         </h5>
                         <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
@@ -259,7 +248,7 @@
                                     <span class="input-group-text">Rp</span>
                                 </div>
                                 <select class="custom-select" id="inputGroupSelect01" name="saldo">
-                                    <option selected>Choose...</option>
+                                    <option value="0">Choose...</option>
                                     <option value="5000">5.000</option>
                                     <option value="10000">10.000</option>
                                     <option value="20000">20.000</option>
@@ -274,7 +263,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">TopUp</button>
+                            <button type="submit" class="btn btn-info">TopUp</button>
                         </div>
                     </form>
                 </div>
