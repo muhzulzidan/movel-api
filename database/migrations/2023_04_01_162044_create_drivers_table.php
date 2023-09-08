@@ -18,9 +18,15 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->unique();
             $table->string('photo')->nullable();
             $table->text('address')->nullable();
+            $table->bigInteger('is_smoking')->nullable();
+            $table->bigInteger('driver_age')->nullable();
+            $table->string('no_ktp')->nullable();
+            $table->string('foto_ktp')->nullable();
+            $table->string('foto_sim')->nullable();
+            $table->string('foto_stnk')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
