@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\Admin\AllDriversController;
 use App\Http\Controllers\API\Driver\DriverController;
 use App\Http\Controllers\API\Driver\DriverDepartureController;
+use App\Http\Controllers\API\Driver\BalanceController;
 use App\Http\Controllers\API\Driver\DriverOrderController;
 use App\Http\Controllers\API\MasterData\CarController;
 use App\Http\Controllers\API\MasterData\KotaKabController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\API\Passenger\PassengerOrderController;
 use App\Http\Controllers\API\Transaction\OrderController;
 use App\Http\Controllers\API\Transaction\RatingController;
 use App\Http\Controllers\API\UserController;
+use App\Models\DriverDeparture;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
@@ -69,7 +71,11 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
     Route::get('/driver', [DriverController::class, 'index']);
     Route::put('/driver/update', [DriverController::class, 'update']);
 
-    Route::match (['post', 'put'], '/drivers/rute_jadwal', [DriverDepartureController::class, 'storeUpdateRuteJadwal']);
+    Route::get('drivers/balance', [BalanceController::class, 'index']);
+
+    Route::get('drivers/rute_jadwal', [DriverDepartureController::class, 'getRuteJadwal']);
+    Route::match(['post', 'put'], '/drivers/rute_jadwal', [DriverDepartureController::class, 'storeUpdateRuteJadwal']);
+    Route::put('/drivers/active', [DriverDepartureController::class, 'setDriverActive']);
     Route::put('/drivers/inactive', [DriverDepartureController::class, 'setDriverInactive']);
     Route::get('drivers/seat_cars', [DriverDepartureController::class, 'getListSeatCars']);
 

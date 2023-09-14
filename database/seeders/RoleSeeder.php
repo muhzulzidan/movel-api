@@ -19,10 +19,10 @@ class RoleSeeder extends Seeder
             'role_name' => 'Admin'
         ]);
         DB::table('roles')->insert([
-            'role_name' => 'Driver'
+            'role_name' => 'Passenger'
         ]);
         DB::table('roles')->insert([
-            'role_name' => 'Passenger'
+            'role_name' => 'Driver'
         ]);
     }
 }

@@ -13,23 +13,12 @@ class OrderController extends Controller
 {
     public function index()
     {
-
-        // $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
-        //     ->join('driver_departures', 'orders.driver_departure_id', '=', 'driver_departures.id')
-        //     ->join('drivers', 'driver_departures.driver_id', '=', 'drivers.id')
-        //     ->join('kota_kabs', 'driver_departures.kota_asal_id', '=', 'kota_kabs.id')
-        //     ->leftJoin('status_orders', 'orders.id', '=', 'status_orders.id')
-        //     ->join('passengers', 'users.id', '=', 'passengers.user_id')
-        //     ->select('users.name as passenger_name', 'passengers.photo as passenger_photo', 'users.email as passenger_email',
-        //         'users.name as driver_name', 'drivers.photo as driver_photo', 'users.email as driver_email',
-        //         'orders.*', 'driver_departures.*', 'status_orders.*', 'kota_kabs.*')
-        //     ->get();
+        // Mau juga ditampilkan di API JSON
         $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
             ->join('driver_departures', 'orders.driver_departure_id', '=', 'driver_departures.id')
             ->join('drivers', 'driver_departures.driver_id', '=', 'drivers.id')
             ->join('kota_kabs', 'driver_departures.kota_asal_id', '=', 'kota_kabs.id')
             ->join('passengers', 'users.id', '=', 'passengers.user_id')
-        // ->join('drivers', 'users.id', '=', 'drivers.user_id')
             ->leftJoin('status_orders', 'orders.status_order_id', '=', 'status_orders.id')
             ->select('users.id as user_id', 'users.name as passenger_name', 'passengers.photo as passenger_photo', 'users.email as passenger_email', 'driver_departures.created_at as tgl_pemesanan',
                 'drivers.id as driver_id', 'users.name as driver_name', 'drivers.photo as driver_photo', 'users.email as driver_email',

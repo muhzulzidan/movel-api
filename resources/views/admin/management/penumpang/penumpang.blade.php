@@ -48,7 +48,14 @@
                                             <img class="img-profile rounded-circle avatar"
                                                 src="{{ asset(Storage::url($penumpang->photo)) }}" alt="">
                                             <div class="pl-3 email">
-                                                <span class="font-weight-bold">{{ $penumpang->name }}</span>
+                                                <span class="font-weight-bold">
+                                                @if ($penumpang != null)
+                                                <i class="text-success fas fa-user-check"></i>
+                                                @else
+                                                <i class="text-secondary fas fa-user-times"></i>
+                                                @endif
+                                                {{ $penumpang->name }}
+                                                </span>
                                                 <span class="d-block">{{ $penumpang->email }}</span>
                                             </div>
                                         </td>
