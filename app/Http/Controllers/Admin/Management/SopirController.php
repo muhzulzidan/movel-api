@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Management;
 use App\Http\Controllers\Controller;
 use App\Models\Balance;
 use App\Models\Car;
+use App\Models\LabelSeatCar;
 use App\Models\Driver;
 use App\Models\DriverDeparture;
 use App\Models\Order;
@@ -189,6 +190,36 @@ class SopirController extends Controller
             'driver_id' => $driver->id,
         ]);
 
+        $seatingCapacity = $validatedData['seating_capacity'];
+
+        if ($seatingCapacity > 0) {
+            $labelSeats = ['Sopir'];
+
+            // Membuat array abjad mulai dari A
+            $alphabet = range('A', 'Z');
+
+            for ($i = 0; $i < $seatingCapacity - 1; $i++) {
+                if (isset($alphabet[$i])) {
+                    $labelSeats[] = $alphabet[$i];
+                } else {
+                    // Jika melebihi Z, gunakan A lagi dengan penanda ganda (AA, AB, AC, ...)
+                    $index = $i - count($alphabet);
+                    $labelSeats[] = $alphabet[$index] . $alphabet[0];
+                }
+            }
+
+            // Simpan data ke tabel label_seat_cars
+            foreach ($labelSeats as $label) {
+                $isFilled = $label == 'Sopir' ? 1 : 0;
+
+                LabelSeatCar::create([
+                    'label_seat' => $label,
+                    'is_filled' => $isFilled,
+                    'car_id' => $car->id,
+                ]);
+            }
+        }
+
         // Buat tabel Balance
         Balance::create([
             'driver_id' => $driver->id,
@@ -347,6 +378,46 @@ class SopirController extends Controller
         $car = Car::findOrFail($id);
         $car->update($validatedData);
 
+        // Update juga tabel label_seat_cars
+        $seatingCapacity = $validatedData['seating_capacity'];
+        $labelSeats = ['Sopir'];
+
+        // Membuat array abjad mulai dari A
+        $alphabet = range('A', 'Z');
+
+        for ($i = 0; $i < $seatingCapacity - 1; $i++) {
+            if (isset($alphabet[$i])) {
+                $labelSeats[] = $alphabet[$i];
+            } else {
+                // Jika melebihi Z, gunakan A lagi dengan penanda ganda (AA, AB, AC, ...)
+                $index = $i - count($alphabet);
+                $labelSeats[] = $alphabet[$index] . $alphabet[0];
+            }
+        }
+
+        // Hapus data yang tidak diperlukan jika seating_capacity berkurang
+        $labelSeatsToDelete = LabelSeatCar::where('car_id', $car->id)
+            ->whereNotIn('label_seat', $labelSeats)
+            ->get();
+
+        foreach ($labelSeatsToDelete as $labelSeatToDelete) {
+            $labelSeatToDelete->delete();
+        }
+
+        // Tambahkan data baru jika seating_capacity bertambah
+        $existingLabelSeats = LabelSeatCar::where('car_id', $car->id)->pluck('label_seat')->toArray();
+        $labelSeatsToAdd = array_diff($labelSeats, $existingLabelSeats);
+
+        foreach ($labelSeatsToAdd as $label) {
+            $isFilled = $label == 'Sopir' ? 1 : 0;
+
+            LabelSeatCar::create([
+                'label_seat' => $label,
+                'is_filled' => $isFilled,
+                'car_id' => $car->id,
+            ]);
+        }
+
         // Redirect atau melakukan tindakan lainnya
         return redirect()->route('sopir.edit', $car->driver_id)->with('success', 'Data Mobil berhasil diperbarui');
     }
@@ -426,7 +497,8 @@ class SopirController extends Controller
         $car = Car::where('driver_id', $id)->first();
         if ($car) {
             // Hapus data label_seat_cars terkait
-            $car->labelSeats()->delete();
+            LabelSeatCar::where('car_id', $car->id)->delete();
+            // $car->labelSeats()->delete();
 
             // Hapus data mobil
             $car->delete();
