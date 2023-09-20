@@ -49,8 +49,8 @@
                                                 src="{{ asset(Storage::url($penumpang->photo)) }}" alt="">
                                             <div class="pl-3 email">
                                                 <span class="font-weight-bold">
-                                                @if ($penumpang != null)
-                                                <i class="text-success fas fa-user-check"></i>
+                                                @if ($penumpang->hasVerifiedEmail())
+                                                <i class="text-primary fas fa-user-check"></i>
                                                 @else
                                                 <i class="text-secondary fas fa-user-times"></i>
                                                 @endif

@@ -96,7 +96,14 @@
                                             <img class="img-profile rounded-circle avatar"
                                                 src="{{ asset(Storage::url($sopir->photo)) }}" alt="">
                                             <div class="pl-3 email">
-                                                <span class="font-weight-bold">{{ $sopir->name }}</span>
+                                                <span class="font-weight-bold">
+                                                @if ($sopir->hasVerifiedEmail())
+                                                <i class="text-primary fas fa-user-check"></i>
+                                                @else
+                                                <i class="text-secondary fas fa-user-times"></i>
+                                                @endif
+                                                {{ $sopir->name }}
+                                                </span>
                                                 <span class="d-block">{{ $sopir->email }}</span>
                                             </div>
                                         </td>

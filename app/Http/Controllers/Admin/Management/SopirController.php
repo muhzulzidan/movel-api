@@ -498,7 +498,6 @@ class SopirController extends Controller
         if ($car) {
             // Hapus data label_seat_cars terkait
             LabelSeatCar::where('car_id', $car->id)->delete();
-            // $car->labelSeats()->delete();
 
             // Hapus data mobil
             $car->delete();
