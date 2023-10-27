@@ -64,7 +64,7 @@ class DriverDepartureController extends Controller
             // Mengambil id order terkait driver departure
             $orderIds = $driver_departure->orders->pluck('id');
 
-            $orders = Order::whereIn('id', $orderIds)->where('status_order_id', 6)->get();
+            $orders = Order::whereIn('id', $orderIds)->where('status_order_id', 7)->get();
 
             // Jika semua orderan, statusnya belum selesai
             if ($orders->count() !== $orderIds->count()) {

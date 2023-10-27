@@ -32,6 +32,12 @@ class SopirController extends Controller
         $driver_departure = DriverDeparture::all();
         $driver_aktif = DriverDeparture::where('is_active', 1)->count();
 
+        // Iterate through the $drivers collection and add a 'has_departure' flag
+        // foreach ($drivers as $driver) {
+        //     $hasDeparture = $driver_departure->contains('driver_id', $driver->sopir_id);
+        //     $driver->has_departure = $hasDeparture;
+        // }
+
         return view('admin.management.sopir.sopir', compact('drivers', 'allDriver', 'driver_aktif', 'balances', 'driver_departure'));
     }
 

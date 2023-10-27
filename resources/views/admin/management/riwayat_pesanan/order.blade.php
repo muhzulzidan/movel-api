@@ -192,6 +192,7 @@
                                         @endif
 
                                         <td>{{ $order->status_name }}</td>
+
                                         <td class="text-center">
                                             {{ 'Rp ' . number_format($order->price_order, 0, ',', '.') }}</td>
                                         <td class="text-center">{{ $order->is_rating }}</td>

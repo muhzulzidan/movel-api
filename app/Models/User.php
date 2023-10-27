@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Driver;
 use App\Models\Order;
 use App\Models\Passenger;
+use App\Models\RiwayatPesanan;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -80,4 +81,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Role::class);
     }
+
+    public function riwayatPesanan()
+{
+    return $this->hasMany(RiwayatPesanan::class, 'user_id');
+}
 }

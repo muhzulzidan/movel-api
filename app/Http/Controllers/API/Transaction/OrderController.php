@@ -4,13 +4,16 @@ namespace App\Http\Controllers\API\Transaction;
 
 use App\Events\NewOrderNotification;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\Transaction\RiwayatPesananController;
 use App\Http\Resources\AvailableDriverDetailResource;
 use App\Http\Resources\AvailableDriverResource;
 use App\Http\Resources\LabelSeatCarResource;
 use App\Models\Car;
+use App\Models\Balance;
 use App\Models\DriverDeparture;
 use App\Models\LabelSeatCar;
 use App\Models\Order;
+use App\Models\StatusOrder;
 use App\Models\Rating;
 use App\Models\TimeDeparture;
 use Illuminate\Http\Request;
@@ -96,7 +99,6 @@ class OrderController extends Controller
         $driverDeparture = $driverDeparture->get()->first();
 
         return (new AvailableDriverDetailResource($driverDeparture))->additional(['data' => ['label_seats' => LabelSeatCarResource::collection($driverDeparture->car->labelSeats)]]);
-
     }
 
     public function getOrderResume(Request $request)
@@ -192,7 +194,6 @@ class OrderController extends Controller
             'success' => true,
             'message' => 'Berhasil dipesan',
         ]);
-
     }
 
     public function updateOrderCancelled($id)
@@ -200,23 +201,24 @@ class OrderController extends Controller
         $driverId = auth()->user()->driver->id;
 
         $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
-            $query->where('driver_id', $driverId)->where('status_order_id', 7);
+            $query->where('driver_id', $driverId)->where('status_order_id', 8);
         })->where('id', $id);
 
         // Jika data tidak ada
         if (!$order->exists()) {
-            return response()->json(['status' => false,
-                'message' => 'Order tidak ditemukan'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
         }
 
         // Jika data ada
         $orderAccepted = $order->get()->first();
         // Update tabel orders
         $orderAccepted->update([
-            'status_order_id' => 8,
+            'status_order_id' => 9,
         ]);
         return response()->json(['success' => true, 'message' => 'Setuju pembatalan pesanan']);
-
     }
 
     public function updateOrderNotCancelled($id)
@@ -224,13 +226,15 @@ class OrderController extends Controller
         $driverId = auth()->user()->driver->id;
 
         $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
-            $query->where('driver_id', $driverId)->where('status_order_id', 7);
+            $query->where('driver_id', $driverId)->where('status_order_id', 9);
         })->where('id', $id);
 
         // Jika data tidak ada
         if (!$order->exists()) {
-            return response()->json(['status' => false,
-                'message' => 'Order tidak ditemukan'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
         }
 
         // Jika data ada
@@ -240,7 +244,6 @@ class OrderController extends Controller
             'status_order_id' => 3,
         ]);
         return response()->json(['success' => true, 'message' => 'Menolak pembatalan pesanan']);
-
     }
 
     // Update status driver menuju ke lokasi jemput
@@ -254,18 +257,19 @@ class OrderController extends Controller
 
         // Jika data tidak ada
         if (!$order->exists()) {
-            return response()->json(['status' => false,
-                'message' => 'Order tidak ditemukan'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
         }
 
         // Jika data ada
         $orderAccepted = $order->get()->first();
         // Update tabel orders
         $orderAccepted->update([
-            'status_order_id' => 4,
+            'status_order_id' => 5,
         ]);
         return response()->json(['success' => true, 'message' => 'Anda menuju ke titik jemput']);
-
     }
 
     // Update status driver tiba dilokasi
@@ -274,38 +278,15 @@ class OrderController extends Controller
         $driverId = auth()->user()->driver->id;
 
         $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
-            $query->where('driver_id', $driverId)->where('status_order_id', 4);
+            $query->where('driver_id', $driverId)->where('status_order_id', 5);
         })->where('id', $id);
 
         // Jika data tidak ada
         if (!$order->exists()) {
-            return response()->json(['status' => false,
-                'message' => 'Order tidak ditemukan'], 404);
-        }
-
-        // Jika data ada
-        $orderAccepted = $order->get()->first();
-        // Update data tabel orders
-        $orderAccepted->update([
-            'status_order_id' => 5,
-        ]);
-        return response()->json(['success' => true, 'message' => 'Anda telah tiba di lokasi jemput']);
-
-    }
-
-    // Update status pesanan selesai oleh driver
-    public function updateOrderComplete($id)
-    {
-        $driverId = auth()->user()->driver->id;
-
-        $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
-            $query->where('driver_id', $driverId)->where('status_order_id', 5);
-        })->where('id', $id);
-
-        // Jika datanya tidak ada
-        if (!$order->exists()) {
-            return response()->json(['status' => false,
-                'message' => 'Order tidak ditemukan'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
         }
 
         // Jika data ada
@@ -314,11 +295,144 @@ class OrderController extends Controller
         $orderAccepted->update([
             'status_order_id' => 6,
         ]);
+        return response()->json(['success' => true, 'message' => 'Anda telah tiba di lokasi jemput']);
+    }
 
-        // RESET KURSI
-        // Nanti ku konfigurasi disini jika na klik Driver Pesanan Selesai
-        // maka kursi kosong kembali.
 
-        return response()->json(['success' => true, 'message' => 'Selamat! Pesanan telah selesai']);
+    // Perbarui status_orders_id menjadi 4 (Sopir Berangkat)
+    public function updateOrderDriverDeparture($id)
+    {
+        $order = Order::find($id);
+        if ($order) {
+            $sopirBerangkatStatus = StatusOrder::find(4);
+            if ($sopirBerangkatStatus) {
+                $order->status_orders_id = $sopirBerangkatStatus->id;
+                $order->save();
+
+                return response()->json([
+                    'message' => 'Berangkat berhasil diupdate.'
+                ]);
+            } else {
+                return response()->json(['message' => 'Status Sopir Berangkat tidak ditemukan.'], 404);
+            }
+        } else {
+            return response()->json(['message' => 'Order tidak ditemukan.'], 404);
+        }
+    }
+
+    // Update status pesanan selesai oleh driver
+    // public function updateOrderComplete($id)
+    // {
+    //     $driverId = auth()->user()->driver->id;
+
+    //     $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
+    //         $query->where('driver_id', $driverId)->where('status_order_id', 6);
+    //     })->where('id', $id);
+
+    //     // Jika datanya tidak ada
+    //     if (!$order->exists()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Order tidak ditemukan'
+    //         ], 404);
+    //     }
+
+    //     // Jika data ada
+    //     $orderAccepted = $order->first();
+
+    //     // Update data tabel orders
+    //     $orderAccepted->update([
+    //         'status_order_id' => 7,
+    //     ]);
+
+    //     // Kurangi saldo sebesar 5000
+    //     $currentBalance = Balance::where('driver_id', $driverId)->first();
+
+    //     if ($currentBalance) {
+    //         $currentBalance->saldo -= 5000;
+    //         $currentBalance->save();
+    //     }
+
+    //     // Panggil fungsi untuk memindahkan data ke tabel riwayat_pesanan
+    //     $riwayatPesananController = new RiwayatPesananController();
+    //     $riwayatPesananController->moveCompletedOrdersToHistory();
+
+    //     LabelSeatCar::where('order_id', $orderAccepted->id)->update(['is_filled' => 0]);
+    //     LabelSeatCar::where('order_id', $orderAccepted->id)->update(['order_id' => null]);
+
+    //     // Reset kolom date_departure dan time_departure, serta set is_active menjadi 0 pada tabel DriverDeparture
+    //     $driverDeparture = $orderAccepted->driverDeparture;
+    //     $driverDeparture->update([
+    //         'date_departure' => null,
+    //         'time_departure' => null,
+    //         'is_active' => 0,
+    //     ]);
+
+    //     return response()->json(['success' => true, 'message' => 'Selamat! Pesanan telah selesai']);
+    // }
+
+    public function updateOrderComplete($id)
+    {
+        $driverId = auth()->user()->driver->id;
+
+        $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
+            $query->where('driver_id', $driverId)->where('status_order_id', 6);
+        })->where('id', $id);
+
+        // Jika datanya tidak ada
+        if (!$order->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
+        }
+
+        // Jika data ada
+        $orderAccepted = $order->first();
+
+        // Update data tabel orders
+        $orderAccepted->update([
+            'status_order_id' => 7,
+        ]);
+
+        // Kurangi saldo sebesar 5000
+        $currentBalance = Balance::where('driver_id', $driverId)->first();
+
+        if ($currentBalance) {
+            $currentBalance->saldo -= 5000;
+            $currentBalance->save();
+        }
+
+        LabelSeatCar::where('order_id', $orderAccepted->id)->update(['is_filled' => 0]);
+        LabelSeatCar::where('order_id', $orderAccepted->id)->update(['order_id' => null]);
+
+        // Periksa apakah masih ada pesanan dengan driver_departure_id yang sama dan status_order_id bukan 7
+        $pendingOrders = Order::where('driver_departure_id', $orderAccepted->driver_departure_id)
+            ->where('status_order_id', '<>', 7)
+            ->exists();
+
+        // Jika masih ada pesanan yang belum selesai, tidak perlu mengubah DriverDeparture
+        if ($pendingOrders) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Pesanan untuk penumpang ini telah selesai, Masih ada pesanan lain yang belum selesai'
+            ]);
+        }
+
+        // Reset kolom date_departure dan time_departure, serta set is_active menjadi 0 pada tabel DriverDeparture
+        $driverDeparture = $orderAccepted->driverDeparture;
+        $driverDeparture->update([
+            'kota_asal_id' => null,
+            'kota_tujuan_id' => null,
+            'date_departure' => null,
+            'time_departure' => null,
+            'is_active' => 0,
+        ]);
+
+        // Panggil fungsi untuk memindahkan data ke tabel riwayat_pesanan
+        // $riwayatPesananController = new RiwayatPesananController();
+        // $riwayatPesananController->moveCompletedOrdersToHistory();
+
+        return response()->json(['success' => true, 'message' => 'Selamat! Semua pesanan telah selesai']);
     }
 }

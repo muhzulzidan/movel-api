@@ -82,8 +82,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Mobil</th>
-                                    {{-- <th>Alamat</th> --}}
-                                    <th>Status</th>
+                                    <th>Rute</th>
                                     <th>Top Up Saldo</th>
                                     <th>Action</th>
                                 </tr>
@@ -95,16 +94,32 @@
                                         <td class="d-flex align-items-center">
                                             <img class="img-profile rounded-circle avatar"
                                                 src="{{ asset(Storage::url($sopir->photo)) }}" alt="">
-                                            <div class="pl-3 email">
+                                            <div class="pl-2 email">
                                                 <span class="font-weight-bold">
-                                                @if ($sopir->hasVerifiedEmail())
-                                                <i class="text-primary fas fa-user-check"></i>
-                                                @else
-                                                <i class="text-secondary fas fa-user-times"></i>
-                                                @endif
-                                                {{ $sopir->name }}
+                                                    @php
+                                                        $driverStatus = null;
+                                                        foreach ($driver_departure as $status) {
+                                                            if ($status->driver_id == $sopir->sopir_id) {
+                                                                $driverStatus = $status->is_active;
+                                                                break;
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    @if ($driverStatus == 1)
+                                                        <span class="badge badge-success">aktif</span>
+                                                    @else
+                                                        <span class="badge badge-danger">inaktif</span>
+                                                    @endif
+                                                    {{ $sopir->name }}
                                                 </span>
-                                                <span class="d-block">{{ $sopir->email }}</span>
+                                                <span class="d-block">
+                                                    @if ($sopir->hasVerifiedEmail())
+                                                        <i class="text-primary fas fa-user-check"></i>
+                                                    @else
+                                                        <i class="text-secondary fas fa-user-times"></i>
+                                                    @endif
+                                                    {{ $sopir->email }}
+                                                </span>
                                             </div>
                                         </td>
 
@@ -113,32 +128,34 @@
                                             <span class="d-block">{{ $sopir->license_plate_number }}</span>
                                         </td>
 
-                                        @php
-                                            $driverStatus = null;
-                                            foreach ($driver_departure as $status) {
-                                                if ($status->driver_id == $sopir->sopir_id) {
-                                                    $driverStatus = $status->is_active;
-                                                    break;
-                                                }
-                                            }
-                                        @endphp
 
-                                        <!-- Your other table columns here -->
-                                        @if ($driverStatus == 1)
-                                            <td class="text-center"><span class="badge badge-success">Aktif</span></td>
-                                        @else
-                                            <td class="text-center"><span class="badge badge-danger">Nonaktif</span></td>
+                                        @php
+                                            $departuresFound = false;
+                                        @endphp
+                                        @foreach ($driver_departure as $departure)
+                                            @if ($departure->driver_id == $sopir->sopir_id && $departure->kotaAsal && $departure->kotaTujuan)
+                                                <td class="text-ceter">
+                                                    {{ $departure->kotaAsal->nama_kota }} -
+                                                    {{ $departure->kotaTujuan->nama_kota }}
+                                                </td>
+                                                @php
+                                                    $departuresFound = true;
+                                                @endphp
+                                            @endif
+                                        @endforeach
+                                        @if (!$departuresFound)
+                                            <td class="text-ceter">
+                                                Rute belum di atur
+                                            </td>
                                         @endif
 
 
                                         <td class="text-center">
                                             <div class="btn-toolbar justify-content-center">
-                                                <div class="input-group mr-2">
-                                                    <input type="text" class="form-control"
-                                                        placeholder="{{ 'Rp ' . number_format($sopir->saldo, 0, ',', '.') }}"
-                                                        readonly>
-                                                </div>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
+                                                    <button
+                                                        class="btn text-dark fw-bold btn-block btn-outline-secondary me-2"
+                                                        disabled>{{ 'Rp ' . number_format($sopir->saldo, 0, ',', '.') }}</button>
                                                     <button type="button" class="btn btn-info" id="{{ $sopir->sopir_id }}"
                                                         data-toggle="modal"
                                                         data-target="#topupModal-{{ $sopir->sopir_id }}"
@@ -151,12 +168,6 @@
                                                         data-toggle="tooltip" data-placement="top" title="Change Saldo">
                                                         <i class="fa-solid fa-money-bill-transfer"></i>
                                                     </button>
-                                                    {{-- <button type="button" class="btn btn-secondary"
-                                                        id="{{ $sopir->sopir_id }}" data-toggle="modal"
-                                                        data-target="#topupModal-{{ $sopir->sopir_id }}"
-                                                        data-toggle="tooltip" data-placement="top" title="Reset Saldo">
-                                                        <i class="fa-solid fa-eraser"></i>
-                                                    </button> --}}
                                                 </div>
                                             </div>
                                         </td>
@@ -216,7 +227,8 @@
                                     <span class="input-group-text">Rp</span>
                                 </div>
                                 <input type="number" class="form-control" id="saldo"name="saldo"
-                                    placeholder="{{ __('Change Saldo') }}" required value="{{ old('saldo', $sopir->saldo) }}">
+                                    placeholder="{{ __('Change Saldo') }}" required
+                                    value="{{ old('saldo', $sopir->saldo) }}">
                             </div>
                         </div>
                         <div class="modal-footer">

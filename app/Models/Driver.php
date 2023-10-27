@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Balance;
 use App\Models\DriverDeparture;
 use App\Models\User;
+use App\Models\RiwayatPesanan;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -66,7 +67,12 @@ class Driver extends Model
     protected function photo(): Attribute
     {
         return Attribute::make(
-            get:fn($photo) => asset('/storage/photos/' . $photo),
+            get: fn ($photo) => asset('/storage/photos/' . $photo),
         );
+    }
+
+    public function riwayatPesanan()
+    {
+        return $this->hasMany(RiwayatPesanan::class, 'driver_id');
     }
 }

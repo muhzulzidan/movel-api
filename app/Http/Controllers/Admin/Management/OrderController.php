@@ -31,13 +31,13 @@ class OrderController extends Controller
         $statusOrder = StatusOrder::all();
 
         $orderBerhasil = Order::select(DB::raw('COUNT(*) as count'))
-            ->where('status_order_id', 6) // Ganti dengan id yang diinginkan
+            ->where('status_order_id', 7) // Ganti dengan id yang diinginkan
             ->first();
         $orderBerlangsung = Order::select(DB::raw('COUNT(*) as count'))
-            ->whereNotIn('status_order_id', [1, 6, 8]) // Ganti dengan id yang diinginkan
+            ->whereNotIn('status_order_id', [1, 7, 9]) // Ganti dengan id yang diinginkan
             ->first();
         $orderGagal = Order::select(DB::raw('COUNT(*) as count'))
-            ->where('status_order_id', [1, 8]) // Ganti dengan id yang diinginkan
+            ->where('status_order_id', [1, 9]) // Ganti dengan id yang diinginkan
             ->first();
 
         return view('admin.management.riwayat_pesanan.order', compact('orders', 'kotaAsalData', 'kotaTujuanData', 'dataDriver', 'statusOrder', 'orderBerhasil', 'orderBerlangsung', 'orderGagal'));

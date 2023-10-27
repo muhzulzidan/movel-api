@@ -29,7 +29,7 @@ class PassengerOrderController extends Controller
             ], 400);
         }
 
-        $order->get()->first()->update(['status_order_id' => 7]);
+        $order->get()->first()->update(['status_order_id' => 8]);
 
         return response()->json([
             'success' => true,
@@ -40,7 +40,7 @@ class PassengerOrderController extends Controller
     public function showListPassengerOrder()
     {
         $user = auth()->user();
-        $orders = $user->orders->where('status_order_id', 6)->where('is_rating', 1);
+        $orders = $user->orders->where('status_order_id', 7)->where('is_rating', 1);
 
         if ($orders->isEmpty()) {
             return response()->json([
@@ -55,7 +55,7 @@ class PassengerOrderController extends Controller
     public function detailPassengerOrder($id)
     {
         $user = auth()->user();
-        $order = $user->orders->where('status_order_id', 6)->where('is_rating', 1)->where('id', $id);
+        $order = $user->orders->where('status_order_id', 7)->where('is_rating', 1)->where('id', $id);
 
         if ($order->isEmpty()) {
             return response()->json([

@@ -12,6 +12,7 @@ use App\Http\Controllers\API\Passenger\PassengerController;
 use App\Http\Controllers\API\Passenger\PassengerOrderController;
 use App\Http\Controllers\API\Transaction\OrderController;
 use App\Http\Controllers\API\Transaction\RatingController;
+use App\Http\Controllers\API\Transaction\RiwayatPesananController;
 use App\Http\Controllers\API\UserController;
 use App\Models\DriverDeparture;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,9 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:2'])->group(function (
     Route::get('/orders/passenger/status', [PassengerOrderController::class, 'passengerOrderStatus']);
     Route::get('orders/passenger', [PassengerOrderController::class, 'showListPassengerOrder']);
     Route::get('orders/{id}/passenger', [PassengerOrderController::class, 'detailPassengerOrder']);
+
+    // Riwayat Pesanan
+    Route::get('/riwayat-pesanan-penumpang', [RiwayatPesananController::class, 'getRiwayatPesananPenumpang']);
 });
 
 // Protected Route Drivers
@@ -90,6 +94,9 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
     Route::get('orders/{id}/driver/completed', [DriverOrderController::class, 'detailCompletedDriverOrder']);
     Route::post('orders/driver/take_self', [DriverOrderController::class, 'addPassengerByDriver']);
 
+    // New Route
+    Route::post('/orders/depart/{id}', [OrderController::class, 'updateOrderDriverDeparture']);
+
     Route::put('/orders/{id}/pick_location', [OrderController::class, 'updateOrderPickLocation']);
     Route::put('/orders/{id}/pick_location_arrive', [OrderController::class, 'updateOrderPickLocationArrive']);
     Route::put('/orders/{id}/complete', [OrderController::class, 'updateOrderComplete']);
@@ -98,6 +105,9 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
 
     Route::get('/cars/seat_car', [CarController::class, 'getSeatCar']);
     Route::get('/cars', [CarController::class, 'getCar']);
+
+    // Riwayat Pesanan
+    Route::get('/riwayat-pesanan-sopir', [RiwayatPesananController::class, 'getRiwayatPesananSopir']);
 });
 
 // Protected Route Admin

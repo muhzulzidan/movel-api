@@ -44,8 +44,10 @@ class DriverOrderController extends Controller
 
         // Jika data tidak ada
         if (!$order->exists()) {
-            return response()->json(['status' => false,
-                'message' => 'Order tidak ditemukan'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
         }
 
         // Jika data ada
@@ -61,8 +63,10 @@ class DriverOrderController extends Controller
 
         // Jika pesanan tidak ada
         if (!$order->exists()) {
-            return response()->json(['status' => false,
-                'message' => 'Order tidak ditemukan'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
         }
 
         // Jika pesanan ada
@@ -84,8 +88,10 @@ class DriverOrderController extends Controller
 
         // Jika pesanan tidak ada
         if (!$order->exists()) {
-            return response()->json(['status' => false,
-                'message' => 'Order tidak ditemukan'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
         }
 
         // Jika pesanan ada
@@ -104,7 +110,10 @@ class DriverOrderController extends Controller
     {
         $driverId = auth()->user()->driver->id;
         $orders = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
-            $query->where('driver_id', $driverId)->whereNot('status_order_id', 1)->whereNot('status_order_id', 2);
+            $query->where('driver_id', $driverId)
+                ->whereNotIn('status_order_id', [1, 2])
+                ->whereNotNull('kota_asal_id')
+                ->whereNotNull('kota_tujuan_id');
         })->get();
 
         // Jika data tidak ada
@@ -118,6 +127,8 @@ class DriverOrderController extends Controller
         // Jika datanya ada
         return OrderAcceptedResource::collection($orders);
     }
+
+
 
     // Mengambil daftar pesanan yang telah diterima driver
     public function showDriverOrderRejected()
@@ -161,7 +172,7 @@ class DriverOrderController extends Controller
         $user = auth()->user();
         $driverDepartureId = $user->driver->driver_departures->first()->id;
 
-        $orders = Order::where('status_order_id', 6)->where('is_rating', 1)->where('driver_departure_id', $driverDepartureId)->get();
+        $orders = Order::where('status_order_id', 7)->where('driver_departure_id', $driverDepartureId)->get();
 
         if ($orders->isEmpty()) {
             return response()->json([
@@ -171,7 +182,6 @@ class DriverOrderController extends Controller
         }
 
         return OrderDriverResource::collection($orders);
-
     }
 
     public function detailCompletedDriverOrder($id)
@@ -179,7 +189,7 @@ class DriverOrderController extends Controller
         $user = auth()->user();
         $driverDepartureId = $user->driver->driver_departures->first()->id;
 
-        $order = Order::where('status_order_id', 6)->where('is_rating', 1)->where('driver_departure_id', $driverDepartureId)->where('id', $id)->get();
+        $order = Order::where('status_order_id', 7)->where('driver_departure_id', $driverDepartureId)->where('id', $id)->get();
 
         if ($order->isEmpty()) {
             return response()->json([
@@ -249,7 +259,6 @@ class DriverOrderController extends Controller
             'success' => true,
             'message' => 'Penumpang berhasil ditambahkan',
         ]);
-
     }
 
     // fungsi privat untuk data order berdasarkan id
@@ -262,7 +271,5 @@ class DriverOrderController extends Controller
         })->where('id', $id);
 
         return $order;
-
     }
-
 }
