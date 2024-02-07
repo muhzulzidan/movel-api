@@ -13,7 +13,7 @@ class PassengerOrderController extends Controller
     public function passengerOrderStatus()
     {
         $user = auth()->user();
-        $order = Order::findOrFail($user->id);
+        $order = Order::where('user_id', $user->id)->latest()->firstOrFail();
         return new OrderStatusResource($order);
     }
 
@@ -40,7 +40,7 @@ class PassengerOrderController extends Controller
     public function showListPassengerOrder()
     {
         $user = auth()->user();
-        $orders = $user->orders->where('status_order_id', 7)->where('is_rating', 1);
+        $orders = $user->orders->where('status_order_id', 7);
 
         if ($orders->isEmpty()) {
             return response()->json([
@@ -65,6 +65,5 @@ class PassengerOrderController extends Controller
         }
 
         return new DetailOrderPassengerResource($order->first());
-
     }
 }

@@ -111,7 +111,7 @@ class DriverOrderController extends Controller
         $driverId = auth()->user()->driver->id;
         $orders = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
             $query->where('driver_id', $driverId)
-                ->whereNotIn('status_order_id', [1, 2])
+                ->whereNotIn('status_order_id', [1, 2, 7])
                 ->whereNotNull('kota_asal_id')
                 ->whereNotNull('kota_tujuan_id');
         })->get();

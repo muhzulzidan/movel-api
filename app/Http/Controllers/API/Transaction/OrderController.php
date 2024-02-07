@@ -414,7 +414,7 @@ class OrderController extends Controller
         // Jika masih ada pesanan yang belum selesai, tidak perlu mengubah DriverDeparture
         if ($pendingOrders) {
             return response()->json([
-                'status' => true,
+                'status' => false,
                 'message' => 'Pesanan untuk penumpang ini telah selesai, Masih ada pesanan lain yang belum selesai'
             ]);
         }
