@@ -16,6 +16,9 @@ use App\Http\Controllers\API\Transaction\RiwayatPesananController;
 use App\Http\Controllers\API\UserController;
 use App\Models\DriverDeparture;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MessageController;
+
 
 // Public Routes
 Route::post('/register', [UserController::class, 'registerPassenger']);
@@ -27,8 +30,17 @@ Route::post('/login', [UserController::class, 'login']);
 Route::post('/forgot_password', [UserController::class, 'forgetPassword']);
 Route::post('/reset_password', [UserController::class, 'reset']);
 
+
 // Group Middleware (telah login dan email terverifikasi)
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+
+Route::post('/chats', [ChatController::class, 'store']);
+Route::get('/chats', [ChatController::class, 'index']);
+
+    Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
+    Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
+
+
     //Route untuk logout/keluar dari sistem
     Route::post('/logout', [UserController::class, 'logout']);
     // CRUD/Setting Profile Users
