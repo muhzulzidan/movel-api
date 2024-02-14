@@ -13,9 +13,9 @@ return [
     |
     | Supported: "pusher", "ably", "redis", "log", "null"
     |
-    */
+     */
 
-    'default' => env('BROADCAST_DRIVER', 'redis'),
+    'default' => env('BROADCAST_DRIVER', 'pusher'),
 
     /*
     |--------------------------------------------------------------------------
@@ -26,24 +26,29 @@ return [
     | to broadcast events to other systems or over websockets. Samples of
     | each available type of connection are provided inside this array.
     |
-    */
+     */
 
     'connections' => [
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
         ],
+
         'pusher' => [
             'driver' => 'pusher',
             'key' => env('PUSHER_APP_KEY'),
             'secret' => env('PUSHER_APP_SECRET'),
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
-                'cluster' => env('PUSHER_APP_CLUSTER'),
+                'useTLS' => true,
                 'encrypted' => true,
-                'host' => '127.0.0.1',
+                'host' => 'api.movel.id',
                 'port' => 6001,
-                'scheme' => 'http'
+                'scheme' => 'https',
+                 'curl_options' => [
+                    CURLOPT_SSL_VERIFYHOST => 0,
+                    CURLOPT_SSL_VERIFYPEER => 0,
+                ],
             ],
         ],
 
