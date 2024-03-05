@@ -2,36 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Models\Chat;
-use App\Models\Models\Message;
+use App\Models\Chat;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Events\MessageSent;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    public function store(Chat $chat, Request $request)
+    public function index(Chat $chat)
     {
-        // Authorization...
-        $this->authorize('view', $chat);
+        // Fetch all messages for the given chat
+        $messages = $chat->messages;
 
-        // Validation...
-        $data = $request->validate([
-            'message' => 'required|string',
+        // Return the messages as a JSON response
+        return response()->json($messages);
+    }
+
+    public function store(Request $request, Chat $chat)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'content' => 'required|string',
         ]);
 
-        try {
-            // Message creation...
-            $message = $chat->messages()->create([
-                'user_id' => $request->user()->id,
-                'message' => $data['message'],
-            ]);
+        // Create a new message linked to the given chat
+        $message = new Message;
+        $message->user_id = Auth::id(); // Get the ID of the authenticated user
+        $message->chat_id = $chat->id; // Get the chat_id from the Chat instance
+        $message->content = $request->content;
+        $message->save();
 
-            // Event broadcasting...
-            broadcast(new MessageSent($message))->toOthers();
 
-            return response()->json($message, 201);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Could not create message'], 500);
-        }
+        return response()->json($message, 201);
+
     }
 }

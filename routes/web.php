@@ -79,6 +79,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Route Riwayat Pesanan
     Route::get('/pesanan', [OrderController::class, 'index'])->name('order');
+    Route::get('/pesanan/updateStatus/{id}/{status}', [OrderController::class, 'updateStatus'])->name('order.updateStatus');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

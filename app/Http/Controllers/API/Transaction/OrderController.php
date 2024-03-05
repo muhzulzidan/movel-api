@@ -18,9 +18,21 @@ use App\Models\Rating;
 use App\Models\TimeDeparture;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\User;
 
 class OrderController extends Controller
 {
+    public function getActiveDriversWithRoutes()
+    {
+        $activeDriversWithRoutes = User::join('drivers', 'users.id', '=', 'drivers.user_id')
+            ->join('driver_departures', 'drivers.id', '=', 'driver_departures.driver_id')
+            ->where('driver_departures.is_active', 1)
+            ->select('drivers.id as driver_id', 'users.*', 'drivers.*', 'driver_departures.*')
+            ->get();
+        return response()->json($activeDriversWithRoutes);
+    }
+
+   
 
     public function getDriverAvailable(Request $request)
     {

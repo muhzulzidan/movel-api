@@ -76,3 +76,4 @@ class Driver extends Model
         return $this->hasMany(RiwayatPesanan::class, 'driver_id');
     }
 }
+

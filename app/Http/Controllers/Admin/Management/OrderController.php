@@ -8,23 +8,56 @@ use App\Models\KotaKab;
 use App\Models\Order;
 use App\Models\StatusOrder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function updateStatus($id, $status)
     {
+        $order = Order::find($id);
+        $order->status_order_id = $status;
+        $order->save();
+
+        return redirect()->route('order');
+    }
+
+    public function index(Request $request)
+
+    {
+        $status = $request->query('status');
+        // dd($status);
         // Mau juga ditampilkan di API JSON
-        $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
+        $query = Order::join('users', 'orders.user_id', '=', 'users.id')
             ->join('driver_departures', 'orders.driver_departure_id', '=', 'driver_departures.id')
             ->join('drivers', 'driver_departures.driver_id', '=', 'drivers.id')
             ->join('kota_kabs', 'driver_departures.kota_asal_id', '=', 'kota_kabs.id')
             ->join('passengers', 'users.id', '=', 'passengers.user_id')
             ->leftJoin('status_orders', 'orders.status_order_id', '=', 'status_orders.id')
-            ->select('users.id as user_id', 'users.name as passenger_name', 'passengers.photo as passenger_photo', 'users.email as passenger_email', 'driver_departures.created_at as tgl_pemesanan',
-                'drivers.id as driver_id', 'users.name as driver_name', 'drivers.photo as driver_photo', 'users.email as driver_email',
-                'orders.*', 'driver_departures.*', 'status_orders.*', 'kota_kabs.*')
-            ->get();
+            ->select(
+                'users.id as user_id',
+                'users.name as passenger_name',
+                'passengers.photo as passenger_photo',
+                'users.email as passenger_email',
+                'driver_departures.created_at as tgl_pemesanan',
+                'drivers.id as driver_id',
+                'users.name as driver_name',
+                'drivers.photo as driver_photo',
+                'users.email as driver_email',
+                'orders.*',
+                'driver_departures.*',
+                'status_orders.*',
+                'kota_kabs.*'
+            );
 
+        if ($status == 'berhasil') {
+            $query->where('status_order_id', 7);
+        } elseif ($status == 'berlangsung') {
+            $query->whereNotIn('status_order_id', [1, 7, 9]);
+        } elseif ($status == 'gagal') {
+            $query->whereIn('status_order_id', [1, 9]);
+        }
+
+        $orders = $query->get();
         $kotaAsalData = KotaKab::all();
         $kotaTujuanData = KotaKab::all();
         $dataDriver = Driver::with('user')->get();

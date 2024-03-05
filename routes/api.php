@@ -34,12 +34,6 @@ Route::post('/reset_password', [UserController::class, 'reset']);
 // Group Middleware (telah login dan email terverifikasi)
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
-Route::post('/chats', [ChatController::class, 'store']);
-Route::get('/chats', [ChatController::class, 'index']);
-
-    Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
-    Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
-
 
     //Route untuk logout/keluar dari sistem
     Route::post('/logout', [UserController::class, 'logout']);
@@ -56,6 +50,15 @@ Route::get('/chats', [ChatController::class, 'index']);
 // Protected Route Passengers
 Route::middleware(['auth:sanctum', 'verified', 'checkRole:2'])->group(function () {
     //Route Booking (Terbaru)
+
+    Route::post('/passenger/chats', [ChatController::class, 'store']);
+    Route::get('/passenger/chats', [ChatController::class, 'index']);
+
+    Route::post('/passenger/chats/{chat}/messages', [MessageController::class, 'store']);
+    Route::get('/passenger/chats/{chat}/messages', [MessageController::class, 'index']);
+
+    Route::get('/drivers/active-drivers', [OrderController::class, 'getActiveDriversWithRoutes']);
+
     Route::post('drivers/available', [OrderController::class, 'getDriverAvailable']);
     Route::get('drivers/available/{id}', [OrderController::class, 'getDriverAvailableById']);
     Route::get('/drivers/available/{id}/seat_cars', [OrderController::class, 'getSeatCars']);
@@ -84,6 +87,13 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:2'])->group(function (
 // Protected Route Drivers
 Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function () {
     //Route Profile
+
+    Route::post('/chats', [ChatController::class, 'store']);
+    Route::get('/chats', [ChatController::class, 'index']);
+
+    Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
+    Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
+
     Route::get('/driver', [DriverController::class, 'index']);
     Route::put('/driver/update', [DriverController::class, 'update']);
 

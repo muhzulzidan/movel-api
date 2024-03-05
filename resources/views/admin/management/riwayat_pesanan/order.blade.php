@@ -19,15 +19,19 @@
         </div>
     @endif
 
-    <div class="row">
 
-        <!-- Sopir yang Online -->
+
+    <div class="row">
+        <!-- Pesanan Sukses -->
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-success shadow">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase">Pesanan Sukses</div>
+                            <a href="{{ route('order', ['status' => 'berhasil']) }}"
+                                class="text-xs font-weight-bold text-success text-uppercase filter-button">Pesanan
+                                Sukses</a>
+
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">{{ $orderBerhasil->count }}
@@ -39,13 +43,14 @@
             </div>
         </div>
 
-        <!-- Sopir yang Berangkat -->
+        <!-- Sedang Berlangsung -->
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-info shadow">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase">Sedang Berlangsung</div>
+                            <a href="{{ route('order', ['status' => 'berlangsung']) }}"
+                                class="text-xs font-weight-bold text-info text-uppercase">Sedang Berlangsung</a>
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
@@ -58,13 +63,14 @@
             </div>
         </div>
 
-        <!-- Sopir Offline -->
+        <!-- Pesanan Gagal -->
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-danger shadow">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase">Pesanan Gagal</div>
+                            <a href="{{ route('order', ['status' => 'gagal']) }}"
+                                class="text-xs font-weight-bold text-danger text-uppercase">Pesanan Gagal</a>
                         </div>
                         <div class="col-auto">
                             <div class="font-weight-bold text-gray-800">
@@ -77,6 +83,8 @@
             </div>
         </div>
     </div>
+
+
 
     <div class="row">
 
@@ -98,6 +106,8 @@
                                     <th>Status</th>
                                     <th>Harga</th>
                                     <th>Rating</th>
+                                    <th>Actions</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -196,7 +206,23 @@
                                         <td class="text-center">
                                             {{ 'Rp ' . number_format($order->price_order, 0, ',', '.') }}</td>
                                         <td class="text-center">{{ $order->is_rating }}</td>
-
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                    Change Status
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('order.updateStatus', ['id' => $order->id, 'status' => 6]) }}">Berhasil</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('order.updateStatus', ['id' => $order->id, 'status' => 1]) }}">Berlangsung</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('order.updateStatus', ['id' => $order->id, 'status' => 0]) }}">Gagal</a>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforeach
 
