@@ -85,12 +85,13 @@
                                 <i class="fa-solid fa-car"></i> Data Mobil
                             </a>
                         </li>
-                        {{-- <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#infolain"
                                 role="tab" aria-controls="infolain" aria-selected="false">
-                                <i class="fa fa-star"></i> Info Lain
+                                <i class="fa fa-star"></i>
+                                Driver Departure
                             </a>
-                        </li> --}}
+                        </li>
                         {{-- <li class="nav-item">
                             <a class="nav-link font-weight-bold" id="contact-tab1" data-toggle="tab" href="#contact1"
                                 role="tab" aria-controls="contact1" aria-selected="false">
@@ -132,7 +133,8 @@
                             <div class="row">
                                 <div class="col-4 text-center">
                                     <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a style="text-decoration: none" href="{{ asset(Storage::url($show_sopir['foto_ktp'])) }}"
+                                        <a style="text-decoration: none"
+                                            href="{{ asset(Storage::url($show_sopir['foto_ktp'])) }}"
                                             data-lightbox="foto_ktp" data-title="{{ $show_sopir['foto_ktp'] }}">
                                             <img src="{{ asset(Storage::url($show_sopir['foto_ktp'])) }}" class="rounded"
                                                 alt="..."> <span class="text-black font-weight-bold">SIM</span>
@@ -141,7 +143,8 @@
                                 </div>
                                 <div class="col-4 text-center">
                                     <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a style="text-decoration: none" href="{{ asset(Storage::url($show_sopir['foto_sim'])) }}"
+                                        <a style="text-decoration: none"
+                                            href="{{ asset(Storage::url($show_sopir['foto_sim'])) }}"
                                             data-lightbox="foto_sim" data-title="{{ $show_sopir['foto_sim'] }}">
                                             <img src="{{ asset(Storage::url($show_sopir['foto_sim'])) }}" class="rounded"
                                                 alt="..."> <span class="text-black font-weight-bold">KTP</span>
@@ -150,10 +153,12 @@
                                 </div>
                                 <div class="col-4 text-center">
                                     <div class="avatar border shadow" style="height: 80px; width: 150px;">
-                                        <a style="text-decoration: none" href="{{ asset(Storage::url($show_sopir['foto_stnk'])) }}"
+                                        <a style="text-decoration: none"
+                                            href="{{ asset(Storage::url($show_sopir['foto_stnk'])) }}"
                                             data-lightbox="foto_stnk" data-title="{{ $show_sopir['foto_stnk'] }}">
                                             <img src="{{ asset(Storage::url($show_sopir['foto_stnk'])) }}"
-                                                class="rounded" alt="..."> <span class="text-black font-weight-bold">STNK</span>
+                                                class="rounded" alt="..."> <span
+                                                class="text-black font-weight-bold">STNK</span>
                                         </a>
                                     </div>
                                 </div>
@@ -193,8 +198,31 @@
                         </div>
 
                         {{-- Info Lain --}}
-                        {{-- <div class="tab-pane fade" id="infolain" role="tabpanel" aria-labelledby="infolain-tab">...
-                        </div> --}}
+                        {{-- Info Lain --}}
+                        <div class="tab-pane fade" id="infolain" role="tabpanel" aria-labelledby="infolain-tab">
+                            {{-- <h5>Driver Departure Details</h5> --}}
+                            <table class="table">
+                                <tbody cellpadding="20px" cellspacing="10px">
+                                    <tr>
+                                        <td>Departure ID</td>
+                                        <td class="font-weight-bold">{{ $driver_departure->id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Departure Date</td>
+                                        <td class="font-weight-bold">{{ $driver_departure->date_departure }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Departure Time</td>
+                                        <td class="font-weight-bold">{{ $driver_departure->time_departure }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Destination ID</td>
+                                        <td class="font-weight-bold">{{ $driver_departure->kota_tujuan_id }}</td>
+                                    </tr>
+                                    <!-- Add more fields as needed -->
+                                </tbody>
+                            </table>
+                        </div>
 
                         {{-- Info Data Feedback --}}
                         {{-- <div class="tab-pane fade" id="contact1" role="tabpanel" aria-labelledby="contact-tab1">...
@@ -218,6 +246,12 @@
                     <a class="nav-link font-weight-bold" id="profile-tab" data-toggle="tab" href="#profile"
                         role="tab" aria-controls="profile" aria-selected="false">
                         <i class="fa-solid fa-car"></i> Data Mobil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link font-weight-bold" id="departure-tab" data-toggle="tab" href="#departure"
+                        role="tab" aria-controls="departure" aria-selected="false">
+                        <i class="fa-solid fa-route"></i> Driver Departure
                     </a>
                 </li>
                 {{-- <li class="nav-item font-weight-bold">
@@ -294,13 +328,15 @@
                                                 for="is_smoking">Merokok?<span class="small text-danger">*</span></span>
                                             <div class="d-block d-flex justify-content-center my-2">
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="is_smoking" id="inlineRadio2" value="1"
-                                                        @if($show_sopir->is_smoking === 1) checked @endif>
+                                                    <input class="form-check-input" type="radio" name="is_smoking"
+                                                        id="inlineRadio2" value="1"
+                                                        @if ($show_sopir->is_smoking === 1) checked @endif>
                                                     <label class="form-check-label" for="inlineRadio2">Ya</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="is_smoking" id="inlineRadio1" value="0"
-                                                        @if($show_sopir->is_smoking === 0) checked @endif>
+                                                    <input class="form-check-input" type="radio" name="is_smoking"
+                                                        id="inlineRadio1" value="0"
+                                                        @if ($show_sopir->is_smoking === 0) checked @endif>
                                                     <label class="form-check-label" for="inlineRadio1">Tidak</label>
                                                 </div>
 
@@ -309,7 +345,8 @@
                                         <div class="form-group col-md-2">
                                             <label for="driver_age">Umur<span class="small text-danger">*</span></label>
                                             <select class="form-control" id="driver_age" name="driver_age">
-                                                <option value="{{ old('driver_age', $show_sopir['driver_age']) }}">{{ $show_sopir['driver_age'] }}</option>
+                                                <option value="{{ old('driver_age', $show_sopir['driver_age']) }}">
+                                                    {{ $show_sopir['driver_age'] }}</option>
                                                 @for ($age = 18; $age <= 60; $age++)
                                                     <option value="{{ $age }}">{{ $age }}</option>
                                                 @endfor
@@ -352,7 +389,8 @@
                                 <div class="col-12">
                                     <div class="row">
                                         <div class="col text-center">
-                                            <button type="submit" class="btn btn-primary btn-block">Simpan Perubahan</button>
+                                            <button type="submit" class="btn btn-primary btn-block">Simpan
+                                                Perubahan</button>
                                         </div>
                                     </div>
                                 </div>
@@ -369,7 +407,8 @@
 
                         <div class="card-body">
 
-                            <form method="POST" action="{{ route('sopir.update.car', $show_sopir->id) }}" autocomplete="off" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('sopir.update.car', $show_sopir->id) }}"
+                                autocomplete="off" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="_method" value="PUT">
 
@@ -377,38 +416,49 @@
                                     <div class="form-group col-md-4">
                                         <label for="merk">Merek<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="merk" name="merk"
-                                            placeholder="{{ __('Toyota') }}" required value="{{ old('merk', $show_sopir['merk']) }}" autofocus>
+                                            placeholder="{{ __('Toyota') }}" required
+                                            value="{{ old('merk', $show_sopir['merk']) }}" autofocus>
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="type">Type<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="type" name="type"
-                                            placeholder="{{ __('Kijang Inova') }}" required value="{{ old('type', $show_sopir['type']) }}" autofocus>
+                                            placeholder="{{ __('Kijang Inova') }}" required
+                                            value="{{ old('type', $show_sopir['type']) }}" autofocus>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="production_year">Tahun Produksi<span class="small text-danger">*</span></label>
-                                        <select class="form-control" id="production_year" name="production_year" placeholder="{{ __('Tahun Produksi') }}" autofocus>
-                                            <option value="{{ old('production_year', $show_sopir['production_year']) }}">{{ $show_sopir['production_year'] }}</option>
+                                        <label for="production_year">Tahun Produksi<span
+                                                class="small text-danger">*</span></label>
+                                        <select class="form-control" id="production_year" name="production_year"
+                                            placeholder="{{ __('Tahun Produksi') }}" autofocus>
+                                            <option value="{{ old('production_year', $show_sopir['production_year']) }}">
+                                                {{ $show_sopir['production_year'] }}</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="jenis">Jenis Kendaraan<span class="small text-danger">*</span></label>
+                                        <label for="jenis">Jenis Kendaraan<span
+                                                class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="jenis" name="jenis"
-                                            placeholder="{{ __('Mobil Penumpang') }}" required value="{{ old('jenis', $show_sopir['jenis']) }}">
+                                            placeholder="{{ __('Mobil Penumpang') }}" required
+                                            value="{{ old('jenis', $show_sopir['jenis']) }}">
                                     </div>
 
                                     <div class="form-group col-md-4">
                                         <label for="model">Model<span class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="model"name="model"
-                                            placeholder="{{ __('Mini Bus') }}" required value="{{ old('model', $show_sopir['model']) }}">
+                                            placeholder="{{ __('Mini Bus') }}" required
+                                            value="{{ old('model', $show_sopir['model']) }}">
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="seating_capacity">Kapasitas Kursi<span class="small text-danger">*</span></label>
+                                        <label for="seating_capacity">Kapasitas Kursi<span
+                                                class="small text-danger">*</span></label>
                                         <select class="form-control" id="seating_capacity" name="seating_capacity">
-                                            <option value="{{ old('seating_capacity', $show_sopir['seating_capacity']) }}">{{ $show_sopir['seating_capacity'] }} Kursi</option>
+                                            <option
+                                                value="{{ old('seating_capacity', $show_sopir['seating_capacity']) }}">
+                                                {{ $show_sopir['seating_capacity'] }} Kursi</option>
                                             <option value="4">4 Kursi</option>
                                             <option value="7">7 Kursi</option>
                                         </select>
@@ -417,22 +467,28 @@
 
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="license_plate_number">Nomor Kendaraan<span class="small text-danger">*</span></label>
+                                        <label for="license_plate_number">Nomor Kendaraan<span
+                                                class="small text-danger">*</span></label>
                                         <input type="text" class="form-control" id="license_plate_number"
-                                            name="license_plate_number" placeholder="{{ __('DD 2023 YR') }}" required value="{{ old('license_plate_number', $show_sopir['license_plate_number']) }}">
+                                            name="license_plate_number" placeholder="{{ __('DD 2023 YR') }}" required
+                                            value="{{ old('license_plate_number', $show_sopir['license_plate_number']) }}">
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="machine_number">Nomor Mesin<span class="small text-danger">*</span></label>
+                                        <label for="machine_number">Nomor Mesin<span
+                                                class="small text-danger">*</span></label>
                                         <input type="text" class="form-control"
                                             id="machine_number"name="machine_number"
-                                            placeholder="{{ __('Nomor Mesin') }}" required value="{{ old('machine_number', $show_sopir['machine_number']) }}">
+                                            placeholder="{{ __('Nomor Mesin') }}" required
+                                            value="{{ old('machine_number', $show_sopir['machine_number']) }}">
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="isi_silinder">Isi Silinder<span class="small text-danger">*</span></label>
+                                        <label for="isi_silinder">Isi Silinder<span
+                                                class="small text-danger">*</span></label>
                                         <select class="form-control" id="isi_silinder" name="isi_silinder" required>
-                                            <option value="{{ old('isi_silinder', $show_sopir['isi_silinder']) }}">{{ $show_sopir['isi_silinder'] }}</option>
+                                            <option value="{{ old('isi_silinder', $show_sopir['isi_silinder']) }}">
+                                                {{ $show_sopir['isi_silinder'] }}</option>
                                             <option value="3">3</option>
                                             <option value="4">4</option>
                                             <option value="5">5</option>
@@ -446,11 +502,79 @@
                                 <div class="col-12">
                                     <div class="row">
                                         <div class="col text-center">
-                                            <button type="submit" class="btn btn-primary btn-block">Simpan Perubahan</button>
+                                            <button type="submit" class="btn btn-primary btn-block">Simpan
+                                                Perubahan</button>
                                         </div>
                                     </div>
                                 </div>
 
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Untuk Edit Data Departure --}}
+                <div class="tab-pane fade" id="departure" role="tabpanel" aria-labelledby="departure-tab">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+
+                            <form method="POST" action="{{ route('departure.update', ['driver_id' => $show_sopir->driver_id, 'departure_id' => $driver_departure->id]) }}" autocomplete="off" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="_method" value="PUT">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="departure_city">Departure City<span
+                                                class="small text-danger">*</span></label>
+                                        <select class="form-control" id="departure_city" name="departure_city" required
+                                            autofocus>
+                                            @foreach ($kota_kabs as $kota_kab)
+                                                <option value="{{ $kota_kab->id }}"
+                                                    {{ old('departure_city', $driver_departure->kota_asal_id) == $kota_kab->id ? 'selected' : '' }}>
+                                                    {{ $kota_kab->nama_kota }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="destination_city">Destination City<span
+                                                class="small text-danger">*</span></label>
+                                        <select class="form-control" id="destination_city" name="destination_city"
+                                            required autofocus>
+                                            @foreach ($kota_kabs as $kota_kab)
+                                                <option value="{{ $kota_kab->id }}"
+                                                    {{ old('destination_city', $driver_departure->kota_tujuan_id) == $kota_kab->id ? 'selected' : '' }}>
+                                                    {{ $kota_kab->nama_kota }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="departure_time">Departure Time<span
+                                                class="small text-danger">*</span></label>
+                                        <input type="time" class="form-control" id="departure_time"
+                                            name="departure_time" placeholder="{{ __('Departure Time') }}" required
+                                            value="{{ old('departure_time', $driver_departure->time_departure) }}"
+                                            autofocus>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="departure_date">Departure Date<span
+                                                class="small text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="departure_date"
+                                            name="departure_date" placeholder="{{ __('Departure Date') }}" required
+                                            value="{{ old('departure_date', $driver_departure->date_departure) }}"
+                                            autofocus>
+                                    </div>
+                                </div>
+
+                                <!-- Button -->
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>

@@ -9,6 +9,22 @@ use App\Http\Resources\LabelSeatCarResource;
 
 class CarController extends Controller
 {
+
+    public function resetSeatCar()
+    {
+        $user = auth()->user();
+        $car = $user->driver->car;
+
+        foreach ($car->labelSeats as $seat) {
+            if ($seat->label_seat !== 'Sopir') {
+                $seat->is_filled = 0;
+                $seat->save();
+            }
+        }
+
+        return response()->json(['message' => 'Car seats reset successfully']);
+    }
+    
     public function getCar()
     {
         $user = auth()->user();

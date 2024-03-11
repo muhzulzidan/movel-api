@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\DriverDeparture;
+use App\Models\Passenger;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,7 @@ class Order extends Model
         'price_order',
         'is_rating',
     ];
+
 
     public function user(): BelongsTo
     {

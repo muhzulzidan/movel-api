@@ -9,11 +9,14 @@ use App\Models\LabelSeatCar;
 use App\Models\Driver;
 use App\Models\DriverDeparture;
 use App\Models\Order;
+use App\Models\KotaKab;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+
 
 class SopirController extends Controller
 {
@@ -57,8 +60,9 @@ class SopirController extends Controller
                     ->where('driver_departures.driver_id', $id);
             })
             ->count();
+        $driver_departure = DriverDeparture::where('driver_id', $id)->first();
+        return view('admin.management.sopir.detail_sopir', compact('show_sopir', 'total_penumpang', 'driver_departure'));
 
-        return view('admin.management.sopir.detail_sopir', compact('show_sopir', 'total_penumpang'));
     }
 
     public function store_view()
@@ -252,10 +256,51 @@ class SopirController extends Controller
             ->where('drivers.id', $id)
             ->select('users.*', 'drivers.*', 'cars.*')
             ->first();
+        $show_departure = DriverDeparture::where('driver_id', $id)->first();
+// Find the DriverDeparture
+    $driver_departure = DriverDeparture::where('driver_id', $id)->first();
 
-        return view('admin.management.sopir.edit_sopir', compact('show_sopir'));
+        $kota_kabs = KotaKab::all();
+
+
+        // dd($driver_departure->toArray());
+        return view('admin.management.sopir.edit_sopir', compact('show_sopir', 'driver_departure', 'show_departure', 'kota_kabs'));
     }
 
+public function updateDeparture(Request $request, $driver_id, $departure_id)
+
+    {
+
+            // Log the request data
+    Log::info($request->all());
+    // Log::info($id->all());
+
+        // Validate the request data
+        $validatedData = $request->validate([
+            'departure_city' => ['required'],
+            'destination_city' => ['required'],
+            'departure_date' => ['required', 'date'],
+            'departure_time' => ['required', 'regex:/^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/'],
+        ]);
+
+        // Find the DriverDeparture
+        $driver_departure = DriverDeparture::find($departure_id);
+
+        if ($driver_departure) {
+            // Update the DriverDeparture
+            $driver_departure->update([
+                'kota_asal_id' => $validatedData['departure_city'],
+                'kota_tujuan_id' => $validatedData['destination_city'],
+                'date_departure' => $validatedData['departure_date'],
+                'time_departure' => $validatedData['departure_time'],
+            ]);
+
+            return redirect()->route('sopir.edit', $driver_id)->with('success', 'Driver departure updated successfully.');
+        }
+
+        return redirect()->route('sopir.edit', $driver_id)->withErrors('error', 'Driver departure not found.');
+    }
+    
     public function update_driver(Request $request, $id)
     {
         // Validasi data yang diterima
@@ -271,6 +316,8 @@ class SopirController extends Controller
             'foto_ktp' => ['image', 'max:2048'],
             'foto_sim' => ['image', 'max:2048'],
             'foto_stnk' => ['image', 'max:2048'],
+
+         
         ]);
 
         // Cari data pengemudi
@@ -361,6 +408,8 @@ class SopirController extends Controller
 
             return redirect()->route('sopir.edit', $driver->id)->with('success', 'Data pengemudi berhasil diperbarui.');
         }
+
+      
 
         return redirect()->route('sopir.edit', $driver->id)->withErrors('error', 'Data pengemudi tidak ditemukan.');
     }

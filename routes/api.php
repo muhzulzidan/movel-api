@@ -52,8 +52,10 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:2'])->group(function (
     //Route Booking (Terbaru)
 
     Route::post('/passenger/chats', [ChatController::class, 'store']);
-    Route::get('/passenger/chats', [ChatController::class, 'index']);
+    Route::get('/passenger/chats', [ChatController::class, 'indexView']);
+    Route::put('/passenger/chat/{chat}', [App\Http\Controllers\ChatController::class, 'update']);
 
+    
     Route::post('/passenger/chats/{chat}/messages', [MessageController::class, 'store']);
     Route::get('/passenger/chats/{chat}/messages', [MessageController::class, 'index']);
 
@@ -90,6 +92,7 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
 
     Route::post('/chats', [ChatController::class, 'store']);
     Route::get('/chats', [ChatController::class, 'index']);
+    Route::put('/chat/{chat}', [App\Http\Controllers\ChatController::class, 'update']);
 
     Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
     Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
@@ -126,6 +129,7 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
     Route::put('/orders/{id}/cancel_reject', [OrderController::class, 'updateOrderNotCancelled']);
 
     Route::get('/cars/seat_car', [CarController::class, 'getSeatCar']);
+    Route::post('/cars/reset_seat_car', [CarController::class, 'resetSeatCar']);
     Route::get('/cars', [CarController::class, 'getCar']);
 
     // Riwayat Pesanan

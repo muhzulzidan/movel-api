@@ -69,6 +69,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/sopir/edit_driver/{id}', [SopirController::class, 'update_driver'])->name('sopir.update.driver');
     Route::put('/sopir/edit_car/{id}', [SopirController::class, 'update_car'])->name('sopir.update.car');
     Route::delete('/sopir/delete/{id}', [SopirController::class, 'destroy'])->name('sopir.destroy');
+    // Route::put('/departure/update/{id}', [SopirController::class, 'updateDeparture'])->name('departure.update');
+    Route::put('/sopir/{driver_id}/departure/{departure_id}',  [SopirController::class, 'updateDeparture'])->name('departure.update');
+
 
     // Route Data Penumpang
     Route::get('/penumpang', [PenumpangController::class, 'index'])->name('penumpang');
@@ -80,6 +83,8 @@ Route::group(['middleware' => 'auth'], function () {
     // Route Riwayat Pesanan
     Route::get('/pesanan', [OrderController::class, 'index'])->name('order');
     Route::get('/pesanan/updateStatus/{id}/{status}', [OrderController::class, 'updateStatus'])->name('order.updateStatus');
+    Route::put('/pesanan/updateStatus/{id}/{status}', [OrderController::class, 'updateStatus']);
+
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -9,10 +9,12 @@ class Chat extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'receiver_id'];
+    protected $fillable = ['user_id', 'receiver_id', 'details', 'order_id'];
+
+        
     public function order()
     {
-        return $this->belongsTo(Order::class, 'order_id');
+        return $this->belongsTo(Order::class);
     }
 
     public function statusOrder()
@@ -25,7 +27,7 @@ class Chat extends Model
     }
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'receiver_id');
+        return $this->belongsTo(Driver::class, 'receiver_id', 'user_id');
     }
     public function user()
     {

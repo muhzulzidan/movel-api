@@ -113,14 +113,16 @@
                             <tbody>
 
                                 @foreach ($orders as $order)
+                               {{-- {{ dd($order, $order->user, $order->user->passenger) }} --}}
                                     <tr>
                                         <td class="d-flex align-items-center">
                                             <img class="img-profile rounded-circle avatar"
                                                 src="{{ asset(Storage::url($order->passenger_photo)) }}" alt="">
-                                            <div class="pl-3 email">
-                                                <span class="font-weight-bold">{{ $order->passenger_name }}</span>
-                                                <span class="d-block">{{ $order->passenger_email }}</span>
-                                            </div>
+                                         <div class="pl-3 email">
+    <span class="font-weight-bold">{{ $order->user->name ?? 'N/A' }}</span>
+    <span class="d-block">{{ $order->user->email ?? 'N/A' }}</span>
+    <span class="d-block">{{ $order->order_id }}</span>
+</div>
                                         </td>
 
                                         <td>
@@ -131,17 +133,10 @@
                                                     <span class="font-weight-bold">
                                                         @php
                                                             $driverName = null;
-                                                            if ($order->driver_id) {
-                                                                foreach ($dataDriver as $driver) {
-                                                                    if ($driver->id == $order->driver_id) {
-                                                                        // Mengambil data user (nama) dari tabel users berdasarkan user_id dari tabel drivers
-                                                                        $user = $driver->user;
-                                                                        if ($user) {
-                                                                            $driverName = $user->name;
-                                                                        }
-                                                                        break;
-                                                                    }
-                                                                }
+                                                            $driverEmail = null;
+                                                            if ($order->driverDeparture && $order->driverDeparture->driver && $order->driverDeparture->driver->user_driver) {
+                                                                $driverName = $order->driverDeparture->driver->user_driver->name;
+                                                                $driverEmail = $order->driverDeparture->driver->user_driver->email;
                                                             }
                                                         @endphp
                                                         @if ($driverName)
@@ -149,21 +144,6 @@
                                                         @endif
                                                     </span>
                                                     <span class="d-block">
-                                                        @php
-                                                            $driverEmail = null;
-                                                            if ($order->driver_id) {
-                                                                foreach ($dataDriver as $driver) {
-                                                                    if ($driver->id == $order->driver_id) {
-                                                                        // Mengambil data user (email) dari tabel users berdasarkan user_id dari tabel drivers
-                                                                        $user = $driver->user;
-                                                                        if ($user) {
-                                                                            $driverEmail = $user->email;
-                                                                        }
-                                                                        break;
-                                                                    }
-                                                                }
-                                                            }
-                                                        @endphp
                                                         @if ($driverEmail)
                                                             {{ $driverEmail }}
                                                         @endif
@@ -172,36 +152,31 @@
                                             </div>
                                         </td>
 
-                                        <td>{{ $order->tgl_pemesanan }}</td>
-                                        <td>{{ $order->date_departure }} - {{ $order->time_departure }}</td>
+                                       <td>{{ $order->driverDeparture->created_at }}</td>
+                                        <td>{{ $order->driverDeparture->date_departure }} - {{ $order->driverDeparture->time_departure }}</td>
 
                                         @php
                                             $kotaAsal = null;
-                                            if ($order->kota_asal_id) {
-                                                foreach ($kotaAsalData as $kota) {
-                                                    if ($kota->id == $order->kota_asal_id) {
-                                                        $kotaAsal = $kota->nama_kota;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-
-                                            $kotaTujuan = null;
-                                            if ($order->kota_tujuan_id) {
-                                                foreach ($kotaTujuanData as $kota) {
-                                                    if ($kota->id == $order->kota_tujuan_id) {
-                                                        $kotaTujuan = $kota->nama_kota;
-                                                        break;
-                                                    }
-                                                }
-                                            }
+                                $kotaTujuan = null;
+                                if ($order->driverDeparture) {
+                                    if ($order->driverDeparture->kotaAsal) {
+                                        $kotaAsal = $order->driverDeparture->kotaAsal->nama_kota;
+                                    }
+                                    if ($order->driverDeparture->kotaTujuan) {
+                                        $kotaTujuan = $order->driverDeparture->kotaTujuan->nama_kota;
+                                    }
+                                }
                                         @endphp
 
-                                        @if ($kotaAsal && $kotaTujuan)
-                                            <td>{{ $kotaAsal }} - {{ $kotaTujuan }}</td>
-                                        @endif
+                                       <td>
+                                            @if ($kotaAsal && $kotaTujuan)
+                                                {{ $kotaAsal }} - {{ $kotaTujuan }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </td>
 
-                                        <td>{{ $order->status_name }}</td>
+                                        <td>{{ $order->statusOrder->status_name }}</td>
 
                                         <td class="text-center">
                                             {{ 'Rp ' . number_format($order->price_order, 0, ',', '.') }}</td>
@@ -213,15 +188,15 @@
                                                     aria-expanded="false">
                                                     Change Status
                                                 </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('order.updateStatus', ['id' => $order->id, 'status' => 6]) }}">Berhasil</a>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('order.updateStatus', ['id' => $order->id, 'status' => 1]) }}">Berlangsung</a>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('order.updateStatus', ['id' => $order->id, 'status' => 0]) }}">Gagal</a>
-                                                </div>
-                                            </div>
+                                                {{-- <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                @foreach ($statusOrder as $status)
+                    <form action="{{ route('order.updateStatus', ['id' => $order->order_id, 'status' => $status->id]) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button class="dropdown-item" type="submit">{{ $status->status_name }}</button>
+                    </form>
+                @endforeach
+            </div> --}}
                                         </td>
                                     </tr>
                                 @endforeach

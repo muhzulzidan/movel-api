@@ -11,12 +11,12 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
-    {
-        Schema::table('messages', function (Blueprint $table) {
-            $table->renameColumn('message', 'content');
-        });
-    }
+    // public function up()
+    // {
+    //     Schema::table('messages', function (Blueprint $table) {
+    //         $table->renameColumn('message', 'content');
+    //     });
+    // }
     
 
 public function down()
