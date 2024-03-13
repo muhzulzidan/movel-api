@@ -13,7 +13,18 @@ class MessageController extends Controller
     public function index(Chat $chat)
     {
         // Fetch all messages for the given chat
-        $messages = $chat->messages;
+        $messages = $chat->messages()->with(['user.driver', 'user.passenger'])->get();
+
+        // Add isDriver, isPassenger and profile picture to each message
+        $messages->transform(function ($message) {
+            $message->isDriver = $message->user->driver != null;
+            $message->isPassenger = $message->user->passenger != null;
+            $message->profilePicture = $message->isDriver ? $message->user->driver->photo : ($message->isPassenger ? $message->user->passenger->photo : null);
+            return $message;
+        });
+        
+        // Broadcast a MessageSent event
+        event(new MessageSent($message));
 
         // Return the messages as a JSON response
         return response()->json($messages);

@@ -104,6 +104,7 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
 
     Route::get('drivers/rute_jadwal', [DriverDepartureController::class, 'getRuteJadwal']);
     Route::match(['post', 'put'], '/drivers/rute_jadwal', [DriverDepartureController::class, 'storeUpdateRuteJadwal']);
+    Route::get('/drivers/active-status', [DriverDepartureController::class, 'getDriverActiveStatus']);
     Route::put('/drivers/active', [DriverDepartureController::class, 'setDriverActive']);
     Route::put('/drivers/inactive', [DriverDepartureController::class, 'setDriverInactive']);
     Route::get('drivers/seat_cars', [DriverDepartureController::class, 'getListSeatCars']);

@@ -13,6 +13,17 @@ use Illuminate\Http\Request;
 class DriverDepartureController extends Controller
 {
 
+    public function getDriverActiveStatus()
+    {
+        $user = auth()->user();
+        $driverDeparture = $user->driver->driver_departures->first();
+
+        return response()->json([
+            'success' => true,
+            'isActive' => $driverDeparture->is_active,
+        ]);
+    }
+
     public function getRuteJadwal()
     {
         $user = auth()->user();
