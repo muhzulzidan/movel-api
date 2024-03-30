@@ -1,0 +1,3 @@
+Starting the WebSocket server on port 6001...
+Exception `InvalidArgumentException` thrown: `Invalid request string`
+Exception `InvalidArgumentException` thrown: `Invalid request string`

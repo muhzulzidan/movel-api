@@ -38,6 +38,8 @@ use App\Http\Controllers\Admin\ProfileController;
 use Illuminate\Support\Facades\Hash;
 
 
+Route::get('/status', [\App\Http\Controllers\WebSocket::class, 'status']);
+
 Route::get('/login', [LoginController::class, 'loginForm']);
 Route::post('/login', [LoginController::class, 'loginVerify'])->name('login');
 Route::get('/hashpassword', function () {

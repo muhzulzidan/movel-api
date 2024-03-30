@@ -18,6 +18,28 @@ use App\Models\DriverDeparture;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\MessageController;
+use Illuminate\Support\Facades\Broadcast;
+
+
+Route::post('/test-websocket', function () {
+    // Broadcast an event to the 'test-channel' channel
+    event(new \App\Events\MyEvent('This is a test message larvel'));
+
+    return response()->json(['message' => 'Event has been broadcasted']);
+});
+
+
+Route::get('/test-websocket', function () {
+    // Broadcast an event to the 'test-channel' channel
+    Broadcast::channel('test-channel', function ($user, $id) {
+        return true; // Indicate that the user is allowed to listen on this channel
+    });
+
+    // Broadcast an event
+    event(new \App\Events\MyEvent('This is a test message larvel'));
+
+    return response()->json(['message' => 'Event has been broadcasted']);
+});
 
 
 // Public Routes
