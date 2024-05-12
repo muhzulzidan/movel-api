@@ -79,8 +79,8 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:2'])->group(function (
     Route::post('/passenger/chats', [ChatController::class, 'store']);
     Route::get('/passenger/chats', [ChatController::class, 'indexView']);
     Route::put('/passenger/chat/{chat}', [App\Http\Controllers\ChatController::class, 'update']);
-
-    
+    Route::delete('/passenger/chat/{chat}', [ChatController::class, 'destroy']);
+        
     Route::post('/passenger/chats/{chat}/messages', [MessageController::class, 'store']);
     Route::get('/passenger/chats/{chat}/messages', [MessageController::class, 'index']);
 
@@ -121,7 +121,8 @@ Route::middleware(['auth:sanctum', 'verified', 'checkRole:3'])->group(function (
 
     Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
     Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
-
+    Route::delete('/chat/{chat}', [ChatController::class, 'destroy']);
+     
     Route::get('/driver', [DriverController::class, 'index']);
     Route::put('/driver/update', [DriverController::class, 'update']);
 

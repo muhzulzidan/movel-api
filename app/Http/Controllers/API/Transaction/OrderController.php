@@ -19,6 +19,8 @@ use App\Models\TimeDeparture;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\User;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -31,8 +33,6 @@ class OrderController extends Controller
             ->get();
         return response()->json($activeDriversWithRoutes);
     }
-
-   
 
     public function getDriverAvailable(Request $request)
     {
@@ -200,8 +200,23 @@ class OrderController extends Controller
             $seatCarChoice->save();
         });
 
-        event(new NewOrderNotification($order));
+        // event(new NewOrderNotification($order));
 
+        // Send a PUT request to the Node.js server with the order details
+        $client = new Client();
+        $response = $client->request('PUT', 'https://admin.movel.id/api/orders/' . $order->id, [
+            'json' => ['order' => $order]
+        ]);
+
+        // Check the status code of the response
+        if ($response->getStatusCode() == 200) {
+            Log::info("The request was successful.");
+            Log::info("Response body: " . $response->getBody());
+        } else {
+            Log::info("The request failed. Status code: " . $response->getStatusCode());
+        }
+
+        
         return response()->json([
             'success' => true,
             'message' => 'Berhasil dipesan',
@@ -221,7 +236,7 @@ class OrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan'
-            ], 404);
+            ], 200);
         }
 
         // Jika data ada
@@ -230,6 +245,22 @@ class OrderController extends Controller
         $orderAccepted->update([
             'status_order_id' => 9,
         ]);
+
+         // Send a PUT request to the Node.js server with the order details
+    $client = new Client();
+    $response = $client->request('PUT', 'https://admin.movel.id/api/orders/' . $id . '/cancel_accept', [
+        'json' => ['order' => $orderAccepted]
+    ]);
+
+    // Check the status code of the response
+    if ($response->getStatusCode() == 200) {
+        Log::info("The request was successful.");
+        Log::info("Response body: " . $response->getBody());
+    } else {
+        Log::info("The request failed. Status code: " . $response->getStatusCode());
+    }
+
+
         return response()->json(['success' => true, 'message' => 'Setuju pembatalan pesanan']);
     }
 
@@ -246,7 +277,7 @@ class OrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan'
-            ], 404);
+            ], 200);
         }
 
         // Jika data ada
@@ -255,8 +286,22 @@ class OrderController extends Controller
         $orderAccepted->update([
             'status_order_id' => 3,
         ]);
-        return response()->json(['success' => true, 'message' => 'Menolak pembatalan pesanan']);
-    }
+
+         // Send a PUT request to the Node.js server with the order details
+        $client = new Client();
+        $response = $client->request('PUT', 'https://admin.movel.id/api/orders/' . $id . '/cancel_reject', [
+            'json' => ['order' => $orderAccepted]
+        ]);
+
+        // Check the status code of the response
+        if ($response->getStatusCode() == 200) {
+            Log::info("The request was successful.");
+            Log::info("Response body: " . $response->getBody());
+        } else {
+            Log::info("The request failed. Status code: " . $response->getStatusCode());
+        }
+            return response()->json(['success' => true, 'message' => 'Menolak pembatalan pesanan']);
+        }
 
     // Update status driver menuju ke lokasi jemput
     public function updateOrderPickLocation($id)
@@ -272,7 +317,7 @@ class OrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan'
-            ], 404);
+            ], 200);
         }
 
         // Jika data ada
@@ -281,6 +326,21 @@ class OrderController extends Controller
         $orderAccepted->update([
             'status_order_id' => 5,
         ]);
+
+        // Send a PUT request to the Node.js server with the order details
+        $client = new Client();
+        $response = $client->request('PUT', 'https://admin.movel.id/api/orders/' . $id . '/pick_location', [
+            'json' => ['order' => $orderAccepted]
+        ]);
+
+        // Check the status code of the response
+        if ($response->getStatusCode() == 200) {
+            Log::info("The request was successful.");
+            Log::info("Response body: " . $response->getBody());
+        } else {
+            Log::info("The request failed. Status code: " . $response->getStatusCode());
+        }
+
         return response()->json(['success' => true, 'message' => 'Anda menuju ke titik jemput']);
     }
 
@@ -298,7 +358,7 @@ class OrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan'
-            ], 404);
+            ], 200);
         }
 
         // Jika data ada
@@ -307,6 +367,21 @@ class OrderController extends Controller
         $orderAccepted->update([
             'status_order_id' => 6,
         ]);
+
+         // Send a PUT request to the Node.js server with the order details
+        $client = new Client();
+        $response = $client->request('PUT', 'https://admin.movel.id/api/orders/' . $id . '/pick_location_arrive', [
+            'json' => ['order' => $orderAccepted]
+        ]);
+
+        // Check the status code of the response
+        if ($response->getStatusCode() == 200) {
+            Log::info("The request was successful.");
+            Log::info("Response body: " . $response->getBody());
+        } else {
+            Log::info("The request failed. Status code: " . $response->getStatusCode());
+        }
+
         return response()->json(['success' => true, 'message' => 'Anda telah tiba di lokasi jemput']);
     }
 
@@ -328,61 +403,11 @@ class OrderController extends Controller
                 return response()->json(['message' => 'Status Sopir Berangkat tidak ditemukan.'], 404);
             }
         } else {
-            return response()->json(['message' => 'Order tidak ditemukan.'], 404);
+            return response()->json(['message' => 'Order tidak ditemukan.'], 200);
         }
     }
 
     // Update status pesanan selesai oleh driver
-    // public function updateOrderComplete($id)
-    // {
-    //     $driverId = auth()->user()->driver->id;
-
-    //     $order = Order::whereHas('driverDeparture', function ($query) use ($driverId) {
-    //         $query->where('driver_id', $driverId)->where('status_order_id', 6);
-    //     })->where('id', $id);
-
-    //     // Jika datanya tidak ada
-    //     if (!$order->exists()) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Order tidak ditemukan'
-    //         ], 404);
-    //     }
-
-    //     // Jika data ada
-    //     $orderAccepted = $order->first();
-
-    //     // Update data tabel orders
-    //     $orderAccepted->update([
-    //         'status_order_id' => 7,
-    //     ]);
-
-    //     // Kurangi saldo sebesar 5000
-    //     $currentBalance = Balance::where('driver_id', $driverId)->first();
-
-    //     if ($currentBalance) {
-    //         $currentBalance->saldo -= 5000;
-    //         $currentBalance->save();
-    //     }
-
-    //     // Panggil fungsi untuk memindahkan data ke tabel riwayat_pesanan
-    //     $riwayatPesananController = new RiwayatPesananController();
-    //     $riwayatPesananController->moveCompletedOrdersToHistory();
-
-    //     LabelSeatCar::where('order_id', $orderAccepted->id)->update(['is_filled' => 0]);
-    //     LabelSeatCar::where('order_id', $orderAccepted->id)->update(['order_id' => null]);
-
-    //     // Reset kolom date_departure dan time_departure, serta set is_active menjadi 0 pada tabel DriverDeparture
-    //     $driverDeparture = $orderAccepted->driverDeparture;
-    //     $driverDeparture->update([
-    //         'date_departure' => null,
-    //         'time_departure' => null,
-    //         'is_active' => 0,
-    //     ]);
-
-    //     return response()->json(['success' => true, 'message' => 'Selamat! Pesanan telah selesai']);
-    // }
-
     public function updateOrderComplete($id)
     {
         $driverId = auth()->user()->driver->id;
@@ -396,7 +421,7 @@ class OrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan'
-            ], 404);
+            ], 200);
         }
 
         // Jika data ada
@@ -411,7 +436,7 @@ class OrderController extends Controller
         $currentBalance = Balance::where('driver_id', $driverId)->first();
 
         if ($currentBalance) {
-            $currentBalance->saldo -= 5000;
+            $currentBalance->saldo -= 1;
             $currentBalance->save();
         }
 
@@ -423,6 +448,21 @@ class OrderController extends Controller
             ->where('status_order_id', '<>', 7)
             ->exists();
 
+
+        // Send a PUT request to the Node.js server with the order details
+        $client = new Client();
+        $response = $client->request('PUT', 'https://admin.movel.id/api/orders/' . $id . '/complete', [
+            'json' => ['order' => $orderAccepted]
+        ]);
+        // Check the status code of the response
+        if ($response->getStatusCode() == 200) {
+            Log::info("The request updateOrderComplete pendingOrders was successful.");
+            Log::info("Response body: " . $response->getBody());
+        } else {
+            Log::info("The request failed. Status code: " . $response->getStatusCode());
+        }
+
+
         // Jika masih ada pesanan yang belum selesai, tidak perlu mengubah DriverDeparture
         if ($pendingOrders) {
             return response()->json([
@@ -430,6 +470,21 @@ class OrderController extends Controller
                 'message' => 'Pesanan untuk penumpang ini telah selesai, Masih ada pesanan lain yang belum selesai'
             ]);
         }
+
+         // Send a PUT request to the Node.js server with the order details
+        $client = new Client();
+        $response = $client->request('PUT', 'https://admin.movel.id/api/orders/' . $id . '/complete', [
+            'json' => ['order' => $orderAccepted]
+        ]);
+
+        // Check the status code of the response
+        if ($response->getStatusCode() == 200) {
+            Log::info("The updateOrderComplete no pendingOrders  was successful.");
+            Log::info("Response body: " . $response->getBody());
+        } else {
+            Log::info("The request failed. Status code: " . $response->getStatusCode());
+        }
+
 
         // Reset kolom date_departure dan time_departure, serta set is_active menjadi 0 pada tabel DriverDeparture
         $driverDeparture = $orderAccepted->driverDeparture;
@@ -445,6 +500,8 @@ class OrderController extends Controller
         // $riwayatPesananController = new RiwayatPesananController();
         // $riwayatPesananController->moveCompletedOrdersToHistory();
 
+       
+        
         return response()->json(['success' => true, 'message' => 'Selamat! Semua pesanan telah selesai']);
     }
 }

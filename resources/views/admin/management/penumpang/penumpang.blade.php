@@ -14,6 +14,12 @@
     @endif
 
     @if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+    @endif
+
+    @if (session('status'))
         <div class="alert alert-success border-left-success" role="alert">
             {{ session('status') }}
         </div>
@@ -38,6 +44,7 @@
                                     <th>Gender</th>
                                     <th>Usia</th>
                                     <th>Action</th>
+                                    <th>Verification</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -48,14 +55,28 @@
                                             <img class="img-profile rounded-circle avatar"
                                                 src="{{ asset(Storage::url($penumpang->photo)) }}" alt="">
                                             <div class="pl-3 email">
-                                                <span class="font-weight-bold">
+                                              <span class=" d-block font-weight-bold">
                                                 @if ($penumpang->hasVerifiedEmail())
-                                                <i class="text-primary fas fa-user-check"></i>
+                                                <div class="text-primary">
+                                                    <i class="text-primary fas fa-user-check"></i>
+                                                Emailnya aktif
+                                                </div>
+                                               
+                                                
                                                 @else
-                                                <i class="text-secondary fas fa-user-times"></i>
+                                                <div class="text-danger">
+                                                    <i class=" fas fa-user-times"></i>
+                                                    Emailnya Tidak aktif
+                                                </div>
+                                                
                                                 @endif
+                                                
+                                                </span>    
+                                                <span class=" d-block font-weight-bold">
                                                 {{ $penumpang->name }}
                                                 </span>
+                                                
+                                              
                                                 <span class="d-block">{{ $penumpang->email }}</span>
                                             </div>
                                         </td>
@@ -71,10 +92,23 @@
                                                 class="btn btn-primary">
                                                 <i class="fas fa-edit"></i> {{ __('Edit') }}
                                             </a>
+                                           
                                             <a class="btn btn-danger" id="{{ $penumpang->id }}" href="#"
                                                 data-toggle="modal" data-target="#deleteModal-{{ $penumpang->id }}">
                                                 <i class="fas fa-trash"></i> {{ __('Delete') }}
                                             </a>
+                                        </td>
+                                        <td class="text-center">
+                                            
+                                           
+                                            @if (!$penumpang->hasVerifiedEmail())
+                                               <form action="{{ route('resendVerificationEmail', ['userType' => 'passenger', 'userId' => $penumpang->id]) }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="user_id" value="{{ $penumpang->id }}">
+                                                    <button type="submit" class="btn btn-primary">Resend Verification Email</button>
+                                                </form>
+                                            @endif
+                                           
                                         </td>
                                     </tr>
                                 @endforeach

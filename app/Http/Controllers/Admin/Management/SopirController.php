@@ -511,28 +511,46 @@ public function updateDeparture(Request $request, $driver_id, $departure_id)
 
     public function topup(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'saldo' => ['required'],
+    $validatedData = $request->validate([
+        'saldo' => ['required'],
+    ]);
+
+    $balance = Balance::where('driver_id', $id)->first();
+
+    if ($balance) {
+        // Jika data sudah ada, update saldo
+        $balance->driver_id = $id;
+        $balance->saldo += $validatedData['saldo'];
+
+        $balance->save();
+    } else {
+        // Jika data belum ada, buat data baru
+        $balance = Balance::create([
+            'driver_id' => $id,
+            'saldo' => $validatedData['saldo'],
         ]);
+    }
 
-        $balance = Balance::where('driver_id', $id)->first();
+    // Send a request to the Node.js server
+    $client = new \GuzzleHttp\Client();
+    $response = $client->request('PUT', 'https://admin.movel.id/api/topup/' . $id, [
+        'json' => ['saldo' => $validatedData['saldo']]
+    ]);
 
-        if ($balance) {
+    // Check the status code of the response
+    if ($response->getStatusCode() == 200) {
+    // The request was successful
+    Log::info("The request was successful.");
 
-            // Jika data sudah ada, update saldo
-            $balance->driver_id = $id;
-            $balance->saldo += $validatedData['saldo'];
+    // You can also print the body of the response
+    $body = $response->getBody();
+    Log::info("Response body: $body");
+    } else {
+    // The request failed
+    Log::info("The request failed. Status code: " . $response->getStatusCode());
+    }
 
-            $balance->save();
-        } else {
-            // Jika data belum ada, buat data baru
-            $balance = Balance::create([
-                'driver_id' => $id,
-                'saldo' => $validatedData['saldo'],
-            ]);
-        }
-
-        return redirect()->route('sopir', $id)->with('success', 'TopUp berhasil');
+    return redirect()->route('sopir', $id)->with('success', 'TopUp berhasil');
     }
 
     public function changeSaldo(Request $request, $id)
@@ -543,9 +561,22 @@ public function updateDeparture(Request $request, $driver_id, $departure_id)
 
         $balance = Balance::where('driver_id', $id)->first();
 
-        // Jika data sudah ada, update saldo
-        $balance->driver_id = $id;
-        $balance->saldo = $validatedData['saldo'];
+        // Check if the balance record exists
+        if ($balance) {
+            // If the balance record exists, update the saldo
+            $balance->saldo = $validatedData['saldo'];
+        } else {
+            // If the balance record doesn't exist, create a new one
+            $balance = new Balance;
+            $balance->driver_id = $id;
+            $balance->saldo = $validatedData['saldo'];
+        }
+
+        // Send a request to the Node.js server
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('PUT', 'https://admin.movel.id/api/topup/' . $id, [
+            'json' => ['saldo' => $validatedData['saldo']]
+        ]);
 
         $balance->save();
 

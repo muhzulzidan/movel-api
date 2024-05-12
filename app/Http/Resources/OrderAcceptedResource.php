@@ -17,6 +17,7 @@ class OrderAcceptedResource extends JsonResource
         return [
             'id' => $this->id,
             'passenger_name' => $this->user->name,
+            'passenger_id' => $this->user->id,
             'kota_asal' => $this->driverDeparture->kotaAsal->nama_kota,
             'kota_tujuan' => $this->driverDeparture->kotaTujuan->nama_kota,
             'date_order' => $this->created_at->format('d M Y'),

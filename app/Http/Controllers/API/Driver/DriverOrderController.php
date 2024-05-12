@@ -14,6 +14,8 @@ use App\Models\LabelSeatCar;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Client;
 
 class DriverOrderController extends Controller
 {
@@ -26,11 +28,11 @@ class DriverOrderController extends Controller
         })->get();
 
         // Jika datanya kosong
-        if ($orders->isEmpty()) {
+       if ($orders->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan',
-            ], 404);
+            ], 200);
         }
 
         // Jika datanya ada
@@ -47,7 +49,7 @@ class DriverOrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan'
-            ], 404);
+            ], 200);
         }
 
         // Jika data ada
@@ -66,17 +68,40 @@ class DriverOrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan'
-            ], 404);
+            ], 200);
         }
 
         // Jika pesanan ada
         $orderAvailable = $order->get()->first();
+
+        // Log the order details
+        Log::info('Order details updateDriverOrderAccept:', $orderAvailable->toArray());
 
         // Update data pada tabel orders
         $orderAvailable->update([
             'status_order_id' => 3,
         ]);
 
+        // Create a Guzzle HTTP client
+        $client = new Client();
+
+        // Send a PUT request to the Node.js server
+        // $response = $client->put('https://admin.movel.id/api/orders/' . $id . '/accept');
+
+
+        $response = $client->request('PUT', 'https://admin.movel.id/api/orders/' . $id . '/accept', [
+         'json' => ['order' => $orderAvailable]
+        ]);
+
+        // Check the status code of the response
+        if ($response->getStatusCode() == 200) {
+            Log::info("The accept request was successful.");
+            Log::info("Response body: " . $response->getBody());
+        } else {
+            Log::info("The accept request failed. Status code: " . $response->getStatusCode());
+        }
+
+        // Check the response status
         return response()->json(['success' => true, 'message' => 'Anda telah menerima pesanan']);
     }
 
@@ -91,7 +116,7 @@ class DriverOrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan'
-            ], 404);
+            ], 200);
         }
 
         // Jika pesanan ada
@@ -100,6 +125,12 @@ class DriverOrderController extends Controller
         // Update data pada tabel orders
         $orderAvailable->update([
             'status_order_id' => 1,
+        ]);
+
+        // Update the LabelSeatCar records associated with the order
+        LabelSeatCar::where('order_id', $orderAvailable->id)->update([
+            'is_filled' => 0,
+            'order_id' => null,
         ]);
 
         return response()->json(['success' => true, 'message' => 'Anda telah menolak pesanan']);
@@ -121,7 +152,7 @@ class DriverOrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan',
-            ], 404);
+            ], 200);
         }
 
         // Jika datanya ada
@@ -143,7 +174,7 @@ class DriverOrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Order tidak ditemukan',
-            ], 404);
+            ], 200);
         }
 
         // Jika datanya ada

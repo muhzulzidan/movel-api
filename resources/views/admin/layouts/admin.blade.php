@@ -433,6 +433,37 @@
         }, 5000);
     </script>
 
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  var socket = io('https://admin.movel.id'); // replace with your Node.js server address
+
+  $('form').on('submit', function(e) {
+    e.preventDefault();
+
+    var id = $(this).find('input[name="sopir_id"]').val(); // replace with the actual id
+    var saldo = $(this).find('select[name="saldo"]').val(); // replace with the actual saldo
+
+    $.ajax({
+      url: 'https://admin.movel.id/topup/' + id, // replace with your Node.js server address
+      type: 'PUT',
+      data: { saldo: saldo },
+      headers: { Authorization: 'Bearer ' + $('#token').val() }, // replace with the actual token
+      success: function(data) {
+        socket.emit('top_up', id, data);
+      },
+      error: function(error) {
+        console.error(error);
+      }
+    });
+  });
+
+  socket.on('top_up', function(id, data) {
+    $('#balance-' + id).text(data.balance); // replace with the actual balance element
+  });
+</script> -->
+
     <script>
         $(document).on("click", ".btn-success", function() {
             var id = $(this).data('id');

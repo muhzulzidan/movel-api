@@ -179,7 +179,9 @@
                                         <td>{{ $order->statusOrder->status_name }}</td>
 
                                         <td class="text-center">
-                                            {{ 'Rp ' . number_format($order->price_order, 0, ',', '.') }}</td>
+                                            {{ . number_format($order->price_order, 0, ',', '.') }}</td>
+                                        <!-- <td class="text-center">
+                                            {{ 'Rp ' . number_format($order->price_order, 0, ',', '.') }}</td> -->
                                         <td class="text-center">{{ $order->is_rating }}</td>
                                         <td>
                                             <div class="dropdown">
@@ -188,15 +190,15 @@
                                                     aria-expanded="false">
                                                     Change Status
                                                 </button>
-                                                {{-- <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                @foreach ($statusOrder as $status)
-                    <form action="{{ route('order.updateStatus', ['id' => $order->order_id, 'status' => $status->id]) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <button class="dropdown-item" type="submit">{{ $status->status_name }}</button>
-                    </form>
-                @endforeach
-            </div> --}}
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    @foreach ($statusOrder as $status)
+                                                        <form action="{{ route('order.updateStatus', ['id' => $order->order_id, 'status' => $status->id]) }}" method="POST">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <button class="dropdown-item" type="submit">{{ $status->status_name }}</button>
+                                                        </form>
+                                                    @endforeach
+                                                </div> 
                                         </td>
                                     </tr>
                                 @endforeach

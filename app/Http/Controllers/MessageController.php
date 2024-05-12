@@ -7,6 +7,7 @@ use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Events\MessageSent;
 use Illuminate\Support\Facades\Auth;
+use GuzzleHttp\Client;
 
 class MessageController extends Controller
 {
@@ -23,9 +24,6 @@ class MessageController extends Controller
             return $message;
         });
         
-        // Broadcast a MessageSent event
-        event(new MessageSent($message));
-
         // Return the messages as a JSON response
         return response()->json($messages);
     }
@@ -44,6 +42,18 @@ class MessageController extends Controller
         $message->content = $request->content;
         $message->save();
 
+        $client = new Client([
+            // Base URI is used with relative requests
+            'base_uri' => 'https://admin.movel.id', // Replace with the actual base URI of your Node.js server
+        ]);
+
+       // Send a message
+        $response = $client->post("/api/passenger/chats/{$chat->id}/messages", [
+            'json' => [
+                'senderId' => Auth::id(),
+                'content' => $request->content,
+            ],
+        ]);
 
         return response()->json($message, 201);
 

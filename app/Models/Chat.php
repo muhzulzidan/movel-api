@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Passenger;
 
 class Chat extends Model
 {
@@ -33,4 +34,8 @@ class Chat extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function passenger()
+    {
+        return $this->hasOne(Passenger::class);
+    }   
 }

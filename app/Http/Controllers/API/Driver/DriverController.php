@@ -14,7 +14,7 @@ class DriverController extends Controller
     {
         $user = auth()->user();
         $drivers = User::join('drivers', 'drivers.user_id', '=', 'users.id')
-            ->select('users.name', 'users.email', 'users.no_hp', 'drivers.address', 'is_smoking', 'driver_age', 'drivers.photo', 'drivers.no_ktp', 'drivers.foto_ktp', 'drivers.foto_sim', 'drivers.foto_stnk')
+            ->select('users.name', 'users.id', 'users.email', 'users.no_hp', 'drivers.address', 'is_smoking', 'driver_age', 'drivers.photo', 'drivers.no_ktp', 'drivers.foto_ktp', 'drivers.foto_sim', 'drivers.foto_stnk')
             ->where('users.id', '=', $user->id)
             ->get();
 

@@ -24,37 +24,8 @@ __webpack_require__.r(__webpack_exports__);
 window.io = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/build/cjs/index.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'socket.io',
-  host: window.location.hostname + ':6001'
+  host: 'admin.movel.id' // replace with your Node.js server's host and port
 });
-
-// window._ = require('lodash');
-
-/**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
- */
-
-// window.axios = require('axios');
-// 
-// window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
-
-// import Echo from 'laravel-echo';
-
-// window.Pusher = require('pusher-js');
-
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: process.env.MIX_PUSHER_APP_KEY,
-//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//     forceTLS: true
-// });
 
 /***/ }),
 
@@ -2904,8 +2875,8 @@ var EventFormatter = /*#__PURE__*/function () {
   _createClass(EventFormatter, [{
     key: "format",
     value: function format(event) {
-      if (event.charAt(0) === '.' || event.charAt(0) === '\\') {
-        return event.substr(1);
+      if (['.', '\\'].includes(event.charAt(0))) {
+        return event.substring(1);
       } else if (this.namespace) {
         event = this.namespace + '.' + event;
       }
@@ -4204,6 +4175,8 @@ var Echo = /*#__PURE__*/function () {
         this.connector = new NullConnector(this.options);
       } else if (typeof this.options.broadcaster == 'function') {
         this.connector = new this.options.broadcaster(this.options);
+      } else {
+        throw new Error("Broadcaster ".concat(_typeof(this.options.broadcaster), " ").concat(this.options.broadcaster, " is not supported."));
       }
     }
     /**

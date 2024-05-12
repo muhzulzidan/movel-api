@@ -122,12 +122,24 @@
                                                     @endif
                                                     {{ $sopir->name }}
                                                 </span>
-                                                <span class="d-block">
+                                                
+                                                <span class="d-block py-1">
                                                     @if ($sopir->hasVerifiedEmail())
+                                                     <div class="text-primary ">
                                                         <i class="text-primary fas fa-user-check"></i>
+                                                        Email Aktif
+                                                    </div>    
+                                                   
                                                     @else
-                                                        <i class="text-secondary fas fa-user-times"></i>
+                                                    <div class="text-danger ">
+                                                        <i class="fas fa-user-times"></i>
+                                                        Email Tidak Aktif
+                                                    </div>
+                                                        
                                                     @endif
+                                                   
+                                                </span>
+                                                <span class="d-block">
                                                     {{ $sopir->email }}
                                                 </span>
                                             </div>
@@ -165,7 +177,7 @@
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                     <button
                                                         class="btn text-dark fw-bold btn-block btn-outline-secondary me-2"
-                                                        disabled>{{ 'Rp ' . number_format($sopir->saldo, 0, ',', '.') }}</button>
+                                                        disabled>{{ number_format($sopir->saldo, 0, ',', '.') }}</button>
                                                     <button type="button" class="btn btn-info" id="{{ $sopir->sopir_id }}"
                                                         data-toggle="modal"
                                                         data-target="#topupModal-{{ $sopir->sopir_id }}"
@@ -190,6 +202,14 @@
                                             <a href="{{ route('sopir.show', $sopir->sopir_id) }}" class="btn btn-success">
                                                 <i class="fas fa-info-circle"></i> {{ __('Detail') }}
                                             </a>
+                                            @if (!$sopir->hasVerifiedEmail())
+                                                <form action="{{ route('resendVerificationEmail', ['userType' => 'driver', 'userId' => $sopir->sopir_id]) }}" method="POST" class="btn">
+                                                @csrf
+
+                                                    <input type="hidden" name="user_id" value="{{ $sopir->sopir_id }}">
+                                                    <button type="submit" class="btn btn-primary"> <i class="fa-solid fa-envelope"></i> Verify  </button>
+                                                </form>
+                                            @endif
                                             <a href="{{ route('sopir.edit', $sopir->sopir_id) }}" class="btn btn-primary">
                                                 <i class="fas fa-edit"></i> {{ __('Edit') }}
                                             </a>
@@ -234,7 +254,7 @@
                         <div class="modal-body">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Rp</span>
+                                    <!-- <span class="input-group-text">Rp</span> -->
                                 </div>
                                 <input type="number" class="form-control" id="saldo"name="saldo"
                                     placeholder="{{ __('Change Saldo') }}" required
@@ -265,18 +285,25 @@
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <form action="{{ route('sopir.topup', $sopir->sopir_id) }}" method="POST"
-                        enctype="multipart/form-data">
+                    <!-- <form action="http://admin.movel.id/api/topup/{{ $sopir->sopir_id }}" method="POST" enctype="multipart/form-data"> -->
+                    <form action="{{ route('sopir.topup', $sopir->sopir_id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="_method" value="PUT">
+                        <input type="hidden" name="sopir_id" value="{{ $sopir->sopir_id }}">
                         <div class="modal-body">
 
                             <div class="input-group mb-3">
-                                <div class="input-group-prepend">
+                                <!-- <div class="input-group-prepend">
                                     <span class="input-group-text">Rp</span>
-                                </div>
+                                </div> -->
                                 <select class="custom-select" id="inputGroupSelect01" name="saldo">
+                                    <option value="0">Choose...</option>
+                                    <?php for ($i = 1; $i <= 10; $i++): ?>
+                                        <option value="<?= $i ?>"><?= $i ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                                <!-- <select class="custom-select" id="inputGroupSelect01" name="saldo">
                                     <option value="0">Choose...</option>
                                     <option value="5000">5.000</option>
                                     <option value="10000">10.000</option>
@@ -287,7 +314,7 @@
                                     <option value="100000">100.000</option>
                                     <option value="150000">150.000</option>
                                     <option value="200000">200.000</option>
-                                </select>
+                                </select> -->
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -299,7 +326,6 @@
             </div>
         </div>
     @endforeach
-
 
     <!-- Delete Modal-->
     @foreach ($drivers as $sopir)

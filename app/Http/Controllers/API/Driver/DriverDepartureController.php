@@ -9,6 +9,8 @@ use App\Models\DriverDeparture;
 use App\Models\Order;
 use App\Models\KotaKab;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 
 class DriverDepartureController extends Controller
 {
@@ -74,10 +76,12 @@ class DriverDepartureController extends Controller
 
             // Mengambil id order terkait driver departure
             $orderIds = $driver_departure->orders->pluck('id');
+            
+            $orders = Order::whereIn('id', $orderIds)->get();
 
-            $orders = Order::whereIn('id', $orderIds)->where('status_order_id', 7)->get();
+            Log::info('Orders count:', [$orders->count()]);
+            Log::info('Order IDs count:', [$orderIds->count()]);
 
-            // Jika semua orderan, statusnya belum selesai
             if ($orders->count() !== $orderIds->count()) {
                 return response()->json([
                     'status' => false,
@@ -120,6 +124,18 @@ class DriverDepartureController extends Controller
     {
         $user = auth()->user();
         $driverDeparture = $user->driver->driver_departures->first();
+
+        // Get the driver's balance
+        $balance = $user->driver->balance;
+
+        // Check if the driver's balance is sufficient
+        if ($balance->saldo < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Poin tidak cukup. Harus lebih dari 1 untuk mengaktifkan.',
+            ], 400);
+        }
+
         $driverDeparture->update([
             'is_active' => true,
         ]);

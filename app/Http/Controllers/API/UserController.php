@@ -15,6 +15,8 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as RulesPassword;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
+use App\Events\UserLoggedIn;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -71,21 +73,37 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function resendVerificationEmail(Request $request)
+    public function resendVerificationEmail(Request $request, $userType)
     {
-        $user = User::find($request->get('user_id'));
+        Log::info('Request to resend verification email: ', $request->all());
 
-        if (! $user) {
-            return response()->json(['error' => 'User not found'], 404);
+        $userId = $request->get('user_id');
+        Log::info('Resending verification email for ' . $userType . ' id: ' . $userId);
+
+      if ($userType === 'passenger') {
+            $user = Passenger::find($userId)->user;
+        } else if ($userType === 'driver') {
+            $user = Driver::find($userId)->user;
+        } else {
+            return response()->json(['error' => 'Invalid user type'], 400);
+        }
+
+
+        if (!$user) {
+            Log::error(ucfirst($userType) . ' not found for id: ' . $userId);
+            return response()->json(['error' => ucfirst($userType) . ' not found'], 404);
         }
 
         if ($user->hasVerifiedEmail()) {
+            Log::error(' Email is already verified');
             return response()->json(['error' => 'Email is already verified'], 400);
         }
 
+        Log::info('Verification email sent: ' . $user);
+        
         $user->sendEmailVerificationNotification();
 
-        return response()->json(['status' => 'Verification email sent']);
+        return redirect()->back()->with('status', 'Verification email sent');
     }
 
     // Fungsi verifikasi email
@@ -151,6 +169,11 @@ class UserController extends Controller
             // Buat token untuk user tersebut
             $token = $user->createToken($request->email)->plainTextToken;
 
+            event(new UserLoggedIn($user));
+    
+            // (new UserLoggedIn($user))->dispatch();
+            // Event::fire(new UserLoggedIn($user));
+
             // response berhasil masuk
             return response()->json([
                 'success' => true,
@@ -165,6 +188,8 @@ class UserController extends Controller
                 ],
             ]);
         }
+
+        
 
         // Jika pengguna berdasarkan email ada tapi password salah
         return response()->json([

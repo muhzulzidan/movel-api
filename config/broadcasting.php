@@ -15,7 +15,7 @@ return [
     |
      */
 
-    'default' => env('BROADCAST_DRIVER', 'pusher'),
+    'default' => env('BROADCAST_DRIVER', 'redis'),
 
     /*
     |--------------------------------------------------------------------------
@@ -42,11 +42,11 @@ return [
     'options' => [
         'cluster' => env('PUSHER_APP_CLUSTER'),
         'encrypted' => true,
-        'host' => 'localhost',
+        'host' => '127.0.0.1',
         'port' => 6001,
         'scheme' => 'http'
     ],
-],  
+],
 
 
         'ably' => [

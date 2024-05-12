@@ -21,6 +21,12 @@ Route::get('/email/verify/{id}', [UserController::class, 'verify'])
     ->name('verification.verify')
     ->middleware('signed');
 
+Route::get('/test', function () {
+    return view('test');
+});
+
+Route::post('/email/resend/{userType}/{userId}', [UserController::class, 'resendVerificationEmail'])->name('resendVerificationEmail');
+
 // Route view Email telah diverifikasi sebelumnya
 Route::get('/email-verified', function () {
     return view('email-verified');
