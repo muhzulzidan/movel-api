@@ -11,6 +11,15 @@
 |
  */
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\API\UserController;
+
+Auth::routes(['verify' => true]);
+
+Route::get('/email/verify/{id}', [UserController::class, 'verify'])
+    ->name('verification.verify')
+    ->middleware('signed');
 
 // Route view Email telah diverifikasi sebelumnya
 Route::get('/email-verified', function () {
@@ -22,6 +31,22 @@ Route::get('/email-verify', function () {
     return view('email-verify');
 });
 
+Route::get('/send-test-email', function(){
+    try {
+        Mail::raw('This is a movell', function ($message) {
+            $message->to('zulzdn@gmail.com');
+            $message->subject('hello');
+        });
+
+        Log::info('Test email sent');
+
+        return 'Test email sent';
+    } catch (\Exception $e) {
+        Log::error('Failed to send test email: ' . $e->getMessage());
+
+        return 'Failed to send test email';
+    }
+});
 
 /*
 |--------------------------------------------------------------------------

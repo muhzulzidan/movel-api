@@ -45,7 +45,10 @@ Route::get('/test-websocket', function () {
 // Public Routes
 Route::post('/register', [UserController::class, 'registerPassenger']);
 // Route verifikasi email
-Route::get('/email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
+// Route::get('/email/verify/{id}', [UserController::class, 'verify'])
+//     ->name('verification.verify')
+//     ->middleware('signed');
+Route::post('/email/resend', [UserController::class, 'resendVerificationEmail']);
 // Route login ke sistem (Email harus terverifikasi)
 Route::post('/login', [UserController::class, 'login']);
 //Route Forget and Reset Password

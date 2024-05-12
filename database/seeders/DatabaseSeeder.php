@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             KotaKabSeeder::class,
             TimeDepartureSeeder::class,
             UserSeeder::class,
+            PassengerSeeder::class,
+            DriverSeeder::class,
+            CarSeeder::class,
             LabelSeatCarSeeder::class,
             StatusOrderSeeder::class,
         ]);

@@ -88,7 +88,7 @@ class AuthRouteMethods
     public function emailVerification()
     {
         return function () {
-            $this->get('email/verify', 'Auth\VerificationController@show')->name('verification.notice');
+            $this->get('email/verify', 'Auth\VerificationController@verify')->name('verification.notice');
             $this->get('email/verify/{id}/{hash}', 'Auth\VerificationController@verify')->name('verification.verify');
             $this->post('email/resend', 'Auth\VerificationController@resend')->name('verification.resend');
         };

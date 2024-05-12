@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 trait VerifiesEmails
 {
@@ -33,7 +34,15 @@ trait VerifiesEmails
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function verify(Request $request)
-    {
+{
+        if (! URL::hasValidSignature($request)) {
+        // Invalid signature
+        Log::error('Invalid signature for request: ' . $request->fullUrl());
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid signature',
+        ], 403);
+    }
         if (! hash_equals((string) $request->route('id'), (string) $request->user()->getKey())) {
             throw new AuthorizationException;
         }

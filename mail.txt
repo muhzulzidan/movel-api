@@ -1,0 +1,3 @@
+mail._domainkey	IN	TXT	( "v=DKIM1; h=sha256; k=rsa; "
+	  "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqz93TKwOK389+Oo9a5hvsWtuWeeP3OO0aUXbwPEO+d2WkCs2tJAWHIuCTsouHGQ/vX4phcuhWu/pH+l/VeFL8+XGAOnNPiDJIeGCxQ7f98NIeLobLIHu7Eh2cooNE8hpD1IeMkebbdyccwmqgfOD5hzqwL5PKWWRonNUMlhrSayCBWLj7IuI11xYfBmAinG6PVx1O+29V/CCHp"
+	  "88mIfWNOVLC6IgrEIUXE4cFTkeopOVa/p3271Gm24iyfNSKLIx+NB6yaFxzNjUcUK38xo/eFcUymKLIsAu0fdFa0BDrgrGpGXvcSxdKqdN21P0kxKYzcTqCOc5G5UDii+rJAixKQIDAQAB" )  ; ----- DKIM key mail for movel.id

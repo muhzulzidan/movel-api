@@ -72,6 +72,10 @@ class SopirController extends Controller
 
     public function store(Request $request)
     {
+        try {
+        // Log the incoming request data
+        Log::info('Store method called with data: ', $request->all());
+
         // Validasi data yang diterima
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -106,30 +110,44 @@ class SopirController extends Controller
             $no_hp = "62" . $no_hp;
         }
 
-        // Cek Email
-        if (User::where('email', $validatedData['email'])->first()) {
-            return redirect()->back()->withErrors(['error' => 'Email already exists']);
-        }
+        // // Cek Email
+        // if (User::where('email', $validatedData['email'])->first()) {
+        //     return redirect()->back()->withErrors(['error' => 'Email already exists']);
+        // }
 
-        // dd($no_hp);
-        // Cek no HP
-        if (User::where('no_hp', $no_hp)->first()) {
-            return redirect()->back()->withErrors(['error' => 'No HP already exists']);
-        }
+        // // dd($no_hp);
+        // // Cek no HP
+        // if (User::where('no_hp', $no_hp)->first()) {
+        //     return redirect()->back()->withErrors(['error' => 'No HP already exists']);
+        // }
 
+        // if (User::where('email', $request->email)->exists()) {
+        //     return redirect()->back()->withErrors(['email' => 'The email has already been taken.']);
+        // }
 
-        // Simpan data user
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'email_verified_at' => date('Y-m-d H:i:s'),
-            'no_hp' => $validatedData['no_hp'],
-            'password' => Hash::make($validatedData['password']),
-            'role_id' => 3,
-        ]);
-
+        // Try to find the user by email
+        $user = User::where('email', $request->email)->first();
+        
+        
+        // If the user doesn't exist, create a new user
         if (!$user) {
-            return redirect()->back()->withErrors('error', 'Failed to create user');
+            $user = User::create([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'email_verified_at' => date('Y-m-d H:i:s'),
+                'no_hp' => $validatedData['no_hp'],
+                'password' => Hash::make($validatedData['password']),
+                'role_id' => 3,
+            ]);
+
+            if (!$user) {
+                return redirect()->back()->withErrors('error', 'Failed to create user');
+            }
+        }
+        // Check if a driver with the given user ID already exists
+        $existingDriver = Driver::where('user_id', $user->id)->first();
+        if ($existingDriver) {
+            return redirect()->back()->withErrors(['error' => 'A driver with this user ID already exists']);
         }
 
         // Simpan data driver
@@ -245,8 +263,22 @@ class SopirController extends Controller
             return redirect()->back()->withErrors('error', 'Failed to create car');
         }
 
-        // Redirect atau melakukan tindakan lainnya
-        return redirect()->route('sopir')->with('success', 'Sopir baru berhasil ditambahkan');
+
+        // Log the created user, driver, and car
+        Log::info('User created: ', $user->toArray());
+        Log::info('Driver created: ', $driver->toArray());
+        Log::info('Car created: ', $car->toArray());
+
+            // Redirect atau melakukan tindakan lainnya
+            return redirect()->route('sopir')->with('success', 'Sopir baru berhasil ditambahkan');
+        } catch (\Exception $e) {
+            // Log any errors that occur
+            Log::error('An error occurred in the store method: ', ['error' => $e->getMessage()]);
+
+
+            // Redirect back with error message
+            return redirect()->back()->withErrors('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 
     public function update_view($id)
@@ -257,7 +289,7 @@ class SopirController extends Controller
             ->select('users.*', 'drivers.*', 'cars.*')
             ->first();
         $show_departure = DriverDeparture::where('driver_id', $id)->first();
-// Find the DriverDeparture
+    // Find the DriverDeparture
     $driver_departure = DriverDeparture::where('driver_id', $id)->first();
 
         $kota_kabs = KotaKab::all();

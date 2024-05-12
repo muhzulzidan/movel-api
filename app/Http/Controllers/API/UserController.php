@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as RulesPassword;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -70,11 +71,30 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function resendVerificationEmail(Request $request)
+    {
+        $user = User::find($request->get('user_id'));
+
+        if (! $user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['error' => 'Email is already verified'], 400);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json(['status' => 'Verification email sent']);
+    }
+
     // Fungsi verifikasi email
     public function verify($id, Request $request)
     {
+        Log::info('Verifying email for user id: ' . $id);
         // Jika validasi gagal
         if (!$request->hasValidSignature()) {
+            Log::error('Invalid signature for user id: ' . $id);
             return response()->json([
                 'status' => false,
                 'message' => 'Verifying email fails',
@@ -85,11 +105,13 @@ class UserController extends Controller
 
         // Jika email belum diverifikasi maka dilakukan verifikasi
         if (!$user->hasVerifiedEmail()) {
-            $user->markEmailAsVerified();
+        $user->markEmailAsVerified();
+        Log::info('Email marked as verified for user id: ' . $id);
         } else {
-            // Informasi email telah terverifikasi sebelumnya diarahkan kesini
+            Log::info('Email already verified for user id: ' . $id);
             return redirect()->to('/email-verified');
         }
+
 
         // Informasi email berhasil diverifikasi diarahkan kesini
         return redirect()->to('/email-verify');
