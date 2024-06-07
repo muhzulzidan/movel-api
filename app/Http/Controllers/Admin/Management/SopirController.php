@@ -16,15 +16,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Redirect;
 
 class SopirController extends Controller
 {
     public function index()
     {
-        $drivers = User::join('drivers', 'users.id', '=', 'drivers.user_id')
-            ->join('cars', 'drivers.id', '=', 'cars.driver_id')
-            // ->join('driver_departures', 'drivers.id', '=', 'driver_departures.driver_id')
+      $drivers = User::join('drivers', 'users.id', '=', 'drivers.user_id')
+            ->leftJoin('cars', 'drivers.id', '=', 'cars.driver_id')
             ->leftJoin('balance', 'drivers.id', '=', 'balance.driver_id')
             ->select('drivers.id as sopir_id', 'users.*', 'drivers.*', 'cars.*', 'balance.*')
             ->get();
@@ -79,7 +78,8 @@ class SopirController extends Controller
         // Validasi data yang diterima
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+            // 'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'email', 'max:255'], // Removed 'unique:' . User::class
             'no_hp' => ['required', 'string', 'max:13'],
             'password' => ['required', 'confirmed', 'min:8'],
             'photo' => ['required', 'image', 'max:2048'],
@@ -126,9 +126,10 @@ class SopirController extends Controller
         // }
 
         // Try to find the user by email
-        $user = User::where('email', $request->email)->first();
-        
-        
+        // $user = User::where('email', $request->email)->first();
+        // Check if a user with the provided email already exists
+        $user = User::where('email', $validatedData['email'])->first();
+
         // If the user doesn't exist, create a new user
         if (!$user) {
             $user = User::create([
@@ -144,6 +145,7 @@ class SopirController extends Controller
                 return redirect()->back()->withErrors('error', 'Failed to create user');
             }
         }
+
         // Check if a driver with the given user ID already exists
         $existingDriver = Driver::where('user_id', $user->id)->first();
         if ($existingDriver) {
@@ -164,6 +166,9 @@ class SopirController extends Controller
         $ktpSize = $request->file('foto_ktp')->getSize();
         $simSize = $request->file('foto_sim')->getSize();
         $stnkSize = $request->file('foto_stnk')->getSize();
+        // Log the file sizes
+        Log::info('File sizes: ', ['photo' => $photoSize, 'ktp' => $ktpSize, 'sim' => $simSize, 'stnk' => $stnkSize]);
+
 
         if ($photoSize > 2097152 || $ktpSize > 2097152 || $simSize > 2097152 || $stnkSize > 2097152) {
             return redirect()->back()->withErrors('error', 'One or more files exceed the maximum file size of 2 MB.');
@@ -275,9 +280,9 @@ class SopirController extends Controller
             // Log any errors that occur
             Log::error('An error occurred in the store method: ', ['error' => $e->getMessage()]);
 
-
+            return Redirect::back()->withErrors(['error', 'An error occurred: ' . $e->getMessage()]);
             // Redirect back with error message
-            return redirect()->back()->withErrors('error', 'An error occurred: ' . $e->getMessage());
+            // return redirect()->back()->withErrors('error', 'An error occurred: ' . $e->getMessage());
         }
     }
 
@@ -592,12 +597,14 @@ public function updateDeparture(Request $request, $driver_id, $departure_id)
         $driver = Driver::findOrFail($id);
 
         // Hapus file gambar dari storage
-        Storage::delete([
+        $filesToDelete = array_filter([
             $driver->photo,
             $driver->foto_ktp,
             $driver->foto_sim,
             $driver->foto_stnk,
         ]);
+
+        Storage::delete($filesToDelete);
 
         // Hapus data pengguna terkait jika tidak ada pengemudi lain yang terhubung dengannya
         $user = User::find($driver->user_id);
@@ -611,11 +618,17 @@ public function updateDeparture(Request $request, $driver_id, $departure_id)
             $balance->delete();
         }
 
-        // Hapus data mobil terkait
+          // Hapus data mobil terkait
         $car = Car::where('driver_id', $id)->first();
         if ($car) {
             // Hapus data label_seat_cars terkait
-            LabelSeatCar::where('car_id', $car->id)->delete();
+            $labelSeatCars = LabelSeatCar::where('car_id', $car->id)->get();
+            foreach ($labelSeatCars as $labelSeatCar) {
+                // Hapus data pesanan terkait
+                $labelSeatCar->order()->delete();
+                // Hapus data label_seat_car
+                $labelSeatCar->delete();
+            }
 
             // Hapus data mobil
             $car->delete();

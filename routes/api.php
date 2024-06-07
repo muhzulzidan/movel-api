@@ -27,6 +27,11 @@ Route::post('/test-websocket', function () {
 
     return response()->json(['message' => 'Event has been broadcasted']);
 });
+// Protected Route Passengers
+Route::middleware(['auth:sanctum', 'verified',])->group(function () {
+    //Route Booking (Terbaru)
+    Route::get('/check-token', [UserController::class, 'checkToken']);
+});
 
 
 Route::get('/test-websocket', function () {
@@ -42,22 +47,22 @@ Route::get('/test-websocket', function () {
 });
 
 
-// Public Routes
-Route::post('/register', [UserController::class, 'registerPassenger']);
-// Route verifikasi email
-// Route::get('/email/verify/{id}', [UserController::class, 'verify'])
-//     ->name('verification.verify')
-//     ->middleware('signed');
-Route::post('/email/resend', [UserController::class, 'resendVerificationEmail']);
-// Route login ke sistem (Email harus terverifikasi)
-Route::post('/login', [UserController::class, 'login']);
-//Route Forget and Reset Password
-Route::post('/forgot_password', [UserController::class, 'forgetPassword']);
-Route::post('/reset_password', [UserController::class, 'reset']);
+    // Public Routes
+    Route::post('/register', [UserController::class, 'registerPassenger']);
+    // Route verifikasi email
+    // Route::get('/email/verify/{id}', [UserController::class, 'verify'])
+    //     ->name('verification.verify')
+    //     ->middleware('signed');
+    Route::post('/email/resend', [UserController::class, 'resendVerificationEmail']);
+    // Route login ke sistem (Email harus terverifikasi)
+    Route::post('/login', [UserController::class, 'login']);
+    //Route Forget and Reset Password
+    Route::post('/forgot_password', [UserController::class, 'forgetPassword']);
+    Route::post('/reset_password', [UserController::class, 'reset']);
 
 
-// Group Middleware (telah login dan email terverifikasi)
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    // Group Middleware (telah login dan email terverifikasi)
+    Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
 
     //Route untuk logout/keluar dari sistem

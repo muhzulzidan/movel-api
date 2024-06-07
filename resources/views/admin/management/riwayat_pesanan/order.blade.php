@@ -119,10 +119,10 @@
                                             <img class="img-profile rounded-circle avatar"
                                                 src="{{ asset(Storage::url($order->passenger_photo)) }}" alt="">
                                          <div class="pl-3 email">
-    <span class="font-weight-bold">{{ $order->user->name ?? 'N/A' }}</span>
-    <span class="d-block">{{ $order->user->email ?? 'N/A' }}</span>
-    <span class="d-block">{{ $order->order_id }}</span>
-</div>
+                                            <span class="font-weight-bold">{{ $order->user->name ?? 'N/A' }}</span>
+                                            <span class="d-block">{{ $order->user->email ?? 'N/A' }}</span>
+                                            <span class="d-block">{{ $order->order_id }}</span>
+                                        </div>
                                         </td>
 
                                         <td>
@@ -179,7 +179,7 @@
                                         <td>{{ $order->statusOrder->status_name }}</td>
 
                                         <td class="text-center">
-                                            {{ . number_format($order->price_order, 0, ',', '.') }}</td>
+                                            {{ number_format($order->price_order, 0, ',', '.') }}</td>
                                         <!-- <td class="text-center">
                                             {{ 'Rp ' . number_format($order->price_order, 0, ',', '.') }}</td> -->
                                         <td class="text-center">{{ $order->is_rating }}</td>

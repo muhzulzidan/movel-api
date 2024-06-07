@@ -7,6 +7,7 @@ use App\Models\Passenger;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class PenumpangController extends Controller
 {
@@ -40,9 +41,11 @@ class PenumpangController extends Controller
             'gender' => ['required'],
             'age_passenger' => ['required'],
         ]);
+    Log::info('Validated data: ', ['validatedData' => $validatedData]);
 
         // Cari data pengemudi
         $passengers = Passenger::find($id);
+    Log::info('Found passenger: ', ['passenger' => $passengers]);
 
         if ($passengers) {
             // Cari data user terkait
@@ -98,22 +101,32 @@ class PenumpangController extends Controller
 
     public function destroy($id)
     {
-        // Ambil data pengemudi berdasarkan ID
+        // Find the passenger by ID
         $passenger = Passenger::findOrFail($id);
+        Log::info('Found passenger: ', ['passenger' => $passenger]);
 
-        // Hapus file gambar dari storage
-        Storage::delete([
-            $passenger->photo,
-        ]);
+        // Delete related label_seat_cars and orders
+        $passenger->user->orders->each(function ($order) {
+            $order->labelSeatCars()->delete();
+            $order->delete();
+        });
+        Log::info('Deleted related label_seat_cars and orders');
 
-        // Hapus data pengemudi
+        // Delete related orders
+        $passenger->user->orders()->delete();
+        Log::info('Deleted related orders');
+
+        // Delete the passenger
         $passenger->delete();
+        Log::info('Deleted passenger');
 
-        // Hapus data pengguna terkait jika tidak ada pengemudi lain yang terhubung dengannya
+        // Delete related user if no other passengers are connected to it
         $user = User::find($passenger->user_id);
         if ($user && $user->passenger()->where('id', '!=', $passenger->id)->count() === 0) {
             $user->delete();
+            Log::info('Deleted user');
         }
+
         return redirect()->route('penumpang')->with('success', 'Penumpang berhasil di-HAPUS');
     }
 }
