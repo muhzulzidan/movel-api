@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+
 
 Auth::routes(['verify' => true]);
 
@@ -54,6 +57,18 @@ Route::get('/send-test-email', function(){
     }
 });
 
+
+// Forgot Password Routes
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+// Reset Password Routes
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+Route::get('/password/reset/success', function () {
+    return view('auth.passwords.success');
+})->name('password.reset.success');
 /*
 |--------------------------------------------------------------------------
 | Web Route untuk ADMIN

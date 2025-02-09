@@ -28,10 +28,7 @@ Route::post('/test-websocket', function () {
     return response()->json(['message' => 'Event has been broadcasted']);
 });
 // Protected Route Passengers
-Route::middleware(['auth:sanctum', 'verified',])->group(function () {
-    //Route Booking (Terbaru)
-    Route::get('/check-token', [UserController::class, 'checkToken']);
-});
+Route::get('/check-token', [UserController::class, 'checkToken']);
 
 
 Route::get('/test-websocket', function () {

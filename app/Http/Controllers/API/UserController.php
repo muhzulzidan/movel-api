@@ -22,28 +22,24 @@ class UserController extends Controller
 {
 
 
-    public function checkToken(Request $request)
-    {
-        $user = $request->user(); // get the authenticated user
+        public function checkToken(Request $request)
+        {
+            $token = $request->query('token');
 
-        if ($user) {
-            // User is authenticated
-            Log::info('User is authenticated: ' . $user->id);
-
-            // Check if the user has a role_id
-            if ($user->role_id) {
-                Log::info('User has role_id: ' . $user->role_id);
-                return response()->json(['message' => 'User and role_id are valid', 'role_id' => $user->role_id], 200);
-            } else {
-                Log::info('User does not have a role_id');
-                return response()->json(['message' => 'User is valid but no role_id found'], 404);
+            if (!$token) {
+                return response()->json(['message' => 'Token is required'], 400);
             }
-        } else {
-            // User is not authenticated
-            Log::info('User is not authenticated');
-            return response()->json(['message' => 'User is not authenticated'], 401);
+
+            $accessToken = PersonalAccessToken::findToken($token);
+
+            if (!$accessToken) {
+                return response()->json(['message' => 'Invalid token'], 401);
+            }
+
+            $user = $accessToken->tokenable;
+
+            return response()->json(['message' => 'Token is valid', 'user' => $user], 200);
         }
-    }
     // Fungsi untuk register Passenger
     public function registerPassenger(Request $request)
     {

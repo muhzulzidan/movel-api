@@ -64,9 +64,10 @@ class User extends Authenticatable implements MustVerifyEmailContract
         Log::info('Email verification notification sent to ' . $this->email);
     }
 
+    // filepath: /var/www/html/movel-api/app/Models/User.php
     public function sendPasswordResetNotification($token)
     {
-        $url = 'https://admin.movel.id/reset_password?token=' . $token;
+        $url = 'https://api.movel.id/password/reset/' . $token . '?email=' . urlencode($this->email);
         $this->notify(new ResetPasswordNotification($url));
     }
 
